@@ -4,53 +4,54 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Conquer AI â Sales Operations Control Room</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%235F63FF'/%3E%3Ctext x='16' y='22' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='700' font-size='18'%3EC%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2337A584'/%3E%3Ctext x='16' y='22' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='700' font-size='18'%3EC%3C/text%3E%3C/svg%3E">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.cdnfonts.com/css/geist-mono" rel="stylesheet">
 <style>
   :root {
-    /* Conquer brand â extracted from conquer.ai + Conquer Intel Figma */
-    --bg: #000212;
-    --bg-elevated: #070B2E;
-    --bg-card: #0D1035;
-    --bg-card-hover: #141845;
-    --bg-panel: #0A0E30;
-    --bg-surface: #191D50;
-    --border: #1E2264;
-    --border-light: #2A2F78;
+    /* Conquer Intel Design System â extracted from Figma */
+    --bg: #141414;
+    --bg-elevated: #1A1A1A;
+    --bg-card: #1E1E1E;
+    --bg-card-hover: #252525;
+    --bg-panel: #1A1A1A;
+    --bg-surface: #222222;
+    --border: #3C3C3C;
+    --border-light: #4A4A4A;
 
-    --text: #FFFFFF;
-    --text-secondary: rgba(255,255,255,0.85);
-    --text-dim: rgba(255,255,255,0.6);
-    --text-muted: rgba(255,255,255,0.35);
+    --text: #EFEFEF;
+    --text-secondary: #D3D3D3;
+    --text-dim: #8A8A8A;
+    --text-muted: #616161;
 
-    --accent: #5F63FF;
-    --accent-hover: #4A4EE6;
-    --accent-glow: rgba(95,99,255,0.15);
-    --accent-subtle: rgba(95,99,255,0.08);
+    --accent: #37A584;
+    --accent-hover: #2E8E72;
+    --accent-glow: rgba(55,165,132,0.15);
+    --accent-subtle: rgba(55,165,132,0.08);
 
-    --teal: #4ECDC4;
-    --teal-bg: rgba(78,205,196,0.1);
+    --teal: #37A584;
+    --teal-bg: rgba(55,165,132,0.1);
     --orange: #F5A623;
     --orange-bg: rgba(245,166,35,0.1);
-    --red: #FF4757;
-    --red-bg: rgba(255,71,87,0.08);
-    --blue: #3A9CFF;
-    --blue-bg: rgba(58,156,255,0.1);
+    --red: #EC3540;
+    --red-bg: rgba(236,53,64,0.08);
+    --blue: #6D7287;
+    --blue-bg: rgba(109,114,135,0.1);
 
-    --stage-intro: #6B7280;
+    --stage-intro: #616161;
     --stage-discovery: #D97706;
-    --stage-poc: #059669;
-    --stage-proposal: #3C48CE;
-    --stage-procurement: #7C3AED;
-    --stage-signed: #10B981;
+    --stage-poc: #37A584;
+    --stage-proposal: #6D7287;
+    --stage-procurement: #8B6CC1;
+    --stage-signed: #37A584;
 
-    --radius: 8px;
-    --radius-lg: 12px;
-    --font: 'Be Vietnam Pro', 'Inter', system-ui, sans-serif;
+    --radius: 5px;
+    --radius-lg: 5px;
+    --font: 'Geist Mono', 'Inter', monospace, system-ui, sans-serif;
   }
 
   * { margin:0; padding:0; box-sizing:border-box; }
@@ -69,7 +70,7 @@
 
   /* âââ HEADER âââ */
   .header {
-    background:linear-gradient(180deg, rgba(7,11,46,0.95) 0%, rgba(0,2,18,0.9) 100%);
+    background:rgba(20,20,20,0.95);
     border-bottom:1px solid var(--border);
     padding:0 32px;
     height:60px;
@@ -177,7 +178,7 @@
   .stage-badge { display:inline-block; padding:3px 10px; border-radius:5px; font-size:10px; font-weight:600; color:white; text-transform:uppercase; letter-spacing:0.3px; }
 
   /* âââ DETAIL PANEL âââ */
-  .overlay { position:fixed; inset:0; background:rgba(0,2,18,0.6); z-index:200; backdrop-filter:blur(6px); }
+  .overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:200; backdrop-filter:blur(6px); }
   .detail-panel { position:fixed; top:0; right:0; width:520px; max-width:92vw; height:100vh; background:var(--bg-panel); border-left:1px solid var(--border); z-index:201; overflow-y:auto; animation:slideIn 0.2s ease; }
   .panel-header { padding:20px 24px; border-bottom:1px solid var(--border); display:flex; align-items:start; justify-content:space-between; position:sticky; top:0; background:var(--bg-panel); z-index:1; }
   .panel-close { background:none; border:1px solid var(--border); border-radius:6px; color:var(--text-dim); cursor:pointer; font-size:16px; width:28px; height:28px; display:flex; align-items:center; justify-content:center; transition:all 0.15s; }
@@ -232,9 +233,9 @@ const STAGE_MAP = Object.fromEntries(STAGES.map(s => [s.key, s]));
 function fmt(val, note) {
   if (!val && note) return note;
   if (!val) return 'TBC';
-  if (val >= 1000000) return `Â£${(val/1000000).toFixed(1)}M`;
-  if (val >= 1000) return `Â£${(val/1000).toFixed(0)}K`;
-  return `Â£${val}`;
+  if (val >= 1000000) return `\u00A3${(val/1000000).toFixed(1)}M`;
+  if (val >= 1000) return `\u00A3${(val/1000).toFixed(0)}K`;
+  return `\u00A3${val}`;
 }
 
 function daysUntil(d) {
@@ -543,7 +544,7 @@ function App() {
                     {form.status==='stalled' && <div className="edit-row"><div className="edit-label">Stall Reason</div><input className="edit-field" value={form.stall_reason} onChange={e=>setForm(f=>({...f,stall_reason:e.target.value}))} placeholder="Why is this stalled?"/></div>}
                     <div className="edit-row"><div className="edit-label">Deal Owner</div><select className="edit-field" value={form.deal_owner_id} onChange={e=>setForm(f=>({...f,deal_owner_id:e.target.value}))}>{team.map(t=><option key={t.id} value={t.id}>{t.full_name}</option>)}</select></div>
                     <div className="edit-row"><div className="edit-label">Partner</div><select className="edit-field" value={form.partner_id} onChange={e=>setForm(f=>({...f,partner_id:e.target.value}))}><option value="">None</option>{team.map(t=><option key={t.id} value={t.id}>{t.full_name}</option>)}</select></div>
-                    <div className="edit-row"><div className="edit-label">Deal Value (Â£)</div><input className="edit-field" type="number" value={form.deal_value} onChange={e=>setForm(f=>({...f,deal_value:e.target.value}))} placeholder="e.g. 100000"/></div>
+                    <div className="edit-row"><div className="edit-label">Deal Value (\u00A3)</div><input className="edit-field" type="number" value={form.deal_value} onChange={e=>setForm(f=>({...f,deal_value:e.target.value}))} placeholder="e.g. 100000"/></div>
                     <div className="edit-row"><div className="edit-label">Champion</div><input className="edit-field" value={form.champion_name} onChange={e=>setForm(f=>({...f,champion_name:e.target.value}))}/></div>
                     <div className="edit-row"><div className="edit-label">Next Action</div><textarea className="edit-field" value={form.next_action} onChange={e=>setForm(f=>({...f,next_action:e.target.value}))}/></div>
                     <div className="edit-row"><div className="edit-label">Due Date</div><input className="edit-field" type="date" value={form.next_action_due||''} onChange={e=>setForm(f=>({...f,next_action_due:e.target.value}))}/></div>
