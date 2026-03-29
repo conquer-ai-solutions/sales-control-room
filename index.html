@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Conquer AI â Sales Operations Control Room</title>
+<title>Conquer AI — Sales Operations Control Room</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2337A584'/%3E%3Ctext x='16' y='22' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='700' font-size='18'%3EC%3C/text%3E%3C/svg%3E">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
@@ -13,7 +13,7 @@
 <link href="https://fonts.cdnfonts.com/css/geist-mono" rel="stylesheet">
 <style>
   :root {
-    /* Conquer Intel Design System â extracted from Figma */
+    /* Conquer Intel Design System */
     --bg: #141414;
     --bg-elevated: #1A1A1A;
     --bg-card: #1E1E1E;
@@ -68,7 +68,7 @@
   @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
   @keyframes slideIn { from { transform:translateX(100%); } to { transform:translateX(0); } }
 
-  /* âââ HEADER âââ */
+  /* HEADER */
   .header {
     background:rgba(20,20,20,0.95);
     border-bottom:1px solid var(--border);
@@ -96,7 +96,7 @@
 
   .timestamp { font-size:11px; color:var(--text-muted); font-variant-numeric:tabular-nums; }
 
-  /* âââ STATS âââ */
+  /* STATS */
   .stats-bar { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px; padding:20px 32px 12px; }
   .stat-card {
     background:var(--bg-card);
@@ -120,7 +120,7 @@
   .stat-value { font-size:28px; font-weight:700; letter-spacing:-1px; font-variant-numeric:tabular-nums; }
   .stat-sub { font-size:12px; color:var(--text-dim); margin-top:4px; }
 
-  /* âââ FILTERS âââ */
+  /* FILTERS */
   .filter-bar { display:flex; gap:6px; padding:8px 32px 16px; flex-wrap:wrap; align-items:center; }
   .search-input { padding:6px 14px; border-radius:var(--radius); border:1px solid var(--border); background:var(--bg-card); color:var(--text); font-size:13px; font-family:var(--font); width:220px; transition:border-color 0.15s; }
   .search-input:focus { outline:none; border-color:var(--accent); }
@@ -130,7 +130,7 @@
   .filter-chip:hover:not(.active) { border-color:var(--border-light); color:var(--text-dim); }
   .filter-sep { width:1px; height:18px; background:var(--border); margin:0 4px; }
 
-  /* âââ KANBAN âââ */
+  /* KANBAN */
   .kanban-container { display:flex; gap:10px; padding:0 32px 32px; overflow-x:auto; min-height:calc(100vh - 240px); }
   .kanban-col { min-width:270px; max-width:310px; flex:1; display:flex; flex-direction:column; }
   .kanban-header { padding:10px 14px; border-radius:var(--radius-lg) var(--radius-lg) 0 0; display:flex; align-items:center; justify-content:space-between; }
@@ -139,7 +139,7 @@
   .kanban-count { background:rgba(255,255,255,0.15); padding:2px 7px; border-radius:8px; font-size:10px; font-weight:600; color:white; }
   .kanban-cards { flex:1; display:flex; flex-direction:column; gap:6px; padding:6px 2px; overflow-y:auto; max-height:calc(100vh - 320px); }
 
-  /* âââ DEAL CARDS âââ */
+  /* DEAL CARDS */
   .deal-card {
     background:var(--bg-card);
     border:1px solid var(--border);
@@ -168,7 +168,7 @@
   .deal-owner-avatar { width:18px; height:18px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; font-size:8px; font-weight:700; color:white; flex-shrink:0; }
   .deal-owner-name { font-size:10px; color:var(--text-muted); }
 
-  /* âââ TABLE VIEW âââ */
+  /* TABLE VIEW */
   .table-container { padding:0 32px 32px; overflow-x:auto; }
   .data-table { width:100%; border-collapse:separate; border-spacing:0; }
   .data-table th { padding:10px 14px; font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.6px; color:var(--text-muted); text-align:left; border-bottom:1px solid var(--border); position:sticky; top:60px; background:var(--bg); z-index:10; }
@@ -177,7 +177,7 @@
   .data-table tbody tr:hover { background:var(--bg-card); }
   .stage-badge { display:inline-block; padding:3px 10px; border-radius:5px; font-size:10px; font-weight:600; color:white; text-transform:uppercase; letter-spacing:0.3px; }
 
-  /* âââ DETAIL PANEL âââ */
+  /* DETAIL PANEL */
   .overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:200; backdrop-filter:blur(6px); }
   .detail-panel { position:fixed; top:0; right:0; width:520px; max-width:92vw; height:100vh; background:var(--bg-panel); border-left:1px solid var(--border); z-index:201; overflow-y:auto; animation:slideIn 0.2s ease; }
   .panel-header { padding:20px 24px; border-bottom:1px solid var(--border); display:flex; align-items:start; justify-content:space-between; position:sticky; top:0; background:var(--bg-panel); z-index:1; }
@@ -207,6 +207,111 @@
   .toast { position:fixed; bottom:24px; right:24px; padding:12px 20px; background:var(--teal); color:var(--bg); border-radius:var(--radius); font-size:13px; font-weight:600; z-index:300; animation:fadeIn 0.2s ease; box-shadow:0 4px 16px rgba(78,205,196,0.3); }
 
   .empty-state { padding:32px; text-align:center; color:var(--text-muted); font-size:12px; }
+
+  /* ACCOUNT VIEW */
+  .account-view-wrapper { min-height:100vh; background:var(--bg); }
+  .account-header {
+    background:rgba(20,20,20,0.95);
+    border-bottom:1px solid var(--border);
+    padding:20px 32px;
+    position:sticky; top:0; z-index:90;
+    backdrop-filter:blur(16px);
+  }
+  .account-header-top { display:flex; align-items:center; gap:16px; margin-bottom:16px; }
+  .back-btn { background:none; border:1px solid var(--border); padding:6px 12px; border-radius:var(--radius); color:var(--text-dim); cursor:pointer; font-size:13px; font-family:var(--font); transition:all 0.15s; }
+  .back-btn:hover { border-color:var(--accent); color:var(--text); }
+  .account-title { flex:1; }
+  .account-name { font-size:20px; font-weight:700; color:var(--text); margin-bottom:4px; }
+  .account-meta { display:flex; gap:12px; align-items:center; font-size:12px; color:var(--text-dim); }
+  .stage-badge-lg { display:inline-block; padding:4px 12px; border-radius:6px; font-size:11px; font-weight:600; color:white; text-transform:uppercase; letter-spacing:0.3px; }
+
+  .tab-bar { display:flex; gap:2px; border-bottom:1px solid var(--border); padding:0 32px; margin:16px 0 0 0; }
+  .tab-btn { padding:12px 20px; border:none; background:transparent; color:var(--text-muted); cursor:pointer; font-size:13px; font-weight:500; font-family:var(--font); border-bottom:2px solid transparent; transition:all 0.15s; }
+  .tab-btn.active { color:var(--accent); border-bottom-color:var(--accent); }
+  .tab-btn:hover:not(.active) { color:var(--text-dim); }
+
+  .tab-content { padding:32px 32px; }
+
+  /* ACTIVITY TIMELINE */
+  .activity-timeline { margin-top:32px; }
+  .activity-item { display:flex; gap:12px; padding:12px 0; border-bottom:1px solid rgba(30,34,100,0.3); }
+  .activity-item:last-child { border-bottom:none; }
+  .activity-dot { width:8px; height:8px; border-radius:50%; background:var(--accent); margin-top:6px; flex-shrink:0; }
+  .activity-content { flex:1; }
+  .activity-text { font-size:13px; color:var(--text); margin-bottom:2px; }
+  .activity-time { font-size:11px; color:var(--text-muted); }
+
+  /* TASKS */
+  .tasks-list { display:flex; flex-direction:column; gap:12px; }
+  .task-item {
+    background:var(--bg-card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:12px 14px;
+    display:flex; gap:12px;
+  }
+  .task-checkbox { width:18px; height:18px; min-width:18px; accent-color:var(--accent); cursor:pointer; }
+  .task-details { flex:1; }
+  .task-title { font-size:13px; font-weight:500; color:var(--text); margin-bottom:4px; }
+  .task-title.completed { text-decoration:line-through; color:var(--text-muted); }
+  .task-description { font-size:12px; color:var(--text-dim); margin-bottom:6px; }
+  .task-meta { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .task-badge { font-size:10px; padding:2px 7px; border-radius:4px; font-weight:600; text-transform:uppercase; }
+  .badge-low { background:var(--blue-bg); color:var(--blue); }
+  .badge-medium { background:var(--orange-bg); color:var(--orange); }
+  .badge-high { background:var(--red-bg); color:var(--red); }
+  .badge-critical { background:var(--red-bg); color:var(--red); font-weight:700; }
+  .badge-intel { background:var(--teal-bg); color:var(--teal); }
+  .badge-manual { background:var(--blue-bg); color:var(--blue); }
+  .task-overdue { color:var(--orange); font-weight:600; }
+
+  /* GAMEPLAN */
+  .gameplan-container { display:flex; flex-direction:column; gap:24px; }
+  .stage-section { margin-bottom:20px; }
+  .stage-section-header {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:12px 16px; border-radius:var(--radius);
+    margin-bottom:12px; background:var(--bg-card); border:1px solid var(--border);
+  }
+  .stage-section-title { font-size:13px; font-weight:600; color:var(--text); }
+  .stage-progress { font-size:11px; color:var(--text-muted); }
+  .criteria-list { display:flex; flex-direction:column; gap:8px; }
+  .criterion-item {
+    display:flex; gap:10px; padding:8px 12px;
+    background:var(--bg-card); border:1px solid var(--border);
+    border-radius:var(--radius); align-items:flex-start;
+  }
+  .criterion-checkbox { width:18px; height:18px; min-width:18px; accent-color:var(--accent); margin-top:1px; cursor:pointer; }
+  .criterion-content { flex:1; }
+  .criterion-text { font-size:12px; font-weight:500; color:var(--text); margin-bottom:2px; }
+  .criterion-desc { font-size:11px; color:var(--text-dim); margin-bottom:4px; }
+  .criterion-badge { font-size:9px; padding:2px 6px; border-radius:3px; font-weight:600; text-transform:uppercase; background:var(--red-bg); color:var(--red); display:inline-block; }
+
+  /* WATERFALL */
+  .waterfall-container { display:flex; flex-direction:column; gap:32px; margin-top:20px; }
+  .waterfall-stages { display:grid; grid-template-columns:repeat(6,1fr); gap:16px; margin-bottom:32px; }
+  .waterfall-node {
+    padding:16px 12px; border-radius:var(--radius);
+    border:2px solid var(--border);
+    background:var(--bg-card);
+    text-align:center;
+    transition:all 0.2s;
+  }
+  .waterfall-node.current { border-color:var(--accent); box-shadow:0 0 12px var(--accent-glow); }
+  .waterfall-node.past { border-color:var(--teal); background:rgba(55,165,132,0.08); }
+  .waterfall-node.future { opacity:0.5; }
+  .waterfall-stage-name { font-size:11px; font-weight:700; text-transform:uppercase; color:var(--text); margin-bottom:8px; }
+  .waterfall-days { font-size:20px; font-weight:700; color:var(--accent); margin-bottom:4px; font-variant-numeric:tabular-nums; }
+  .waterfall-dates { font-size:9px; color:var(--text-muted); }
+
+  .waterfall-summary {
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:16px; padding:20px; background:var(--bg-card);
+    border:1px solid var(--border); border-radius:var(--radius);
+  }
+  .summary-item { }
+  .summary-label { font-size:10px; font-weight:600; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px; }
+  .summary-value { font-size:16px; font-weight:700; color:var(--text); font-variant-numeric:tabular-nums; }
 </style>
 </head>
 <body>
@@ -230,6 +335,24 @@ const STAGES = [
 
 const STAGE_MAP = Object.fromEntries(STAGES.map(s => [s.key, s]));
 
+const STAGE_BENCHMARKS = {
+  intro: 7,
+  discovery: 14,
+  poc: 30,
+  proposal: 14,
+  procurement: 21,
+  contract_signed: 0,
+};
+
+const WEIGHT_MAP = {
+  intro: 0.05,
+  discovery: 0.15,
+  poc: 0.3,
+  proposal: 0.5,
+  procurement: 0.75,
+  contract_signed: 1,
+};
+
 function fmt(val, note) {
   if (!val && note) return note;
   if (!val) return 'TBC';
@@ -249,11 +372,512 @@ function initials(name) {
   return name ? name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase() : '?';
 }
 
+function OverviewTab({ deal, teamMembers, onEditDeal }) {
+  const [activities, setActivities] = useState([]);
+  const tmMap = useMemo(() => Object.fromEntries(teamMembers.map(t => [t.id, t])), [teamMembers]);
+
+  useEffect(() => {
+    const fetchActivities = async () => {
+      const { data } = await supabase.from('deal_activity_log').select('*').eq('deal_id', deal.id).order('logged_at', { ascending: false });
+      if (data) setActivities(data);
+    };
+    fetchActivities();
+  }, [deal.id]);
+
+  const stageInfo = STAGE_MAP[deal.stage];
+  const dealOwner = tmMap[deal.deal_owner_id];
+  const nextActionOwner = tmMap[deal.next_action_owner_id];
+
+  return (
+    <div>
+      <div className="panel-section">
+        <div className="panel-section-title">Deal Information</div>
+        <div className="panel-field">
+          <span className="panel-field-label">Account</span>
+          <span className="panel-field-value">{deal.account_name}</span>
+        </div>
+        <div className="panel-field">
+          <span className="panel-field-label">Project</span>
+          <span className="panel-field-value">{deal.project_name}</span>
+        </div>
+        <div className="panel-field">
+          <span className="panel-field-label">Stage</span>
+          <span className="panel-field-value">{stageInfo?.label}</span>
+        </div>
+        <div className="panel-field">
+          <span className="panel-field-label">Value</span>
+          <span className="panel-field-value">{fmt(deal.deal_value, deal.deal_value_note)}</span>
+        </div>
+        <div className="panel-field">
+          <span className="panel-field-label">Region</span>
+          <span className="panel-field-value">{deal.region}</span>
+        </div>
+        <div className="panel-field">
+          <span className="panel-field-label">Status</span>
+          <span className="panel-field-value" style={{color:deal.status==='stalled'?'var(--red)':'var(--text)'}}>{deal.status}</span>
+        </div>
+      </div>
+
+      <div className="panel-section">
+        <div className="panel-section-title">Ownership</div>
+        <div className="panel-field">
+          <span className="panel-field-label">Deal Owner</span>
+          <span className="panel-field-value">{dealOwner?.display_name||'—'}</span>
+        </div>
+        <div className="panel-field">
+          <span className="panel-field-label">Champion</span>
+          <span className="panel-field-value">{deal.champion_name||'—'}</span>
+        </div>
+        <div className="panel-field">
+          <span className="panel-field-label">Decision Maker</span>
+          <span className="panel-field-value">{deal.decision_maker_name||'—'}</span>
+        </div>
+      </div>
+
+      <div className="panel-section">
+        <div className="panel-section-title">Next Action</div>
+        <div className="panel-field">
+          <span className="panel-field-label">Action</span>
+          <span className="panel-field-value">{deal.next_action||'—'}</span>
+        </div>
+        <div className="panel-field">
+          <span className="panel-field-label">Owner</span>
+          <span className="panel-field-value">{nextActionOwner?.display_name||'—'}</span>
+        </div>
+        <div className="panel-field">
+          <span className="panel-field-label">Due</span>
+          <span className="panel-field-value">{deal.next_action_due?new Date(deal.next_action_due).toLocaleDateString('en-GB'):'—'}</span>
+        </div>
+      </div>
+
+      <div className="panel-section">
+        <div className="panel-section-title">Activity</div>
+        <div className="panel-field">
+          <span className="panel-field-label">Last Activity</span>
+          <span className="panel-field-value">{deal.last_activity_date?new Date(deal.last_activity_date).toLocaleDateString('en-GB'):'—'}</span>
+        </div>
+        <div className="panel-field">
+          <span className="panel-field-label">Source</span>
+          <span className="panel-field-value">{deal.last_activity_source||'—'}</span>
+        </div>
+      </div>
+
+      {deal.stall_reason && (
+        <div className="panel-section">
+          <div className="panel-section-title">Stall Reason</div>
+          <div style={{fontSize:'12px',color:'var(--text)',padding:'8px 0'}}>{deal.stall_reason}</div>
+        </div>
+      )}
+
+      {deal.notes && (
+        <div className="panel-section">
+          <div className="panel-section-title">Notes</div>
+          <div style={{fontSize:'12px',color:'var(--text)',padding:'8px 0',whiteSpace:'pre-wrap'}}>{deal.notes}</div>
+        </div>
+      )}
+
+      <button className="btn btn-primary" onClick={() => onEditDeal(deal)} style={{width:'100%',marginTop:'16px'}}>Edit Deal</button>
+
+      <div className="activity-timeline">
+        <div className="panel-section-title">Recent Activity</div>
+        {activities.length === 0 ? (
+          <div style={{fontSize:'12px',color:'var(--text-muted)',padding:'12px 0'}}>No activity logged</div>
+        ) : (
+          activities.slice(0, 10).map(act => (
+            <div key={act.id} className="activity-item">
+              <div className="activity-dot"></div>
+              <div className="activity-content">
+                <div className="activity-text">{act.activity_text}</div>
+                <div className="activity-time">{new Date(act.logged_at).toLocaleDateString('en-GB')} at {new Date(act.logged_at).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}
+
+function TasksTab({ deal, teamMembers }) {
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [showAdd, setShowAdd] = useState(false);
+  const [newTask, setNewTask] = useState({title:'',description:'',owner_id:'',due_date:'',priority:'medium'});
+  const tmMap = useMemo(() => Object.fromEntries(teamMembers.map(t => [t.id, t])), [teamMembers]);
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      setLoading(true);
+      const { data } = await supabase.from('deal_actions').select('*').eq('deal_id', deal.id).order('due_date',{ascending:true});
+      if (data) setTasks(data);
+      setLoading(false);
+    };
+    fetchTasks();
+  }, [deal.id]);
+
+  useEffect(() => {
+    const ch = supabase.channel(`tasks-${deal.id}`)
+      .on('postgres_changes', { event:'*', schema:'public', table:'deal_actions', filter:`deal_id=eq.${deal.id}` }, p => {
+        if (p.eventType === 'UPDATE') setTasks(prev => prev.map(t => t.id === p.new.id ? p.new : t));
+        else if (p.eventType === 'INSERT') setTasks(prev => [...prev, p.new]);
+      }).subscribe();
+    return () => supabase.removeChannel(ch);
+  }, [deal.id]);
+
+  const handleToggleTask = async (task) => {
+    const statuses = ['pending', 'in_progress', 'completed'];
+    const curr = statuses.indexOf(task.status || 'pending');
+    const next = statuses[(curr + 1) % statuses.length];
+    const updates = { status: next };
+    if (next === 'completed') updates.completed_at = new Date().toISOString();
+    const { error } = await supabase.from('deal_actions').update(updates).eq('id', task.id);
+    if (!error) setTasks(prev => prev.map(t => t.id === task.id ? { ...t, ...updates } : t));
+  };
+
+  const handleAddTask = async () => {
+    if (!newTask.title.trim()) return;
+    const payload = {
+      deal_id: deal.id,
+      title: newTask.title,
+      description: newTask.description || null,
+      owner_id: newTask.owner_id || deal.deal_owner_id,
+      due_date: newTask.due_date || new Date(Date.now() + 7*86400000).toISOString().split('T')[0],
+      priority: newTask.priority,
+      status: 'pending',
+    };
+    const { data, error } = await supabase.from('deal_actions').insert(payload).select();
+    if (!error && data) {
+      setTasks(prev => [...prev, data[0]]);
+      setNewTask({title:'',description:'',owner_id:'',due_date:'',priority:'medium'});
+      setShowAdd(false);
+    }
+  };
+
+  const getPriorityClass = (p) => {
+    if (!p) return 'badge-medium';
+    if (p === 'low') return 'badge-low';
+    if (p === 'medium') return 'badge-medium';
+    return 'badge-high';
+  };
+
+  const statusLabel = (s) => s === 'in_progress' ? 'In Progress' : s === 'completed' ? 'Done' : 'Pending';
+
+  if (loading) return <div style={{color:'var(--text-muted)',fontSize:12}}>Loading tasks\u2026</div>;
+
+  const pending = tasks.filter(t => t.status !== 'completed');
+  const completed = tasks.filter(t => t.status === 'completed');
+
+  return (
+    <div>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
+        <div style={{fontSize:12,color:'var(--text-muted)'}}>{pending.length} open · {completed.length} completed</div>
+        <button className="btn btn-primary" style={{fontSize:12,padding:'6px 14px'}} onClick={() => setShowAdd(!showAdd)}>+ Add Task</button>
+      </div>
+
+      {showAdd && (
+        <div style={{background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:'var(--radius)',padding:16,marginBottom:16}}>
+          <div className="edit-row"><div className="edit-label">Title</div><input className="edit-field" value={newTask.title} onChange={e=>setNewTask({...newTask,title:e.target.value})} placeholder="Task title"/></div>
+          <div className="edit-row"><div className="edit-label">Description</div><textarea className="edit-field" value={newTask.description} onChange={e=>setNewTask({...newTask,description:e.target.value})} rows={2} placeholder="Optional details"/></div>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:12}}>
+            <div className="edit-row"><div className="edit-label">Owner</div><select className="edit-field" value={newTask.owner_id} onChange={e=>setNewTask({...newTask,owner_id:e.target.value})}><option value="">Default</option>{teamMembers.map(t=><option key={t.id} value={t.id}>{t.display_name}</option>)}</select></div>
+            <div className="edit-row"><div className="edit-label">Due Date</div><input className="edit-field" type="date" value={newTask.due_date} onChange={e=>setNewTask({...newTask,due_date:e.target.value})}/></div>
+            <div className="edit-row"><div className="edit-label">Priority</div><select className="edit-field" value={newTask.priority} onChange={e=>setNewTask({...newTask,priority:e.target.value})}><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option><option value="critical">Critical</option></select></div>
+          </div>
+          <div className="btn-row"><button className="btn btn-primary" onClick={handleAddTask}>Save Task</button><button className="btn btn-secondary" onClick={()=>setShowAdd(false)}>Cancel</button></div>
+        </div>
+      )}
+
+      <div className="tasks-list">
+        {pending.length === 0 && completed.length === 0 && <div style={{fontSize:12,color:'var(--text-muted)',padding:'12px 0'}}>No tasks yet — add one above</div>}
+        {pending.map(task => {
+          const isOverdue = task.due_date && daysUntil(task.due_date) < 0 && task.status !== 'completed';
+          const owner = tmMap[task.owner_id];
+          return (
+            <div key={task.id} className="task-item" style={isOverdue?{borderLeftColor:'var(--orange)'}:{}}>
+              <div style={{cursor:'pointer',flexShrink:0}} onClick={() => handleToggleTask(task)}>
+                <div style={{width:18,height:18,borderRadius:'50%',border:task.status==='in_progress'?'2px solid var(--accent)':'2px solid var(--border)',background:task.status==='in_progress'?'var(--accent-subtle)':'transparent',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                  {task.status==='in_progress' && <div style={{width:6,height:6,borderRadius:'50%',background:'var(--accent)'}}></div>}
+                </div>
+              </div>
+              <div className="task-details">
+                <div className="task-title">{task.title}</div>
+                {task.description && <div className="task-description">{task.description}</div>}
+                <div className="task-meta">
+                  {task.intel_action_id && <span className="task-badge" style={{background:'var(--teal-bg)',color:'var(--teal)'}}>Intel</span>}
+                  {!task.intel_action_id && <span className="task-badge" style={{background:'var(--blue-bg)',color:'var(--blue)'}}>Manual</span>}
+                  <span className={`task-badge ${getPriorityClass(task.priority)}`}>{task.priority||'medium'}</span>
+                  <span className="task-badge" style={{background:'transparent',color:task.status==='in_progress'?'var(--accent)':'var(--text-muted)'}}>{statusLabel(task.status)}</span>
+                  {owner && <span style={{fontSize:11,color:'var(--text-muted)'}}>{owner.display_name}</span>}
+                  {task.due_date && <span style={{fontSize:11,color:isOverdue?'var(--orange)':'var(--text-muted)'}}>{isOverdue?'\u26A0 ':''}{new Date(task.due_date).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</span>}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+        {completed.length > 0 && (
+          <>
+            <div style={{fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.8px',color:'var(--text-muted)',padding:'16px 0 8px',borderTop:'1px solid var(--border)',marginTop:8}}>Completed ({completed.length})</div>
+            {completed.map(task => {
+              const owner = tmMap[task.owner_id];
+              return (
+                <div key={task.id} className="task-item" style={{opacity:0.5}}>
+                  <div style={{cursor:'pointer',flexShrink:0}} onClick={() => handleToggleTask(task)}>
+                    <div style={{width:18,height:18,borderRadius:'50%',background:'var(--accent)',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                      <span style={{color:'white',fontSize:10,fontWeight:700}}>✓</span>
+                    </div>
+                  </div>
+                  <div className="task-details">
+                    <div className="task-title" style={{textDecoration:'line-through',color:'var(--text-dim)'}}>{task.title}</div>
+                    <div className="task-meta">
+                      {owner && <span style={{fontSize:11,color:'var(--text-muted)'}}>{owner.display_name}</span>}
+                      {task.completed_at && <span style={{fontSize:11,color:'var(--text-muted)'}}>Done {new Date(task.completed_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</span>}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function GameplanTab({ deal }) {
+  const [criteria, setCriteria] = useState([]);
+  const [checks, setChecks] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetch = async () => {
+      setLoading(true);
+      const [c, ch] = await Promise.all([
+        supabase.from('gate_criteria').select('*').order('sort_order'),
+        supabase.from('deal_gate_checks').select('*').eq('deal_id', deal.id),
+      ]);
+      if (c.data) setCriteria(c.data);
+      if (ch.data) setChecks(ch.data);
+      setLoading(false);
+    };
+    fetch();
+  }, [deal.id]);
+
+  const handleToggleCriterion = async (crits) => {
+    const isMet = checks.some(c => c.gate_criterion_id === crits.id && c.is_met);
+    const { error } = await supabase.from('deal_gate_checks').upsert({
+      deal_id: deal.id,
+      gate_criterion_id: crits.id,
+      is_met: !isMet,
+    }, { onConflict: 'deal_id,gate_criterion_id' });
+    if (!error) {
+      setChecks(prev => {
+        const ex = prev.findIndex(c => c.gate_criterion_id === crits.id);
+        if (ex >= 0) return [...prev.slice(0, ex), { ...prev[ex], is_met: !isMet }, ...prev.slice(ex + 1)];
+        return [...prev, { deal_id: deal.id, gate_criterion_id: crits.id, is_met: !isMet }];
+      });
+    }
+  };
+
+  const stageIdx = STAGES.findIndex(s => s.key === deal.stage);
+  const byStage = useMemo(() => {
+    const g = {};
+    STAGES.forEach(s => g[s.key] = []);
+    criteria.forEach(c => {
+      if (g[c.stage]) g[c.stage].push(c);
+    });
+    return g;
+  }, [criteria]);
+
+  if (loading) return <div style={{color:'var(--text-muted)',fontSize:12}}>Loading gameplan…</div>;
+
+  return (
+    <div className="gameplan-container">
+      {STAGES.map((stage, idx) => {
+        const stageCrit = byStage[stage.key] || [];
+        if (stageCrit.length === 0) return null;
+        const metCount = stageCrit.filter(c => checks.some(ch => ch.gate_criterion_id === c.id && ch.is_met)).length;
+        const isPast = idx < stageIdx;
+        const isCurrent = idx === stageIdx;
+        return (
+          <div key={stage.key} className="stage-section">
+            <div className="stage-section-header" style={{borderColor:isPast?'var(--teal)':isCurrent?'var(--accent)':'var(--border)',borderWidth:'2px'}}>
+              <span className="stage-section-title" style={{color:isPast?'var(--teal)':isCurrent?'var(--accent)':'var(--text)'}}>{stage.label}</span>
+              <span className="stage-progress">{metCount}/{stageCrit.length}</span>
+            </div>
+            <div className="criteria-list">
+              {stageCrit.map(c => {
+                const isMet = checks.some(ch => ch.gate_criterion_id === c.id && ch.is_met);
+                return (
+                  <div key={c.id} className="criterion-item">
+                    <input type="checkbox" className="criterion-checkbox" checked={isMet} onChange={() => handleToggleCriterion(c)} />
+                    <div className="criterion-content">
+                      <div className="criterion-text">{c.criterion}</div>
+                      {c.description && <div className="criterion-desc">{c.description}</div>}
+                      {c.is_required && <span className="criterion-badge">Required</span>}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            {isCurrent && stageCrit.every(c => !c.is_required || checks.some(ch => ch.gate_criterion_id === c.id && ch.is_met)) && (
+              <div style={{padding:'12px',background:'var(--accent-subtle)',border:'1px solid var(--accent)',borderRadius:'var(--radius)',color:'var(--accent)',fontSize:12,fontWeight:600,marginTop:'8px'}}>→ Ready to Advance</div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function RouteToCashTab({ deal }) {
+  const stageIdx = STAGES.findIndex(s => s.key === deal.stage);
+  const daysInCurrent = deal.stage_entered_at ? Math.floor((Date.now() - new Date(deal.stage_entered_at)) / 86400000) : 0;
+
+  const projectedClose = useMemo(() => {
+    let d = new Date();
+    for (let i = stageIdx + 1; i < STAGES.length; i++) {
+      d = new Date(d.getTime() + STAGE_BENCHMARKS[STAGES[i].key] * 86400000);
+    }
+    return d.toLocaleDateString('en-GB');
+  }, [stageIdx]);
+
+  return (
+    <div className="waterfall-container">
+      <div className="waterfall-stages">
+        {STAGES.map((stage, idx) => {
+          const isP = idx < stageIdx;
+          const isC = idx === stageIdx;
+          return (
+            <div key={stage.key} className={`waterfall-node ${isP?'past':isC?'current':'future'}`}>
+              <div className="waterfall-stage-name">{stage.label}</div>
+              <div className="waterfall-days">{isP || isC ? (isC ? daysInCurrent : '—') : STAGE_BENCHMARKS[stage.key]}</div>
+              <div className="waterfall-dates" style={{opacity:isP||isC?1:0.5}}>{isC?'Current':isP?'Past':'Est.'}</div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="waterfall-summary">
+        <div className="summary-item">
+          <div className="summary-label">Deal Value</div>
+          <div className="summary-value">{fmt(deal.deal_value, deal.deal_value_note)}</div>
+        </div>
+        <div className="summary-item">
+          <div className="summary-label">Weighted Value</div>
+          <div className="summary-value">{fmt(deal.deal_value * WEIGHT_MAP[deal.stage])}</div>
+        </div>
+        <div className="summary-item">
+          <div className="summary-label">Days in Pipeline</div>
+          <div className="summary-value">{deal.stage_entered_at ? daysInCurrent : '—'}</div>
+        </div>
+        <div className="summary-item">
+          <div className="summary-label">Projected Close</div>
+          <div className="summary-value">{projectedClose}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AccountView({ dealId, deals, teamMembers, onBack }) {
+  const deal = deals.find(d => d.id === dealId);
+  const [activeTab, setActiveTab] = useState('overview');
+  const [editing, setEditing] = useState(false);
+  const [form, setForm] = useState({});
+
+  useEffect(() => {
+    if (deal) setForm(deal);
+  }, [deal]);
+
+  if (!deal) return <div className="loading-screen"><div className="loading-spinner"></div></div>;
+
+  const stageInfo = STAGE_MAP[deal.stage];
+
+  const handleEditDeal = (d) => {
+    setForm(d);
+    setEditing(true);
+  };
+
+  const saveDeal = async () => {
+    const u = {};
+    ['stage','deal_owner_id','next_action','next_action_due','next_action_owner_id','champion_name','deal_value','status','stall_reason','notes','partner_id'].forEach(k => {
+      if (form[k] !== undefined) u[k] = form[k];
+    });
+    const { error } = await supabase.from('deals').update(u).eq('id', deal.id);
+    if (!error) {
+      setEditing(false);
+      deals.map(d => d.id === deal.id ? { ...d, ...u } : d);
+    }
+  };
+
+  return (
+    <div className="account-view-wrapper">
+      <div className="account-header">
+        <div className="account-header-top">
+          <button className="back-btn" onClick={onBack}>← Back to Pipeline</button>
+          <div className="account-title">
+            <div className="account-name">{deal.account_name}</div>
+            <div className="account-meta">
+              <span>{deal.project_name}</span>
+              <span style={{color:'var(--text-dim)'}}>•</span>
+              <span className="stage-badge-lg" style={{background:stageInfo?.color,color:'white'}}>{stageInfo?.label}</span>
+            </div>
+          </div>
+        </div>
+        <div className="tab-bar">
+          <button className={`tab-btn ${activeTab==='overview'?'active':''}`} onClick={() => setActiveTab('overview')}>Overview</button>
+          <button className={`tab-btn ${activeTab==='tasks'?'active':''}`} onClick={() => setActiveTab('tasks')}>Tasks</button>
+          <button className={`tab-btn ${activeTab==='gameplan'?'active':''}`} onClick={() => setActiveTab('gameplan')}>Gameplan</button>
+          <button className={`tab-btn ${activeTab==='route'?'active':''}`} onClick={() => setActiveTab('route')}>Route to Cash</button>
+        </div>
+      </div>
+
+      <div className="tab-content">
+        {activeTab === 'overview' && !editing && <OverviewTab deal={deal} teamMembers={teamMembers} onEditDeal={handleEditDeal} />}
+        {activeTab === 'overview' && editing && (
+          <div>
+            <div className="edit-row">
+              <label className="edit-label">Stage</label>
+              <select className="edit-field" value={form.stage} onChange={e => setForm({...form,stage:e.target.value})}>
+                {STAGES.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}
+              </select>
+            </div>
+            <div className="edit-row">
+              <label className="edit-label">Status</label>
+              <select className="edit-field" value={form.status} onChange={e => setForm({...form,status:e.target.value})}>
+                <option value="active">Active</option>
+                <option value="stalled">Stalled</option>
+              </select>
+            </div>
+            <div className="edit-row">
+              <label className="edit-label">Stall Reason</label>
+              <textarea className="edit-field" value={form.stall_reason||''} onChange={e => setForm({...form,stall_reason:e.target.value})}></textarea>
+            </div>
+            <div className="edit-row">
+              <label className="edit-label">Notes</label>
+              <textarea className="edit-field" value={form.notes||''} onChange={e => setForm({...form,notes:e.target.value})}></textarea>
+            </div>
+            <div className="btn-row">
+              <button className="btn btn-primary" onClick={saveDeal}>Save</button>
+              <button className="btn btn-secondary" onClick={() => setEditing(false)}>Cancel</button>
+            </div>
+          </div>
+        )}
+        {activeTab === 'tasks' && <TasksTab deal={deal} teamMembers={teamMembers} />}
+        {activeTab === 'gameplan' && <GameplanTab deal={deal} />}
+        {activeTab === 'route' && <RouteToCashTab deal={deal} />}
+      </div>
+    </div>
+  );
+}
+
 function App() {
   const [deals, setDeals] = useState([]);
   const [team, setTeam] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState('board');
   const [view, setView] = useState('kanban');
+  const [selId, setSelId] = useState(null);
   const [sel, setSel] = useState(null);
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({});
@@ -330,9 +954,13 @@ function App() {
   if (loading) return (
     <div className="loading-screen">
       <div className="loading-spinner"></div>
-      <div style={{color:'var(--text-muted)',fontSize:13,fontWeight:500}}>Loading pipelineâ¦</div>
+      <div style={{color:'var(--text-muted)',fontSize:13,fontWeight:500}}>Loading pipeline…</div>
     </div>
   );
+
+  if (page === 'account') {
+    return <AccountView dealId={selId} deals={deals} teamMembers={team} onBack={() => {setPage('board'); setSelId(null);}} />;
+  }
 
   return (
     <div>
@@ -350,7 +978,7 @@ function App() {
             <button className={`view-btn ${view==='kanban'?'active':''}`} onClick={()=>setView('kanban')}>Board</button>
             <button className={`view-btn ${view==='table'?'active':''}`} onClick={()=>setView('table')}>Table</button>
           </div>
-          <button className="refresh-btn" onClick={load}>â» Refresh</button>
+          <button className="refresh-btn" onClick={load}>↻ Refresh</button>
           <span className="timestamp">{ts.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span>
         </div>
       </div>
@@ -381,7 +1009,7 @@ function App() {
 
       {/* Filters */}
       <div className="filter-bar">
-        <input className="search-input" placeholder="Search dealsâ¦" value={search} onChange={e=>setSearch(e.target.value)} />
+        <input className="search-input" placeholder="Search deals…" value={search} onChange={e=>setSearch(e.target.value)} />
         <button className={`filter-chip ${stageF==='all'?'active':''}`} onClick={()=>setStageF('all')}>All</button>
         {STAGES.map(s => <button key={s.key} className={`filter-chip ${stageF===s.key?'active':''}`} onClick={()=>setStageF(s.key)}>{s.label}</button>)}
         <div className="filter-sep"></div>
@@ -398,46 +1026,31 @@ function App() {
             return (
               <div className="kanban-col" key={stage.key}>
                 <div className="kanban-header" style={{background:stage.color}}>
-                  <h3>{stage.label}</h3>
-                  <div style={{display:'flex',alignItems:'center',gap:8}}>
-                    {sv > 0 && <span className="kanban-value">{fmt(sv)}</span>}
-                    <span className="kanban-count">{sd.length}</span>
-                  </div>
+                  <h3>{stage.label} <span className="kanban-count">{sd.length}</span></h3>
+                  <span className="kanban-value">{fmt(sv)}</span>
                 </div>
                 <div className="kanban-cards">
-                  {sd.map(deal => {
-                    const days = daysUntil(deal.next_action_due);
-                    const od = days !== null && days < 0 && deal.status === 'active';
-                    const owner = tm[deal.deal_owner_id];
+                  {sd.map(d => {
+                    const owner = tm[d.deal_owner_id];
+                    const isStalled = d.status === 'stalled';
+                    const dueDays = daysUntil(d.next_action_due);
+                    const isOverdue = dueDays !== null && dueDays < 0;
                     return (
-                      <div key={deal.id} className={`deal-card ${deal.status==='stalled'?'stalled':''} ${od?'overdue':''}`}
-                        onClick={() => { setSel(deal); setEditing(false); }}>
-                        <div className="deal-name">{deal.account_name}</div>
-                        <div className="deal-project">{deal.project_name}</div>
+                      <div key={d.id} className={`deal-card ${isStalled?'stalled':''} ${isOverdue?'overdue':''}`} onClick={() => {setSelId(d.id); setPage('account');}}>
+                        <div className="deal-name">{d.account_name}</div>
+                        <div className="deal-project">{d.project_name}</div>
                         <div className="deal-meta">
-                          <span className="deal-tag tag-region">{deal.region}</span>
-                          {deal.deal_value > 0 && <span className="deal-tag tag-value">{fmt(deal.deal_value, deal.deal_value_note)}</span>}
-                          {deal.status === 'stalled' && <span className="deal-tag tag-stalled">Stalled</span>}
-                          {od && <span className="deal-tag tag-overdue">Overdue</span>}
+                          {d.region && <span className="deal-tag tag-region">{d.region}</span>}
+                          <span className="deal-tag tag-value">{fmt(d.deal_value,d.deal_value_note)}</span>
+                          {isStalled && <span className="deal-tag tag-stalled">Stalled</span>}
+                          {isOverdue && <span className="deal-tag tag-overdue">Overdue</span>}
                         </div>
-                        <div className="deal-action">
-                          <span className="deal-action-arrow">â</span>
-                          <span>{deal.next_action}</span>
-                        </div>
-                        {deal.next_action_due && (
-                          <div className={`deal-due ${od?'overdue':''}`}>
-                            {new Date(deal.next_action_due).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}
-                            {od && ` Â· ${Math.abs(days)}d overdue`}
-                          </div>
-                        )}
-                        <div className="deal-owner-row">
-                          <div className="deal-owner-avatar">{initials(owner?.display_name)}</div>
-                          <span className="deal-owner-name">{owner?.display_name || 'Unassigned'}</span>
-                        </div>
+                        {d.next_action && <div className="deal-action"><span className="deal-action-arrow">›</span>{d.next_action}</div>}
+                        {d.next_action_due && <div className={`deal-due ${isOverdue?'overdue':''}`}>{isOverdue?`${-dueDays}d overdue`:`Due ${dueDays}d`}</div>}
+                        {owner && <div className="deal-owner-row"><div className="deal-owner-avatar">{initials(owner.display_name)}</div><div className="deal-owner-name">{owner.display_name}</div></div>}
                       </div>
                     );
                   })}
-                  {sd.length === 0 && <div className="empty-state">No deals</div>}
                 </div>
               </div>
             );
@@ -449,29 +1062,34 @@ function App() {
       {view === 'table' && (
         <div className="table-container">
           <table className="data-table">
-            <thead><tr>
-              <th>Account</th><th>Stage</th><th>Region</th><th>Value</th>
-              <th>Champion</th><th>Owner</th><th>Next Action</th><th>Due</th><th>Status</th>
-            </tr></thead>
+            <thead>
+              <tr>
+                <th>Account</th>
+                <th>Project</th>
+                <th>Stage</th>
+                <th>Value</th>
+                <th>Owner</th>
+                <th>Status</th>
+                <th>Next Action</th>
+                <th>Due</th>
+              </tr>
+            </thead>
             <tbody>
-              {filtered.sort((a,b) => STAGES.findIndex(s=>s.key===a.stage) - STAGES.findIndex(s=>s.key===b.stage) || (b.deal_value||0) - (a.deal_value||0)).map(deal => {
-                const days = daysUntil(deal.next_action_due);
-                const od = days !== null && days < 0 && deal.status === 'active';
-                const owner = tm[deal.deal_owner_id];
-                const stage = STAGE_MAP[deal.stage];
+              {filtered.map(d => {
+                const owner = tm[d.deal_owner_id];
+                const stageInfo = STAGE_MAP[d.stage];
+                const dueDays = daysUntil(d.next_action_due);
+                const isOverdue = dueDays !== null && dueDays < 0;
                 return (
-                  <tr key={deal.id} onClick={() => { setSel(deal); setEditing(false); }}>
-                    <td><strong>{deal.account_name}</strong><br/><span style={{fontSize:11,color:'var(--text-dim)'}}>{(deal.project_name||'').substring(0,45)}</span></td>
-                    <td><span className="stage-badge" style={{background:stage?.color}}>{stage?.label}</span></td>
-                    <td>{deal.region}</td>
-                    <td style={{fontVariantNumeric:'tabular-nums'}}>{fmt(deal.deal_value, deal.deal_value_note)}</td>
-                    <td style={{fontSize:12,color:'var(--text-dim)'}}>{deal.champion_name || 'â'}</td>
-                    <td style={{fontSize:12}}>{owner?.display_name || 'â'}</td>
-                    <td style={{fontSize:12,maxWidth:180,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{deal.next_action}</td>
-                    <td style={{color:od?'var(--orange)':'var(--text-dim)',fontSize:12,fontWeight:od?600:400}}>
-                      {deal.next_action_due ? new Date(deal.next_action_due).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : 'â'}
-                    </td>
-                    <td>{deal.status==='stalled' ? <span style={{color:'var(--red)',fontWeight:600,fontSize:12}}>Stalled</span> : <span style={{color:'var(--teal)',fontSize:12}}>Active</span>}</td>
+                  <tr key={d.id} onClick={() => {setSelId(d.id); setPage('account');}}>
+                    <td>{d.account_name}</td>
+                    <td>{d.project_name}</td>
+                    <td><span className="stage-badge" style={{background:stageInfo?.color}}>{stageInfo?.label}</span></td>
+                    <td>{fmt(d.deal_value,d.deal_value_note)}</td>
+                    <td>{owner?.display_name||'—'}</td>
+                    <td style={{color:d.status==='stalled'?'var(--red)':'inherit'}}>{d.status}</td>
+                    <td>{d.next_action||'—'}</td>
+                    <td style={{color:isOverdue?'var(--orange)':'inherit'}}>{d.next_action_due?`${isOverdue?'-':''}${Math.abs(dueDays||0)}d`:'—'}</td>
                   </tr>
                 );
               })}
@@ -480,87 +1098,6 @@ function App() {
         </div>
       )}
 
-      {/* Detail Panel */}
-      {sel && (
-        <>
-          <div className="overlay" onClick={() => setSel(null)}></div>
-          <div className="detail-panel">
-            <div className="panel-header">
-              <div>
-                <div style={{fontSize:18,fontWeight:700}}>{sel.account_name}</div>
-                <div style={{fontSize:13,color:'var(--text-dim)',marginTop:4}}>{sel.project_name}</div>
-                <div style={{marginTop:10,display:'flex',gap:6}}>
-                  <span className="stage-badge" style={{background:STAGE_MAP[sel.stage]?.color}}>{STAGE_MAP[sel.stage]?.label}</span>
-                  {sel.status==='stalled' && <span className="deal-tag tag-stalled" style={{padding:'4px 10px',fontSize:11}}>Stalled</span>}
-                </div>
-              </div>
-              <button className="panel-close" onClick={() => setSel(null)}>â</button>
-            </div>
-            <div className="panel-body">
-              {!editing ? (
-                <>
-                  <div className="panel-section">
-                    <div className="panel-section-title">Deal Info</div>
-                    <div className="panel-field"><span className="panel-field-label">Region</span><span className="panel-field-value">{sel.region}</span></div>
-                    <div className="panel-field"><span className="panel-field-label">Value</span><span className="panel-field-value">{fmt(sel.deal_value, sel.deal_value_note)}</span></div>
-                    <div className="panel-field"><span className="panel-field-label">Champion</span><span className="panel-field-value">{sel.champion_name || 'â'}</span></div>
-                    <div className="panel-field"><span className="panel-field-label">Decision Maker</span><span className="panel-field-value">{sel.decision_maker_name || 'â'}</span></div>
-                    <div className="panel-field"><span className="panel-field-label">Stage Entered</span><span className="panel-field-value">{new Date(sel.stage_entered_at).toLocaleDateString('en-GB')}</span></div>
-                  </div>
-                  <div className="panel-section">
-                    <div className="panel-section-title">Ownership</div>
-                    <div className="panel-field"><span className="panel-field-label">Deal Owner</span><span className="panel-field-value">{tm[sel.deal_owner_id]?.display_name || 'â'}</span></div>
-                    <div className="panel-field"><span className="panel-field-label">Partner</span><span className="panel-field-value">{tm[sel.partner_id]?.display_name || 'â'}</span></div>
-                  </div>
-                  <div className="panel-section">
-                    <div className="panel-section-title">Next Action</div>
-                    <div style={{background:'var(--bg)',padding:12,borderRadius:'var(--radius)',border:'1px solid var(--border)'}}>
-                      <div style={{fontSize:13,fontWeight:500}}>{sel.next_action}</div>
-                      <div style={{fontSize:12,color:'var(--text-dim)',marginTop:6}}>Due: {sel.next_action_due ? new Date(sel.next_action_due).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : 'â'}</div>
-                      <div style={{fontSize:12,color:'var(--text-dim)',marginTop:2}}>Owner: {tm[sel.next_action_owner_id]?.display_name || 'â'}</div>
-                    </div>
-                  </div>
-                  <div className="panel-section">
-                    <div className="panel-section-title">Last Activity</div>
-                    <div className="panel-field"><span className="panel-field-label">Date</span><span className="panel-field-value">{sel.last_activity_date ? new Date(sel.last_activity_date).toLocaleDateString('en-GB') : 'â'}</span></div>
-                    <div className="panel-field"><span className="panel-field-label">Source</span><span className="panel-field-value" style={{textTransform:'capitalize'}}>{sel.last_activity_source || 'â'}</span></div>
-                    {sel.last_activity_note && <div className="panel-field"><span className="panel-field-label">Note</span><span className="panel-field-value">{sel.last_activity_note}</span></div>}
-                  </div>
-                  {sel.notes && <div className="panel-section"><div className="panel-section-title">Notes</div><div style={{fontSize:13,color:'var(--text-dim)',lineHeight:1.5}}>{sel.notes}</div></div>}
-                  {sel.stall_reason && <div className="panel-section"><div className="panel-section-title">Stall Reason</div><div style={{background:'var(--red-bg)',padding:12,borderRadius:'var(--radius)',border:'1px solid rgba(255,71,87,0.15)',color:'var(--red)',fontSize:13}}>{sel.stall_reason}</div></div>}
-                  <div className="btn-row">
-                    <button className="btn btn-primary" onClick={() => {
-                      setEditing(true);
-                      setForm({stage:sel.stage,deal_owner_id:sel.deal_owner_id,next_action:sel.next_action,next_action_due:sel.next_action_due,next_action_owner_id:sel.next_action_owner_id,champion_name:sel.champion_name||'',deal_value:sel.deal_value||'',status:sel.status,stall_reason:sel.stall_reason||'',notes:sel.notes||'',partner_id:sel.partner_id||''});
-                    }}>Edit Deal</button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="panel-section">
-                    <div className="panel-section-title">Edit Deal</div>
-                    <div className="edit-row"><div className="edit-label">Stage</div><select className="edit-field" value={form.stage} onChange={e=>setForm(f=>({...f,stage:e.target.value}))}>{STAGES.map(s=><option key={s.key} value={s.key}>{s.label}</option>)}</select></div>
-                    <div className="edit-row"><div className="edit-label">Status</div><select className="edit-field" value={form.status} onChange={e=>setForm(f=>({...f,status:e.target.value}))}><option value="active">Active</option><option value="stalled">Stalled</option><option value="closed_won">Closed Won</option><option value="closed_lost">Closed Lost</option></select></div>
-                    {form.status==='stalled' && <div className="edit-row"><div className="edit-label">Stall Reason</div><input className="edit-field" value={form.stall_reason} onChange={e=>setForm(f=>({...f,stall_reason:e.target.value}))} placeholder="Why is this stalled?"/></div>}
-                    <div className="edit-row"><div className="edit-label">Deal Owner</div><select className="edit-field" value={form.deal_owner_id} onChange={e=>setForm(f=>({...f,deal_owner_id:e.target.value}))}>{team.map(t=><option key={t.id} value={t.id}>{t.display_name}</option>)}</select></div>
-                    <div className="edit-row"><div className="edit-label">Partner</div><select className="edit-field" value={form.partner_id} onChange={e=>setForm(f=>({...f,partner_id:e.target.value}))}><option value="">None</option>{team.map(t=><option key={t.id} value={t.id}>{t.display_name}</option>)}</select></div>
-                    <div className="edit-row"><div className="edit-label">Deal Value (\u00A3)</div><input className="edit-field" type="number" value={form.deal_value} onChange={e=>setForm(f=>({...f,deal_value:e.target.value}))} placeholder="e.g. 100000"/></div>
-                    <div className="edit-row"><div className="edit-label">Champion</div><input className="edit-field" value={form.champion_name} onChange={e=>setForm(f=>({...f,champion_name:e.target.value}))}/></div>
-                    <div className="edit-row"><div className="edit-label">Next Action</div><textarea className="edit-field" value={form.next_action} onChange={e=>setForm(f=>({...f,next_action:e.target.value}))}/></div>
-                    <div className="edit-row"><div className="edit-label">Due Date</div><input className="edit-field" type="date" value={form.next_action_due||''} onChange={e=>setForm(f=>({...f,next_action_due:e.target.value}))}/></div>
-                    <div className="edit-row"><div className="edit-label">Action Owner</div><select className="edit-field" value={form.next_action_owner_id} onChange={e=>setForm(f=>({...f,next_action_owner_id:e.target.value}))}>{team.map(t=><option key={t.id} value={t.id}>{t.display_name}</option>)}</select></div>
-                    <div className="edit-row"><div className="edit-label">Notes</div><textarea className="edit-field" value={form.notes} onChange={e=>setForm(f=>({...f,notes:e.target.value}))} rows={3}/></div>
-                  </div>
-                  <div className="btn-row">
-                    <button className="btn btn-primary" onClick={save}>Save Changes</button>
-                    <button className="btn btn-secondary" onClick={()=>setEditing(false)}>Cancel</button>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        </>
-      )}
       {toast && <div className="toast">{toast}</div>}
     </div>
   );
