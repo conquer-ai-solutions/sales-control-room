@@ -431,8 +431,8 @@ function App() {
                           </div>
                         )}
                         <div className="deal-owner-row">
-                          <div className="deal-owner-avatar">{initials(owner?.full_name)}</div>
-                          <span className="deal-owner-name">{owner?.full_name || 'Unassigned'}</span>
+                          <div className="deal-owner-avatar">{initials(owner?.display_name)}</div>
+                          <span className="deal-owner-name">{owner?.display_name || 'Unassigned'}</span>
                         </div>
                       </div>
                     );
@@ -466,7 +466,7 @@ function App() {
                     <td>{deal.region}</td>
                     <td style={{fontVariantNumeric:'tabular-nums'}}>{fmt(deal.deal_value, deal.deal_value_note)}</td>
                     <td style={{fontSize:12,color:'var(--text-dim)'}}>{deal.champion_name || 'â'}</td>
-                    <td style={{fontSize:12}}>{owner?.full_name || 'â'}</td>
+                    <td style={{fontSize:12}}>{owner?.display_name || 'â'}</td>
                     <td style={{fontSize:12,maxWidth:180,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{deal.next_action}</td>
                     <td style={{color:od?'var(--orange)':'var(--text-dim)',fontSize:12,fontWeight:od?600:400}}>
                       {deal.next_action_due ? new Date(deal.next_action_due).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : 'â'}
@@ -509,15 +509,15 @@ function App() {
                   </div>
                   <div className="panel-section">
                     <div className="panel-section-title">Ownership</div>
-                    <div className="panel-field"><span className="panel-field-label">Deal Owner</span><span className="panel-field-value">{tm[sel.deal_owner_id]?.full_name || 'â'}</span></div>
-                    <div className="panel-field"><span className="panel-field-label">Partner</span><span className="panel-field-value">{tm[sel.partner_id]?.full_name || 'â'}</span></div>
+                    <div className="panel-field"><span className="panel-field-label">Deal Owner</span><span className="panel-field-value">{tm[sel.deal_owner_id]?.display_name || 'â'}</span></div>
+                    <div className="panel-field"><span className="panel-field-label">Partner</span><span className="panel-field-value">{tm[sel.partner_id]?.display_name || 'â'}</span></div>
                   </div>
                   <div className="panel-section">
                     <div className="panel-section-title">Next Action</div>
                     <div style={{background:'var(--bg)',padding:12,borderRadius:'var(--radius)',border:'1px solid var(--border)'}}>
                       <div style={{fontSize:13,fontWeight:500}}>{sel.next_action}</div>
                       <div style={{fontSize:12,color:'var(--text-dim)',marginTop:6}}>Due: {sel.next_action_due ? new Date(sel.next_action_due).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : 'â'}</div>
-                      <div style={{fontSize:12,color:'var(--text-dim)',marginTop:2}}>Owner: {tm[sel.next_action_owner_id]?.full_name || 'â'}</div>
+                      <div style={{fontSize:12,color:'var(--text-dim)',marginTop:2}}>Owner: {tm[sel.next_action_owner_id]?.display_name || 'â'}</div>
                     </div>
                   </div>
                   <div className="panel-section">
@@ -542,13 +542,13 @@ function App() {
                     <div className="edit-row"><div className="edit-label">Stage</div><select className="edit-field" value={form.stage} onChange={e=>setForm(f=>({...f,stage:e.target.value}))}>{STAGES.map(s=><option key={s.key} value={s.key}>{s.label}</option>)}</select></div>
                     <div className="edit-row"><div className="edit-label">Status</div><select className="edit-field" value={form.status} onChange={e=>setForm(f=>({...f,status:e.target.value}))}><option value="active">Active</option><option value="stalled">Stalled</option><option value="closed_won">Closed Won</option><option value="closed_lost">Closed Lost</option></select></div>
                     {form.status==='stalled' && <div className="edit-row"><div className="edit-label">Stall Reason</div><input className="edit-field" value={form.stall_reason} onChange={e=>setForm(f=>({...f,stall_reason:e.target.value}))} placeholder="Why is this stalled?"/></div>}
-                    <div className="edit-row"><div className="edit-label">Deal Owner</div><select className="edit-field" value={form.deal_owner_id} onChange={e=>setForm(f=>({...f,deal_owner_id:e.target.value}))}>{team.map(t=><option key={t.id} value={t.id}>{t.full_name}</option>)}</select></div>
-                    <div className="edit-row"><div className="edit-label">Partner</div><select className="edit-field" value={form.partner_id} onChange={e=>setForm(f=>({...f,partner_id:e.target.value}))}><option value="">None</option>{team.map(t=><option key={t.id} value={t.id}>{t.full_name}</option>)}</select></div>
+                    <div className="edit-row"><div className="edit-label">Deal Owner</div><select className="edit-field" value={form.deal_owner_id} onChange={e=>setForm(f=>({...f,deal_owner_id:e.target.value}))}>{team.map(t=><option key={t.id} value={t.id}>{t.display_name}</option>)}</select></div>
+                    <div className="edit-row"><div className="edit-label">Partner</div><select className="edit-field" value={form.partner_id} onChange={e=>setForm(f=>({...f,partner_id:e.target.value}))}><option value="">None</option>{team.map(t=><option key={t.id} value={t.id}>{t.display_name}</option>)}</select></div>
                     <div className="edit-row"><div className="edit-label">Deal Value (\u00A3)</div><input className="edit-field" type="number" value={form.deal_value} onChange={e=>setForm(f=>({...f,deal_value:e.target.value}))} placeholder="e.g. 100000"/></div>
                     <div className="edit-row"><div className="edit-label">Champion</div><input className="edit-field" value={form.champion_name} onChange={e=>setForm(f=>({...f,champion_name:e.target.value}))}/></div>
                     <div className="edit-row"><div className="edit-label">Next Action</div><textarea className="edit-field" value={form.next_action} onChange={e=>setForm(f=>({...f,next_action:e.target.value}))}/></div>
                     <div className="edit-row"><div className="edit-label">Due Date</div><input className="edit-field" type="date" value={form.next_action_due||''} onChange={e=>setForm(f=>({...f,next_action_due:e.target.value}))}/></div>
-                    <div className="edit-row"><div className="edit-label">Action Owner</div><select className="edit-field" value={form.next_action_owner_id} onChange={e=>setForm(f=>({...f,next_action_owner_id:e.target.value}))}>{team.map(t=><option key={t.id} value={t.id}>{t.full_name}</option>)}</select></div>
+                    <div className="edit-row"><div className="edit-label">Action Owner</div><select className="edit-field" value={form.next_action_owner_id} onChange={e=>setForm(f=>({...f,next_action_owner_id:e.target.value}))}>{team.map(t=><option key={t.id} value={t.id}>{t.display_name}</option>)}</select></div>
                     <div className="edit-row"><div className="edit-label">Notes</div><textarea className="edit-field" value={form.notes} onChange={e=>setForm(f=>({...f,notes:e.target.value}))} rows={3}/></div>
                   </div>
                   <div className="btn-row">
