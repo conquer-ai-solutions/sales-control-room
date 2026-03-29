@@ -1,3 +1,571 @@
-# Sales Control Room
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conquer AI â Sales Operations Control Room</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%235F63FF'/%3E%3Ctext x='16' y='22' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='700' font-size='18'%3EC%3C/text%3E%3C/svg%3E">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Conquer brand â extracted from conquer.ai + Conquer Intel Figma */
+    --bg: #000212;
+    --bg-elevated: #070B2E;
+    --bg-card: #0D1035;
+    --bg-card-hover: #141845;
+    --bg-panel: #0A0E30;
+    --bg-surface: #191D50;
+    --border: #1E2264;
+    --border-light: #2A2F78;
 
-Conquer AI — Sales Operations Dashboard
+    --text: #FFFFFF;
+    --text-secondary: rgba(255,255,255,0.85);
+    --text-dim: rgba(255,255,255,0.6);
+    --text-muted: rgba(255,255,255,0.35);
+
+    --accent: #5F63FF;
+    --accent-hover: #4A4EE6;
+    --accent-glow: rgba(95,99,255,0.15);
+    --accent-subtle: rgba(95,99,255,0.08);
+
+    --teal: #4ECDC4;
+    --teal-bg: rgba(78,205,196,0.1);
+    --orange: #F5A623;
+    --orange-bg: rgba(245,166,35,0.1);
+    --red: #FF4757;
+    --red-bg: rgba(255,71,87,0.08);
+    --blue: #3A9CFF;
+    --blue-bg: rgba(58,156,255,0.1);
+
+    --stage-intro: #6B7280;
+    --stage-discovery: #D97706;
+    --stage-poc: #059669;
+    --stage-proposal: #3C48CE;
+    --stage-procurement: #7C3AED;
+    --stage-signed: #10B981;
+
+    --radius: 8px;
+    --radius-lg: 12px;
+    --font: 'Be Vietnam Pro', 'Inter', system-ui, sans-serif;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:var(--font); background:var(--bg); color:var(--text); overflow-x:hidden; -webkit-font-smoothing:antialiased; }
+
+  ::-webkit-scrollbar { width:5px; height:5px; }
+  ::-webkit-scrollbar-track { background:transparent; }
+  ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+  ::-webkit-scrollbar-thumb:hover { background:var(--border-light); }
+
+  .loading-screen { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; gap:20px; }
+  .loading-spinner { width:36px; height:36px; border:2.5px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 0.7s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes slideIn { from { transform:translateX(100%); } to { transform:translateX(0); } }
+
+  /* âââ HEADER âââ */
+  .header {
+    background:linear-gradient(180deg, rgba(7,11,46,0.95) 0%, rgba(0,2,18,0.9) 100%);
+    border-bottom:1px solid var(--border);
+    padding:0 32px;
+    height:60px;
+    display:flex; align-items:center; justify-content:space-between;
+    position:sticky; top:0; z-index:100;
+    backdrop-filter:blur(16px);
+  }
+  .header-left { display:flex; align-items:center; gap:20px; }
+  .logo { display:flex; align-items:baseline; gap:2px; }
+  .logo-conquer { font-size:18px; font-weight:700; color:var(--text); letter-spacing:-0.3px; }
+  .logo-ai { font-size:18px; font-weight:300; color:var(--text-dim); }
+  .logo-divider { width:1px; height:20px; background:var(--border); margin:0 12px; align-self:center; }
+  .logo-product { font-size:13px; font-weight:500; color:var(--accent); letter-spacing:0.3px; }
+  .header-right { display:flex; align-items:center; gap:10px; }
+
+  .view-toggle { display:flex; background:var(--bg); border-radius:var(--radius); padding:2px; border:1px solid var(--border); }
+  .view-btn { padding:5px 14px; border-radius:6px; border:none; background:transparent; color:var(--text-muted); cursor:pointer; font-size:12px; font-weight:500; font-family:var(--font); transition:all 0.2s; }
+  .view-btn.active { background:var(--accent); color:white; }
+  .view-btn:hover:not(.active) { color:var(--text-dim); }
+
+  .refresh-btn { padding:6px 12px; border-radius:var(--radius); border:1px solid var(--border); background:transparent; color:var(--text-dim); cursor:pointer; font-size:12px; font-family:var(--font); transition:all 0.15s; }
+  .refresh-btn:hover { border-color:var(--accent); color:var(--text); }
+
+  .timestamp { font-size:11px; color:var(--text-muted); font-variant-numeric:tabular-nums; }
+
+  /* âââ STATS âââ */
+  .stats-bar { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px; padding:20px 32px 12px; }
+  .stat-card {
+    background:var(--bg-card);
+    border:1px solid var(--border);
+    border-radius:var(--radius-lg);
+    padding:16px 20px;
+    transition:all 0.2s;
+    position:relative;
+    overflow:hidden;
+  }
+  .stat-card::before {
+    content:'';
+    position:absolute; top:0; left:0; right:0; height:2px;
+  }
+  .stat-card:nth-child(1)::before { background:var(--accent); }
+  .stat-card:nth-child(2)::before { background:var(--teal); }
+  .stat-card:nth-child(3)::before { background:var(--red); }
+  .stat-card:nth-child(4)::before { background:var(--orange); }
+  .stat-card:hover { border-color:var(--border-light); }
+  .stat-label { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); margin-bottom:8px; }
+  .stat-value { font-size:28px; font-weight:700; letter-spacing:-1px; font-variant-numeric:tabular-nums; }
+  .stat-sub { font-size:12px; color:var(--text-dim); margin-top:4px; }
+
+  /* âââ FILTERS âââ */
+  .filter-bar { display:flex; gap:6px; padding:8px 32px 16px; flex-wrap:wrap; align-items:center; }
+  .search-input { padding:6px 14px; border-radius:var(--radius); border:1px solid var(--border); background:var(--bg-card); color:var(--text); font-size:13px; font-family:var(--font); width:220px; transition:border-color 0.15s; }
+  .search-input:focus { outline:none; border-color:var(--accent); }
+  .search-input::placeholder { color:var(--text-muted); }
+  .filter-chip { padding:5px 12px; border-radius:6px; border:1px solid var(--border); background:transparent; color:var(--text-muted); font-size:11px; font-weight:500; font-family:var(--font); cursor:pointer; transition:all 0.15s; text-transform:uppercase; letter-spacing:0.3px; }
+  .filter-chip.active { border-color:var(--accent); background:var(--accent-subtle); color:var(--accent); }
+  .filter-chip:hover:not(.active) { border-color:var(--border-light); color:var(--text-dim); }
+  .filter-sep { width:1px; height:18px; background:var(--border); margin:0 4px; }
+
+  /* âââ KANBAN âââ */
+  .kanban-container { display:flex; gap:10px; padding:0 32px 32px; overflow-x:auto; min-height:calc(100vh - 240px); }
+  .kanban-col { min-width:270px; max-width:310px; flex:1; display:flex; flex-direction:column; }
+  .kanban-header { padding:10px 14px; border-radius:var(--radius-lg) var(--radius-lg) 0 0; display:flex; align-items:center; justify-content:space-between; }
+  .kanban-header h3 { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:white; }
+  .kanban-value { font-size:11px; color:rgba(255,255,255,0.6); font-weight:500; }
+  .kanban-count { background:rgba(255,255,255,0.15); padding:2px 7px; border-radius:8px; font-size:10px; font-weight:600; color:white; }
+  .kanban-cards { flex:1; display:flex; flex-direction:column; gap:6px; padding:6px 2px; overflow-y:auto; max-height:calc(100vh - 320px); }
+
+  /* âââ DEAL CARDS âââ */
+  .deal-card {
+    background:var(--bg-card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:12px 14px;
+    cursor:pointer;
+    transition:all 0.15s;
+    animation:fadeIn 0.3s ease;
+  }
+  .deal-card:hover { border-color:var(--border-light); transform:translateY(-1px); box-shadow:0 4px 16px rgba(0,0,0,0.4); }
+  .deal-card.stalled { border-left:3px solid var(--red); }
+  .deal-card.overdue { border-left:3px solid var(--orange); }
+  .deal-name { font-size:13px; font-weight:600; margin-bottom:3px; line-height:1.3; }
+  .deal-project { font-size:11px; color:var(--text-dim); margin-bottom:8px; line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .deal-meta { display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px; }
+  .deal-tag { font-size:9px; padding:2px 7px; border-radius:4px; font-weight:600; text-transform:uppercase; letter-spacing:0.3px; }
+  .tag-region { background:var(--blue-bg); color:var(--blue); }
+  .tag-value { background:var(--teal-bg); color:var(--teal); }
+  .tag-stalled { background:var(--red-bg); color:var(--red); }
+  .tag-overdue { background:var(--orange-bg); color:var(--orange); }
+  .deal-action { font-size:11px; color:var(--text-dim); padding-top:8px; border-top:1px solid rgba(30,34,100,0.5); display:flex; align-items:start; gap:5px; line-height:1.4; }
+  .deal-action-arrow { color:var(--accent); font-weight:600; flex-shrink:0; }
+  .deal-due { font-size:10px; color:var(--text-muted); margin-top:4px; }
+  .deal-due.overdue { color:var(--orange); font-weight:600; }
+  .deal-owner-row { display:flex; align-items:center; gap:6px; margin-top:6px; }
+  .deal-owner-avatar { width:18px; height:18px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; font-size:8px; font-weight:700; color:white; flex-shrink:0; }
+  .deal-owner-name { font-size:10px; color:var(--text-muted); }
+
+  /* âââ TABLE VIEW âââ */
+  .table-container { padding:0 32px 32px; overflow-x:auto; }
+  .data-table { width:100%; border-collapse:separate; border-spacing:0; }
+  .data-table th { padding:10px 14px; font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.6px; color:var(--text-muted); text-align:left; border-bottom:1px solid var(--border); position:sticky; top:60px; background:var(--bg); z-index:10; }
+  .data-table td { padding:10px 14px; font-size:13px; border-bottom:1px solid rgba(30,34,100,0.3); vertical-align:middle; }
+  .data-table tr { transition:background 0.1s; cursor:pointer; }
+  .data-table tbody tr:hover { background:var(--bg-card); }
+  .stage-badge { display:inline-block; padding:3px 10px; border-radius:5px; font-size:10px; font-weight:600; color:white; text-transform:uppercase; letter-spacing:0.3px; }
+
+  /* âââ DETAIL PANEL âââ */
+  .overlay { position:fixed; inset:0; background:rgba(0,2,18,0.6); z-index:200; backdrop-filter:blur(6px); }
+  .detail-panel { position:fixed; top:0; right:0; width:520px; max-width:92vw; height:100vh; background:var(--bg-panel); border-left:1px solid var(--border); z-index:201; overflow-y:auto; animation:slideIn 0.2s ease; }
+  .panel-header { padding:20px 24px; border-bottom:1px solid var(--border); display:flex; align-items:start; justify-content:space-between; position:sticky; top:0; background:var(--bg-panel); z-index:1; }
+  .panel-close { background:none; border:1px solid var(--border); border-radius:6px; color:var(--text-dim); cursor:pointer; font-size:16px; width:28px; height:28px; display:flex; align-items:center; justify-content:center; transition:all 0.15s; }
+  .panel-close:hover { color:var(--text); border-color:var(--border-light); }
+  .panel-body { padding:20px 24px; }
+  .panel-section { margin-bottom:24px; }
+  .panel-section-title { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin-bottom:10px; }
+  .panel-field { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(30,34,100,0.3); }
+  .panel-field-label { font-size:12px; color:var(--text-dim); }
+  .panel-field-value { font-size:13px; font-weight:500; text-align:right; max-width:60%; }
+
+  .edit-field { width:100%; padding:8px 12px; background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); color:var(--text); font-size:13px; font-family:var(--font); transition:border-color 0.15s; }
+  .edit-field:focus { outline:none; border-color:var(--accent); }
+  select.edit-field { cursor:pointer; }
+  textarea.edit-field { min-height:60px; resize:vertical; }
+  .edit-row { margin-bottom:12px; }
+  .edit-label { font-size:10px; font-weight:600; color:var(--text-dim); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.5px; }
+
+  .btn { padding:8px 18px; border-radius:var(--radius); border:none; font-size:13px; font-weight:600; font-family:var(--font); cursor:pointer; transition:all 0.15s; }
+  .btn-primary { background:var(--accent); color:white; }
+  .btn-primary:hover { background:var(--accent-hover); }
+  .btn-secondary { background:transparent; border:1px solid var(--border); color:var(--text-dim); }
+  .btn-secondary:hover { border-color:var(--border-light); color:var(--text); }
+  .btn-row { display:flex; gap:8px; margin-top:16px; }
+
+  .toast { position:fixed; bottom:24px; right:24px; padding:12px 20px; background:var(--teal); color:var(--bg); border-radius:var(--radius); font-size:13px; font-weight:600; z-index:300; animation:fadeIn 0.2s ease; box-shadow:0 4px 16px rgba(78,205,196,0.3); }
+
+  .empty-state { padding:32px; text-align:center; color:var(--text-muted); font-size:12px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useMemo, useCallback } = React;
+
+const SUPABASE_URL = 'https://wrhzavqvbfeqhldpqcgl.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndyaHphdnF2YmZlcWhsZHBxY2dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3NzYzNTEsImV4cCI6MjA5MDM1MjM1MX0.eIduMPLm8_6lbY_GzGRBEPJ-hifuXjWjp6Kvva6EAHU';
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const STAGES = [
+  { key:'intro', label:'Intro', color:'var(--stage-intro)', order:1 },
+  { key:'discovery', label:'Discovery', color:'var(--stage-discovery)', order:2 },
+  { key:'poc', label:'POC', color:'var(--stage-poc)', order:3 },
+  { key:'proposal', label:'Proposal', color:'var(--stage-proposal)', order:4 },
+  { key:'procurement', label:'Procurement', color:'var(--stage-procurement)', order:5 },
+  { key:'contract_signed', label:'Signed', color:'var(--stage-signed)', order:6 },
+];
+
+const STAGE_MAP = Object.fromEntries(STAGES.map(s => [s.key, s]));
+
+function fmt(val, note) {
+  if (!val && note) return note;
+  if (!val) return 'TBC';
+  if (val >= 1000000) return `Â£${(val/1000000).toFixed(1)}M`;
+  if (val >= 1000) return `Â£${(val/1000).toFixed(0)}K`;
+  return `Â£${val}`;
+}
+
+function daysUntil(d) {
+  if (!d) return null;
+  const dt = new Date(d), now = new Date();
+  now.setHours(0,0,0,0); dt.setHours(0,0,0,0);
+  return Math.round((dt - now) / 86400000);
+}
+
+function initials(name) {
+  return name ? name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase() : '?';
+}
+
+function App() {
+  const [deals, setDeals] = useState([]);
+  const [team, setTeam] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [view, setView] = useState('kanban');
+  const [sel, setSel] = useState(null);
+  const [editing, setEditing] = useState(false);
+  const [form, setForm] = useState({});
+  const [search, setSearch] = useState('');
+  const [stageF, setStageF] = useState('all');
+  const [regionF, setRegionF] = useState('all');
+  const [toast, setToast] = useState(null);
+  const [ts, setTs] = useState(new Date());
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    const [d, t] = await Promise.all([
+      supabase.from('deals').select('*').order('stage_entered_at', {ascending:false}),
+      supabase.from('team_members').select('*'),
+    ]);
+    if (d.data) setDeals(d.data);
+    if (t.data) setTeam(t.data);
+    setLoading(false);
+    setTs(new Date());
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  useEffect(() => {
+    const ch = supabase.channel('deals-rt')
+      .on('postgres_changes', { event:'*', schema:'public', table:'deals' }, p => {
+        if (p.eventType === 'UPDATE') setDeals(prev => prev.map(d => d.id === p.new.id ? p.new : d));
+        else if (p.eventType === 'INSERT') setDeals(prev => [...prev, p.new]);
+      }).subscribe();
+    return () => supabase.removeChannel(ch);
+  }, []);
+
+  const tm = useMemo(() => Object.fromEntries(team.map(t => [t.id, t])), [team]);
+
+  const filtered = useMemo(() => deals.filter(d => {
+    if (search) {
+      const s = search.toLowerCase();
+      if (!(d.account_name||'').toLowerCase().includes(s) && !(d.project_name||'').toLowerCase().includes(s) && !(d.champion_name||'').toLowerCase().includes(s)) return false;
+    }
+    if (stageF !== 'all' && d.stage !== stageF) return false;
+    if (regionF !== 'all' && d.region !== regionF) return false;
+    return true;
+  }), [deals, search, stageF, regionF]);
+
+  const stats = useMemo(() => {
+    const active = deals.filter(d => d.status === 'active');
+    const stalled = deals.filter(d => d.status === 'stalled');
+    const overdue = deals.filter(d => daysUntil(d.next_action_due) < 0 && d.status === 'active');
+    const val = active.reduce((s, d) => s + (d.deal_value || 0), 0);
+    const w = active.reduce((s, d) => {
+      const m = {intro:0.05,discovery:0.15,poc:0.3,proposal:0.5,procurement:0.75,contract_signed:1};
+      return s + (d.deal_value || 0) * (m[d.stage] || 0);
+    }, 0);
+    return { total:deals.length, active:active.length, stalled:stalled.length, overdue:overdue.length, val, w };
+  }, [deals]);
+
+  const regions = useMemo(() => [...new Set(deals.map(d => d.region).filter(Boolean))].sort(), [deals]);
+
+  const flash = msg => { setToast(msg); setTimeout(() => setToast(null), 2500); };
+
+  const save = async () => {
+    const u = {};
+    ['stage','deal_owner_id','next_action','next_action_due','next_action_owner_id','champion_name','deal_value','status','stall_reason','notes','partner_id'].forEach(k => {
+      if (form[k] !== undefined) u[k] = k === 'deal_value' ? (form[k] || null) : (k === 'partner_id' ? (form[k] || null) : form[k]);
+    });
+    const { error } = await supabase.from('deals').update(u).eq('id', sel.id);
+    if (error) { flash('Error: ' + error.message); return; }
+    setDeals(prev => prev.map(d => d.id === sel.id ? {...d, ...u} : d));
+    setSel(prev => ({...prev, ...u}));
+    setEditing(false);
+    flash('Deal updated');
+  };
+
+  if (loading) return (
+    <div className="loading-screen">
+      <div className="loading-spinner"></div>
+      <div style={{color:'var(--text-muted)',fontSize:13,fontWeight:500}}>Loading pipelineâ¦</div>
+    </div>
+  );
+
+  return (
+    <div>
+      {/* Header */}
+      <div className="header">
+        <div className="header-left">
+          <div className="logo">
+            <span className="logo-conquer">Conquer</span><span className="logo-ai">AI</span>
+          </div>
+          <div className="logo-divider"></div>
+          <span className="logo-product">Control Room</span>
+        </div>
+        <div className="header-right">
+          <div className="view-toggle">
+            <button className={`view-btn ${view==='kanban'?'active':''}`} onClick={()=>setView('kanban')}>Board</button>
+            <button className={`view-btn ${view==='table'?'active':''}`} onClick={()=>setView('table')}>Table</button>
+          </div>
+          <button className="refresh-btn" onClick={load}>â» Refresh</button>
+          <span className="timestamp">{ts.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span>
+        </div>
+      </div>
+
+      {/* Stats */}
+      <div className="stats-bar">
+        <div className="stat-card">
+          <div className="stat-label">Pipeline Deals</div>
+          <div className="stat-value" style={{color:'var(--accent)'}}>{stats.total}</div>
+          <div className="stat-sub">{stats.active} active</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-label">Pipeline Value</div>
+          <div className="stat-value" style={{color:'var(--teal)'}}>{fmt(stats.val)}</div>
+          <div className="stat-sub">Weighted: {fmt(stats.w)}</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-label">Stalled</div>
+          <div className="stat-value" style={{color:'var(--red)'}}>{stats.stalled}</div>
+          <div className="stat-sub">Needs attention</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-label">Overdue Actions</div>
+          <div className="stat-value" style={{color:'var(--orange)'}}>{stats.overdue}</div>
+          <div className="stat-sub">Past due date</div>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div className="filter-bar">
+        <input className="search-input" placeholder="Search dealsâ¦" value={search} onChange={e=>setSearch(e.target.value)} />
+        <button className={`filter-chip ${stageF==='all'?'active':''}`} onClick={()=>setStageF('all')}>All</button>
+        {STAGES.map(s => <button key={s.key} className={`filter-chip ${stageF===s.key?'active':''}`} onClick={()=>setStageF(s.key)}>{s.label}</button>)}
+        <div className="filter-sep"></div>
+        <button className={`filter-chip ${regionF==='all'?'active':''}`} onClick={()=>setRegionF('all')}>All Regions</button>
+        {regions.map(r => <button key={r} className={`filter-chip ${regionF===r?'active':''}`} onClick={()=>setRegionF(r)}>{r}</button>)}
+      </div>
+
+      {/* Kanban */}
+      {view === 'kanban' && (
+        <div className="kanban-container">
+          {STAGES.map(stage => {
+            const sd = filtered.filter(d => d.stage === stage.key).sort((a,b) => (b.deal_value||0) - (a.deal_value||0));
+            const sv = sd.reduce((s,d) => s + (d.deal_value||0), 0);
+            return (
+              <div className="kanban-col" key={stage.key}>
+                <div className="kanban-header" style={{background:stage.color}}>
+                  <h3>{stage.label}</h3>
+                  <div style={{display:'flex',alignItems:'center',gap:8}}>
+                    {sv > 0 && <span className="kanban-value">{fmt(sv)}</span>}
+                    <span className="kanban-count">{sd.length}</span>
+                  </div>
+                </div>
+                <div className="kanban-cards">
+                  {sd.map(deal => {
+                    const days = daysUntil(deal.next_action_due);
+                    const od = days !== null && days < 0 && deal.status === 'active';
+                    const owner = tm[deal.deal_owner_id];
+                    return (
+                      <div key={deal.id} className={`deal-card ${deal.status==='stalled'?'stalled':''} ${od?'overdue':''}`}
+                        onClick={() => { setSel(deal); setEditing(false); }}>
+                        <div className="deal-name">{deal.account_name}</div>
+                        <div className="deal-project">{deal.project_name}</div>
+                        <div className="deal-meta">
+                          <span className="deal-tag tag-region">{deal.region}</span>
+                          {deal.deal_value > 0 && <span className="deal-tag tag-value">{fmt(deal.deal_value, deal.deal_value_note)}</span>}
+                          {deal.status === 'stalled' && <span className="deal-tag tag-stalled">Stalled</span>}
+                          {od && <span className="deal-tag tag-overdue">Overdue</span>}
+                        </div>
+                        <div className="deal-action">
+                          <span className="deal-action-arrow">â</span>
+                          <span>{deal.next_action}</span>
+                        </div>
+                        {deal.next_action_due && (
+                          <div className={`deal-due ${od?'overdue':''}`}>
+                            {new Date(deal.next_action_due).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}
+                            {od && ` Â· ${Math.abs(days)}d overdue`}
+                          </div>
+                        )}
+                        <div className="deal-owner-row">
+                          <div className="deal-owner-avatar">{initials(owner?.full_name)}</div>
+                          <span className="deal-owner-name">{owner?.full_name || 'Unassigned'}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {sd.length === 0 && <div className="empty-state">No deals</div>}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Table */}
+      {view === 'table' && (
+        <div className="table-container">
+          <table className="data-table">
+            <thead><tr>
+              <th>Account</th><th>Stage</th><th>Region</th><th>Value</th>
+              <th>Champion</th><th>Owner</th><th>Next Action</th><th>Due</th><th>Status</th>
+            </tr></thead>
+            <tbody>
+              {filtered.sort((a,b) => STAGES.findIndex(s=>s.key===a.stage) - STAGES.findIndex(s=>s.key===b.stage) || (b.deal_value||0) - (a.deal_value||0)).map(deal => {
+                const days = daysUntil(deal.next_action_due);
+                const od = days !== null && days < 0 && deal.status === 'active';
+                const owner = tm[deal.deal_owner_id];
+                const stage = STAGE_MAP[deal.stage];
+                return (
+                  <tr key={deal.id} onClick={() => { setSel(deal); setEditing(false); }}>
+                    <td><strong>{deal.account_name}</strong><br/><span style={{fontSize:11,color:'var(--text-dim)'}}>{(deal.project_name||'').substring(0,45)}</span></td>
+                    <td><span className="stage-badge" style={{background:stage?.color}}>{stage?.label}</span></td>
+                    <td>{deal.region}</td>
+                    <td style={{fontVariantNumeric:'tabular-nums'}}>{fmt(deal.deal_value, deal.deal_value_note)}</td>
+                    <td style={{fontSize:12,color:'var(--text-dim)'}}>{deal.champion_name || 'â'}</td>
+                    <td style={{fontSize:12}}>{owner?.full_name || 'â'}</td>
+                    <td style={{fontSize:12,maxWidth:180,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{deal.next_action}</td>
+                    <td style={{color:od?'var(--orange)':'var(--text-dim)',fontSize:12,fontWeight:od?600:400}}>
+                      {deal.next_action_due ? new Date(deal.next_action_due).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : 'â'}
+                    </td>
+                    <td>{deal.status==='stalled' ? <span style={{color:'var(--red)',fontWeight:600,fontSize:12}}>Stalled</span> : <span style={{color:'var(--teal)',fontSize:12}}>Active</span>}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Detail Panel */}
+      {sel && (
+        <>
+          <div className="overlay" onClick={() => setSel(null)}></div>
+          <div className="detail-panel">
+            <div className="panel-header">
+              <div>
+                <div style={{fontSize:18,fontWeight:700}}>{sel.account_name}</div>
+                <div style={{fontSize:13,color:'var(--text-dim)',marginTop:4}}>{sel.project_name}</div>
+                <div style={{marginTop:10,display:'flex',gap:6}}>
+                  <span className="stage-badge" style={{background:STAGE_MAP[sel.stage]?.color}}>{STAGE_MAP[sel.stage]?.label}</span>
+                  {sel.status==='stalled' && <span className="deal-tag tag-stalled" style={{padding:'4px 10px',fontSize:11}}>Stalled</span>}
+                </div>
+              </div>
+              <button className="panel-close" onClick={() => setSel(null)}>â</button>
+            </div>
+            <div className="panel-body">
+              {!editing ? (
+                <>
+                  <div className="panel-section">
+                    <div className="panel-section-title">Deal Info</div>
+                    <div className="panel-field"><span className="panel-field-label">Region</span><span className="panel-field-value">{sel.region}</span></div>
+                    <div className="panel-field"><span className="panel-field-label">Value</span><span className="panel-field-value">{fmt(sel.deal_value, sel.deal_value_note)}</span></div>
+                    <div className="panel-field"><span className="panel-field-label">Champion</span><span className="panel-field-value">{sel.champion_name || 'â'}</span></div>
+                    <div className="panel-field"><span className="panel-field-label">Decision Maker</span><span className="panel-field-value">{sel.decision_maker_name || 'â'}</span></div>
+                    <div className="panel-field"><span className="panel-field-label">Stage Entered</span><span className="panel-field-value">{new Date(sel.stage_entered_at).toLocaleDateString('en-GB')}</span></div>
+                  </div>
+                  <div className="panel-section">
+                    <div className="panel-section-title">Ownership</div>
+                    <div className="panel-field"><span className="panel-field-label">Deal Owner</span><span className="panel-field-value">{tm[sel.deal_owner_id]?.full_name || 'â'}</span></div>
+                    <div className="panel-field"><span className="panel-field-label">Partner</span><span className="panel-field-value">{tm[sel.partner_id]?.full_name || 'â'}</span></div>
+                  </div>
+                  <div className="panel-section">
+                    <div className="panel-section-title">Next Action</div>
+                    <div style={{background:'var(--bg)',padding:12,borderRadius:'var(--radius)',border:'1px solid var(--border)'}}>
+                      <div style={{fontSize:13,fontWeight:500}}>{sel.next_action}</div>
+                      <div style={{fontSize:12,color:'var(--text-dim)',marginTop:6}}>Due: {sel.next_action_due ? new Date(sel.next_action_due).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : 'â'}</div>
+                      <div style={{fontSize:12,color:'var(--text-dim)',marginTop:2}}>Owner: {tm[sel.next_action_owner_id]?.full_name || 'â'}</div>
+                    </div>
+                  </div>
+                  <div className="panel-section">
+                    <div className="panel-section-title">Last Activity</div>
+                    <div className="panel-field"><span className="panel-field-label">Date</span><span className="panel-field-value">{sel.last_activity_date ? new Date(sel.last_activity_date).toLocaleDateString('en-GB') : 'â'}</span></div>
+                    <div className="panel-field"><span className="panel-field-label">Source</span><span className="panel-field-value" style={{textTransform:'capitalize'}}>{sel.last_activity_source || 'â'}</span></div>
+                    {sel.last_activity_note && <div className="panel-field"><span className="panel-field-label">Note</span><span className="panel-field-value">{sel.last_activity_note}</span></div>}
+                  </div>
+                  {sel.notes && <div className="panel-section"><div className="panel-section-title">Notes</div><div style={{fontSize:13,color:'var(--text-dim)',lineHeight:1.5}}>{sel.notes}</div></div>}
+                  {sel.stall_reason && <div className="panel-section"><div className="panel-section-title">Stall Reason</div><div style={{background:'var(--red-bg)',padding:12,borderRadius:'var(--radius)',border:'1px solid rgba(255,71,87,0.15)',color:'var(--red)',fontSize:13}}>{sel.stall_reason}</div></div>}
+                  <div className="btn-row">
+                    <button className="btn btn-primary" onClick={() => {
+                      setEditing(true);
+                      setForm({stage:sel.stage,deal_owner_id:sel.deal_owner_id,next_action:sel.next_action,next_action_due:sel.next_action_due,next_action_owner_id:sel.next_action_owner_id,champion_name:sel.champion_name||'',deal_value:sel.deal_value||'',status:sel.status,stall_reason:sel.stall_reason||'',notes:sel.notes||'',partner_id:sel.partner_id||''});
+                    }}>Edit Deal</button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="panel-section">
+                    <div className="panel-section-title">Edit Deal</div>
+                    <div className="edit-row"><div className="edit-label">Stage</div><select className="edit-field" value={form.stage} onChange={e=>setForm(f=>({...f,stage:e.target.value}))}>{STAGES.map(s=><option key={s.key} value={s.key}>{s.label}</option>)}</select></div>
+                    <div className="edit-row"><div className="edit-label">Status</div><select className="edit-field" value={form.status} onChange={e=>setForm(f=>({...f,status:e.target.value}))}><option value="active">Active</option><option value="stalled">Stalled</option><option value="closed_won">Closed Won</option><option value="closed_lost">Closed Lost</option></select></div>
+                    {form.status==='stalled' && <div className="edit-row"><div className="edit-label">Stall Reason</div><input className="edit-field" value={form.stall_reason} onChange={e=>setForm(f=>({...f,stall_reason:e.target.value}))} placeholder="Why is this stalled?"/></div>}
+                    <div className="edit-row"><div className="edit-label">Deal Owner</div><select className="edit-field" value={form.deal_owner_id} onChange={e=>setForm(f=>({...f,deal_owner_id:e.target.value}))}>{team.map(t=><option key={t.id} value={t.id}>{t.full_name}</option>)}</select></div>
+                    <div className="edit-row"><div className="edit-label">Partner</div><select className="edit-field" value={form.partner_id} onChange={e=>setForm(f=>({...f,partner_id:e.target.value}))}><option value="">None</option>{team.map(t=><option key={t.id} value={t.id}>{t.full_name}</option>)}</select></div>
+                    <div className="edit-row"><div className="edit-label">Deal Value (Â£)</div><input className="edit-field" type="number" value={form.deal_value} onChange={e=>setForm(f=>({...f,deal_value:e.target.value}))} placeholder="e.g. 100000"/></div>
+                    <div className="edit-row"><div className="edit-label">Champion</div><input className="edit-field" value={form.champion_name} onChange={e=>setForm(f=>({...f,champion_name:e.target.value}))}/></div>
+                    <div className="edit-row"><div className="edit-label">Next Action</div><textarea className="edit-field" value={form.next_action} onChange={e=>setForm(f=>({...f,next_action:e.target.value}))}/></div>
+                    <div className="edit-row"><div className="edit-label">Due Date</div><input className="edit-field" type="date" value={form.next_action_due||''} onChange={e=>setForm(f=>({...f,next_action_due:e.target.value}))}/></div>
+                    <div className="edit-row"><div className="edit-label">Action Owner</div><select className="edit-field" value={form.next_action_owner_id} onChange={e=>setForm(f=>({...f,next_action_owner_id:e.target.value}))}>{team.map(t=><option key={t.id} value={t.id}>{t.full_name}</option>)}</select></div>
+                    <div className="edit-row"><div className="edit-label">Notes</div><textarea className="edit-field" value={form.notes} onChange={e=>setForm(f=>({...f,notes:e.target.value}))} rows={3}/></div>
+                  </div>
+                  <div className="btn-row">
+                    <button className="btn btn-primary" onClick={save}>Save Changes</button>
+                    <button className="btn btn-secondary" onClick={()=>setEditing(false)}>Cancel</button>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </>
+      )}
+      {toast && <div className="toast">{toast}</div>}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
