@@ -210,6 +210,17 @@
 
   .toast { position:fixed; bottom:24px; right:24px; padding:12px 20px; background:var(--teal); color:var(--bg); border-radius:var(--radius); font-size:13px; font-weight:600; z-index:300; animation:fadeIn 0.2s ease; box-shadow:0 4px 16px rgba(78,205,196,0.3); }
 
+  .stage-modal { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:28px 32px; z-index:210; width:440px; max-width:90vw; animation:fadeIn 0.15s ease; box-shadow:0 20px 60px rgba(0,0,0,0.5); }
+  .stage-modal-title { font-size:15px; font-weight:700; margin-bottom:4px; }
+  .stage-modal-sub { font-size:12px; color:var(--text-dim); margin-bottom:20px; }
+  .stage-modal-arrow { display:inline-flex; align-items:center; gap:8px; margin-bottom:16px; font-size:13px; }
+  .stage-modal-badge { display:inline-block; padding:3px 10px; border-radius:var(--radius); color:white; font-size:12px; font-weight:600; }
+  .stage-modal-notes { width:100%; min-height:80px; background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius); padding:10px 12px; color:var(--text); font-family:var(--font); font-size:13px; resize:vertical; }
+  .stage-modal-notes:focus { outline:none; border-color:var(--accent); }
+  .stage-modal-notes::placeholder { color:var(--text-muted); }
+  .stage-modal-label { font-size:12px; font-weight:600; color:var(--text-dim); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px; }
+  .stage-modal-btns { display:flex; gap:8px; justify-content:flex-end; margin-top:20px; }
+
   .empty-state { padding:32px; text-align:center; color:var(--text-muted); font-size:12px; }
 
   /* ACCOUNT VIEW */
@@ -1266,20 +1277,36 @@ function App() {
 
   const [dragId, setDragId] = useState(null);
 
-  const handleDrop = async (targetStage) => {
+  const [dragTarget, setDragTarget] = useState(null);
+  const [dragNotes, setDragNotes] = useState('');
+
+  const handleDrop = (targetStage) => {
     if (!dragId) return;
     const deal = deals.find(d => d.id === dragId);
     if (!deal || deal.stage === targetStage) { setDragId(null); return; }
-    setDeals(prev => prev.map(d => d.id === dragId ? {...d, stage: targetStage, stage_entered_at: new Date().toISOString()} : d));
+    setDragTarget({ deal, targetStage });
+    setDragNotes('');
     setDragId(null);
-    const { error } = await supabase.from('deals').update({ stage: targetStage, stage_entered_at: new Date().toISOString() }).eq('id', deal.id);
+  };
+
+  const confirmDrop = async () => {
+    if (!dragTarget) return;
+    const { deal, targetStage } = dragTarget;
+    const now = new Date().toISOString();
+    const updates = { stage: targetStage, stage_entered_at: now };
+    if (dragNotes.trim()) updates.notes = (deal.notes ? deal.notes + '\n' : '') + '[' + new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short'}) + '] Moved to ' + (STAGE_MAP[targetStage]?.label || targetStage) + ': ' + dragNotes.trim();
+    setDeals(prev => prev.map(d => d.id === deal.id ? {...d, ...updates} : d));
+    setDragTarget(null);
+    const { error } = await supabase.from('deals').update(updates).eq('id', deal.id);
     if (error) {
-      setDeals(prev => prev.map(d => d.id === deal.id ? {...d, stage: deal.stage, stage_entered_at: deal.stage_entered_at} : d));
+      setDeals(prev => prev.map(d => d.id === deal.id ? {...d, stage: deal.stage, stage_entered_at: deal.stage_entered_at, notes: deal.notes} : d));
       flash('Error moving deal: ' + error.message);
     } else {
-      flash(`Moved ${deal.account_name} to ${STAGE_MAP[targetStage]?.label}`);
+      flash('Moved ' + deal.account_name + ' to ' + (STAGE_MAP[targetStage]?.label || targetStage));
     }
   };
+
+  const cancelDrop = () => { setDragTarget(null); setDragNotes(''); };
 
   const flash = msg => { setToast(msg); setTimeout(() => setToast(null), 2500); };
 
@@ -1472,6 +1499,27 @@ function App() {
             </tbody>
           </table>
         </div>
+      )}
+
+      {dragTarget && (
+        <>
+          <div className="overlay" onClick={cancelDrop}></div>
+          <div className="stage-modal">
+            <div className="stage-modal-title">Move {dragTarget.deal.account_name}</div>
+            <div className="stage-modal-sub">{dragTarget.deal.project_name}</div>
+            <div className="stage-modal-arrow">
+              <span className="stage-modal-badge" style={{background:STAGE_MAP[dragTarget.deal.stage]?.color}}>{STAGE_MAP[dragTarget.deal.stage]?.label}</span>
+              <span style={{color:'var(--text-dim)'}}>→</span>
+              <span className="stage-modal-badge" style={{background:STAGE_MAP[dragTarget.targetStage]?.color}}>{STAGE_MAP[dragTarget.targetStage]?.label}</span>
+            </div>
+            <div className="stage-modal-label">Notes</div>
+            <textarea className="stage-modal-notes" placeholder="Why is this deal moving? Any context for the team..." value={dragNotes} onChange={e => setDragNotes(e.target.value)} autoFocus />
+            <div className="stage-modal-btns">
+              <button className="btn btn-secondary" onClick={cancelDrop}>Cancel</button>
+              <button className="btn btn-primary" onClick={confirmDrop}>Confirm Move</button>
+            </div>
+          </div>
+        </>
       )}
 
       {toast && <div className="toast">{toast}</div>}
