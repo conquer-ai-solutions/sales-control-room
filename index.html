@@ -137,7 +137,11 @@
   .kanban-header h3 { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:white; }
   .kanban-value { font-size:11px; color:rgba(255,255,255,0.6); font-weight:500; }
   .kanban-count { background:rgba(255,255,255,0.15); padding:2px 7px; border-radius:8px; font-size:10px; font-weight:600; color:white; }
-  .kanban-cards { flex:1; display:flex; flex-direction:column; gap:6px; padding:6px 2px; overflow-y:auto; max-height:calc(100vh - 320px); }
+  .kanban-cards { flex:1; display:flex; flex-direction:column; gap:6px; padding:6px 2px; overflow-y:auto; max-height:calc(100vh - 320px); transition:background 0.2s; }
+  .kanban-cards.drag-over { background:rgba(55,165,132,0.08); border-radius:var(--radius); }
+  .deal-card[draggable="true"] { cursor:grab; }
+  .deal-card[draggable="true"]:active { cursor:grabbing; }
+  .deal-card.dragging { opacity:0.4; transform:scale(0.97); }
 
   /* DEAL CARDS */
   .deal-card {
@@ -1260,6 +1264,23 @@ function App() {
 
   const regions = useMemo(() => [...new Set(deals.map(d => d.region).filter(Boolean))].sort(), [deals]);
 
+  const [dragId, setDragId] = useState(null);
+
+  const handleDrop = async (targetStage) => {
+    if (!dragId) return;
+    const deal = deals.find(d => d.id === dragId);
+    if (!deal || deal.stage === targetStage) { setDragId(null); return; }
+    setDeals(prev => prev.map(d => d.id === dragId ? {...d, stage: targetStage, stage_entered_at: new Date().toISOString()} : d));
+    setDragId(null);
+    const { error } = await supabase.from('deals').update({ stage: targetStage, stage_entered_at: new Date().toISOString() }).eq('id', deal.id);
+    if (error) {
+      setDeals(prev => prev.map(d => d.id === deal.id ? {...d, stage: deal.stage, stage_entered_at: deal.stage_entered_at} : d));
+      flash('Error moving deal: ' + error.message);
+    } else {
+      flash(`Moved ${deal.account_name} to ${STAGE_MAP[targetStage]?.label}`);
+    }
+  };
+
   const flash = msg => { setToast(msg); setTimeout(() => setToast(null), 2500); };
 
   const save = async () => {
@@ -1381,14 +1402,17 @@ function App() {
                   <h3>{stage.label} <span className="kanban-count">{sd.length}</span></h3>
                   <span className="kanban-value">{fmt(sv)}</span>
                 </div>
-                <div className="kanban-cards">
+                <div className="kanban-cards"
+                  onDragOver={e => { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }}
+                  onDragLeave={e => { e.currentTarget.classList.remove('drag-over'); }}
+                  onDrop={e => { e.currentTarget.classList.remove('drag-over'); handleDrop(stage.key); }}>
                   {sd.map(d => {
                     const owner = tm[d.deal_owner_id];
                     const isStalled = d.status === 'stalled';
                     const dueDays = daysUntil(d.next_action_due);
                     const isOverdue = dueDays !== null && dueDays < 0;
                     return (
-                      <div key={d.id} className={`deal-card ${isStalled?'stalled':''} ${isOverdue?'overdue':''}`} onClick={() => {setSelId(d.id); setPage('account');}}>
+                      <div key={d.id} draggable="true" onDragStart={() => setDragId(d.id)} onDragEnd={() => setDragId(null)} className={`deal-card ${isStalled?'stalled':''} ${isOverdue?'overdue':''} ${dragId===d.id?'dragging':''}`} onClick={() => {setSelId(d.id); setPage('account');}}>
                         <div className="deal-name">{d.account_name}</div>
                         <div className="deal-project">{d.project_name}</div>
                         <div className="deal-meta">
