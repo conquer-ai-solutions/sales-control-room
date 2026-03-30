@@ -841,7 +841,7 @@ function RouteToCashTab({ deal }) {
   );
 }
 
-function AccountView({ dealId, deals, teamMembers, onBack }) {
+function AccountView({ dealId, deals, teamMembers, onBack, onDealUpdated }) {
   const deal = deals.find(d => d.id === dealId);
   const [activeTab, setActiveTab] = useState('overview');
   const [editing, setEditing] = useState(false);
@@ -866,10 +866,9 @@ function AccountView({ dealId, deals, teamMembers, onBack }) {
       if (form[k] !== undefined) u[k] = form[k];
     });
     const { error } = await supabase.from('deals').update(u).eq('id', deal.id);
-    if (!error) {
-      setEditing(false);
-      deals.map(d => d.id === deal.id ? { ...d, ...u } : d);
-    }
+    if (error) { alert('Error: ' + error.message); return; }
+    setEditing(false);
+    if (onDealUpdated) onDealUpdated(deal.id, u);
   };
 
   return (
@@ -1284,7 +1283,7 @@ function App() {
   );
 
   if (page === 'account') {
-    return <AccountView dealId={selId} deals={deals} teamMembers={team} onBack={() => {setPage('board'); setSelId(null);}} />;
+    return <AccountView dealId={selId} deals={deals} teamMembers={team} onBack={() => {setPage('board'); setSelId(null);}} onDealUpdated={(id, u) => setDeals(prev => prev.map(d => d.id === id ? {...d, ...u} : d))} />;
   }
 
   if (page === 'revenue') {
