@@ -312,6 +312,68 @@
   .summary-item { }
   .summary-label { font-size:10px; font-weight:600; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px; }
   .summary-value { font-size:16px; font-weight:700; color:var(--text); font-variant-numeric:tabular-nums; }
+
+  /* REVENUE TAB */
+  .revenue-wrapper { padding:24px 32px; min-height:calc(100vh - 60px); }
+  .revenue-header-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:24px; }
+  .rev-stat { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:16px 20px; position:relative; overflow:hidden; }
+  .rev-stat::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
+  .rev-stat:nth-child(1)::before { background:#37A584; }
+  .rev-stat:nth-child(2)::before { background:#8B6CC1; }
+  .rev-stat:nth-child(3)::before { background:#F5A623; }
+  .rev-stat:nth-child(4)::before { background:#6D7287; }
+  .rev-stat-label { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); margin-bottom:6px; }
+  .rev-stat-value { font-size:24px; font-weight:700; letter-spacing:-0.5px; font-variant-numeric:tabular-nums; }
+  .rev-stat-sub { font-size:11px; color:var(--text-dim); margin-top:4px; }
+
+  .revenue-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px; }
+  @media (max-width:1100px) { .revenue-grid { grid-template-columns:1fr; } }
+
+  .rev-section { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; }
+  .rev-section-header { padding:14px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+  .rev-section-title { font-size:13px; font-weight:700; color:var(--text); }
+  .rev-section-badge { font-size:10px; padding:3px 8px; border-radius:4px; font-weight:600; }
+  .rev-section-body { padding:16px 20px; }
+
+  .priority-action-item { display:flex; gap:12px; padding:10px 0; border-bottom:1px solid rgba(60,60,60,0.4); align-items:flex-start; }
+  .priority-action-item:last-child { border-bottom:none; }
+  .priority-dot { width:8px; height:8px; border-radius:50%; margin-top:5px; flex-shrink:0; }
+  .priority-dot.critical { background:var(--red); }
+  .priority-dot.high { background:var(--orange); }
+  .priority-dot.medium { background:var(--accent); }
+  .priority-action-content { flex:1; }
+  .priority-action-title { font-size:13px; font-weight:500; color:var(--text); margin-bottom:2px; }
+  .priority-action-meta { font-size:11px; color:var(--text-dim); }
+  .priority-action-deal { font-size:10px; color:var(--accent); font-weight:600; text-transform:uppercase; letter-spacing:0.3px; margin-bottom:4px; }
+
+  .split-col { display:flex; flex-direction:column; gap:8px; }
+  .split-col-header { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); padding:4px 0 8px; display:flex; justify-content:space-between; }
+  .split-deal-row { display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:var(--bg-surface); border-radius:var(--radius); cursor:pointer; transition:background 0.15s; }
+  .split-deal-row:hover { background:var(--bg-card-hover); }
+  .split-deal-name { font-size:13px; font-weight:500; color:var(--text); }
+  .split-deal-value { font-size:12px; font-weight:600; color:var(--accent); font-variant-numeric:tabular-nums; }
+  .split-deal-stage { font-size:9px; padding:2px 6px; border-radius:3px; font-weight:600; color:white; text-transform:uppercase; }
+
+  .pathway-section { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; }
+  .pathway-deal { border-bottom:1px solid var(--border); }
+  .pathway-deal:last-child { border-bottom:none; }
+  .pathway-deal-header { padding:14px 20px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; transition:background 0.15s; }
+  .pathway-deal-header:hover { background:var(--bg-card-hover); }
+  .pathway-deal-left { display:flex; align-items:center; gap:12px; }
+  .pathway-deal-name { font-size:14px; font-weight:600; color:var(--text); }
+  .pathway-deal-right { display:flex; align-items:center; gap:12px; }
+  .pathway-deal-value { font-size:14px; font-weight:700; color:var(--accent); font-variant-numeric:tabular-nums; }
+  .pathway-steps-list { padding:0 20px 16px; }
+  .pathway-step { display:flex; gap:12px; padding:8px 0; align-items:flex-start; }
+  .pathway-step-num { width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; flex-shrink:0; }
+  .pathway-step-num.done { background:var(--accent); color:white; }
+  .pathway-step-num.pending { background:var(--bg-surface); color:var(--text-dim); border:1px solid var(--border); }
+  .pathway-step-content { flex:1; }
+  .pathway-step-title { font-size:12px; font-weight:500; color:var(--text); }
+  .pathway-step-owner { font-size:10px; color:var(--text-dim); margin-top:2px; }
+  .pathway-step-due { font-size:10px; color:var(--text-muted); }
+
+  .rev-empty { padding:24px; text-align:center; color:var(--text-muted); font-size:12px; }
 </style>
 </head>
 <body>
@@ -871,6 +933,269 @@ function AccountView({ dealId, deals, teamMembers, onBack }) {
   );
 }
 
+function PriorityActionsBoard({ deals, teamMembers }) {
+  const tmMap = useMemo(() => Object.fromEntries(teamMembers.map(t => [t.id, t])), [teamMembers]);
+
+  // Priority deals: in proposal/procurement/poc stages, active, sorted by value
+  const priorityDeals = useMemo(() => {
+    return deals
+      .filter(d => ['proposal', 'procurement', 'poc'].includes(d.stage) && d.status === 'active')
+      .sort((a, b) => (b.deal_value || 0) - (a.deal_value || 0));
+  }, [deals]);
+
+  // Build flat action list from priority deals
+  const actions = useMemo(() => {
+    return priorityDeals.map(d => ({
+      dealId: d.id,
+      account: d.account_name,
+      project: d.project_name,
+      action: d.next_action,
+      due: d.next_action_due,
+      ownerId: d.next_action_owner_id || d.deal_owner_id,
+      stage: d.stage,
+      value: d.deal_value,
+      isOverdue: d.next_action_due && daysUntil(d.next_action_due) < 0,
+      daysOut: d.next_action_due ? daysUntil(d.next_action_due) : null,
+    })).filter(a => a.action);
+  }, [priorityDeals]);
+
+  const getPriorityLevel = (a) => {
+    if (a.isOverdue) return 'critical';
+    if (a.stage === 'procurement') return 'critical';
+    if (a.stage === 'proposal') return 'high';
+    return 'medium';
+  };
+
+  return (
+    <div className="rev-section" style={{gridColumn:'1 / -1'}}>
+      <div className="rev-section-header">
+        <span className="rev-section-title">Priority Actions — Path to Revenue</span>
+        <span className="rev-section-badge" style={{background:'var(--red-bg)',color:'var(--red)'}}>{actions.length} actions</span>
+      </div>
+      <div className="rev-section-body">
+        {actions.length === 0 && <div className="rev-empty">No priority actions right now</div>}
+        {actions.map((a, i) => {
+          const owner = tmMap[a.ownerId];
+          const prio = getPriorityLevel(a);
+          return (
+            <div key={i} className="priority-action-item">
+              <div className={`priority-dot ${prio}`}></div>
+              <div className="priority-action-content">
+                <div className="priority-action-deal">{a.account} — {STAGE_MAP[a.stage]?.label}</div>
+                <div className="priority-action-title">{a.action}</div>
+                <div className="priority-action-meta">
+                  {owner ? owner.display_name : 'Unassigned'}
+                  {a.due && <span> · {a.isOverdue ? <span style={{color:'var(--orange)',fontWeight:600}}>{Math.abs(a.daysOut)}d overdue</span> : `Due in ${a.daysOut}d`}</span>}
+                  <span> · {fmt(a.value)}</span>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function AccountGrowthVsNewBusiness({ deals, teamMembers, onDealClick }) {
+  const tmMap = useMemo(() => Object.fromEntries(teamMembers.map(t => [t.id, t])), [teamMembers]);
+
+  const growth = useMemo(() => deals.filter(d => d.revenue_category === 'account_growth' && d.status === 'active').sort((a, b) => (b.deal_value || 0) - (a.deal_value || 0)), [deals]);
+  const newBiz = useMemo(() => deals.filter(d => d.revenue_category !== 'account_growth' && d.status === 'active').sort((a, b) => (b.deal_value || 0) - (a.deal_value || 0)), [deals]);
+
+  const growthVal = growth.reduce((s, d) => s + (d.deal_value || 0), 0);
+  const newBizVal = newBiz.reduce((s, d) => s + (d.deal_value || 0), 0);
+
+  const renderDeals = (list) => list.map(d => (
+    <div key={d.id} className="split-deal-row" onClick={() => onDealClick && onDealClick(d.id)}>
+      <div>
+        <div className="split-deal-name">{d.account_name}</div>
+        <div style={{fontSize:11,color:'var(--text-dim)',marginTop:2}}>{d.project_name}</div>
+      </div>
+      <div style={{display:'flex',alignItems:'center',gap:8}}>
+        <span className="split-deal-stage" style={{background:STAGE_MAP[d.stage]?.color}}>{STAGE_MAP[d.stage]?.label}</span>
+        <span className="split-deal-value">{fmt(d.deal_value)}</span>
+      </div>
+    </div>
+  ));
+
+  return (
+    <>
+      <div className="rev-section">
+        <div className="rev-section-header">
+          <span className="rev-section-title">Account Growth</span>
+          <span className="rev-section-badge" style={{background:'var(--teal-bg)',color:'var(--teal)'}}>{fmt(growthVal)}</span>
+        </div>
+        <div className="rev-section-body">
+          <div className="split-col">
+            <div className="split-col-header"><span>{growth.length} deals</span><span>Expanding existing</span></div>
+            {growth.length === 0 && <div className="rev-empty">No account growth deals tagged</div>}
+            {renderDeals(growth)}
+          </div>
+        </div>
+      </div>
+      <div className="rev-section">
+        <div className="rev-section-header">
+          <span className="rev-section-title">New Business</span>
+          <span className="rev-section-badge" style={{background:'var(--blue-bg)',color:'var(--blue)'}}>{fmt(newBizVal)}</span>
+        </div>
+        <div className="rev-section-body">
+          <div className="split-col">
+            <div className="split-col-header"><span>{newBiz.length} deals</span><span>Net new logos</span></div>
+            {newBiz.length === 0 && <div className="rev-empty">No new business deals</div>}
+            {renderDeals(newBiz)}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function PathwayToInvoice({ deals, teamMembers, onDealClick }) {
+  const tmMap = useMemo(() => Object.fromEntries(teamMembers.map(t => [t.id, t])), [teamMembers]);
+  const [expanded, setExpanded] = useState({});
+
+  // Focus on deals closest to money: proposal, procurement stages
+  const invoiceDeals = useMemo(() => {
+    return deals
+      .filter(d => ['proposal', 'procurement', 'poc'].includes(d.stage) && d.status === 'active')
+      .sort((a, b) => {
+        const stageOrder = { procurement: 0, proposal: 1, poc: 2 };
+        const so = (stageOrder[a.stage] || 9) - (stageOrder[b.stage] || 9);
+        return so !== 0 ? so : (b.deal_value || 0) - (a.deal_value || 0);
+      });
+  }, [deals]);
+
+  const toggleExpand = (id) => setExpanded(prev => ({...prev, [id]: !prev[id]}));
+
+  // Generate default pathway steps if none stored
+  const getSteps = (deal) => {
+    if (deal.pathway_steps && Array.isArray(deal.pathway_steps) && deal.pathway_steps.length > 0) {
+      return deal.pathway_steps;
+    }
+    // Default pathway based on stage
+    const defaults = {
+      poc: [
+        { step: 'Complete POC delivery', done: false },
+        { step: 'Get stakeholder sign-off on POC results', done: false },
+        { step: 'Submit commercial proposal', done: false },
+        { step: 'Navigate procurement', done: false },
+        { step: 'Contract signed → Invoice', done: false },
+      ],
+      proposal: [
+        { step: 'Proposal submitted and reviewed', done: false },
+        { step: 'Commercial terms agreed', done: false },
+        { step: 'Navigate procurement / legal', done: false },
+        { step: 'Contract signed → Invoice', done: false },
+      ],
+      procurement: [
+        { step: 'Legal / procurement review complete', done: false },
+        { step: 'Final sign-off from decision maker', done: false },
+        { step: 'Contract signed → Invoice', done: false },
+      ],
+    };
+    return defaults[deal.stage] || [{ step: 'Move to next stage', done: false }];
+  };
+
+  return (
+    <div className="pathway-section">
+      <div className="rev-section-header" style={{borderBottom:'1px solid var(--border)'}}>
+        <span className="rev-section-title">Pathway to Invoice</span>
+        <span className="rev-section-badge" style={{background:'var(--accent-subtle)',color:'var(--accent)'}}>{invoiceDeals.length} deals in flight</span>
+      </div>
+      {invoiceDeals.length === 0 && <div className="rev-empty">No deals approaching invoice stage</div>}
+      {invoiceDeals.map(d => {
+        const steps = getSteps(d);
+        const doneCount = steps.filter(s => s.done).length;
+        const isOpen = expanded[d.id];
+        return (
+          <div key={d.id} className="pathway-deal">
+            <div className="pathway-deal-header" onClick={() => toggleExpand(d.id)}>
+              <div className="pathway-deal-left">
+                <span style={{color:'var(--text-dim)',fontSize:12,fontWeight:600}}>{isOpen ? '▾' : '▸'}</span>
+                <div>
+                  <div className="pathway-deal-name">{d.account_name}</div>
+                  <div style={{fontSize:11,color:'var(--text-dim)'}}>{d.project_name} · <span style={{color:STAGE_MAP[d.stage]?.color}}>{STAGE_MAP[d.stage]?.label}</span></div>
+                </div>
+              </div>
+              <div className="pathway-deal-right">
+                <span style={{fontSize:11,color:'var(--text-dim)'}}>{doneCount}/{steps.length} steps</span>
+                <span className="pathway-deal-value">{fmt(d.deal_value)}</span>
+              </div>
+            </div>
+            {isOpen && (
+              <div className="pathway-steps-list">
+                {steps.map((s, i) => {
+                  const owner = s.owner_id ? tmMap[s.owner_id] : null;
+                  return (
+                    <div key={i} className="pathway-step">
+                      <div className={`pathway-step-num ${s.done ? 'done' : 'pending'}`}>{s.done ? '✓' : i + 1}</div>
+                      <div className="pathway-step-content">
+                        <div className="pathway-step-title" style={s.done?{textDecoration:'line-through',color:'var(--text-dim)'}:{}}>{s.step}</div>
+                        {owner && <div className="pathway-step-owner">{owner.display_name}</div>}
+                        {s.due && <div className="pathway-step-due">Due: {new Date(s.due).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div>}
+                      </div>
+                    </div>
+                  );
+                })}
+                <div style={{textAlign:'right',marginTop:8}}>
+                  <span style={{fontSize:10,color:'var(--text-muted)',cursor:'pointer'}} onClick={() => onDealClick && onDealClick(d.id)}>View full deal →</span>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function RevenueView({ deals, teamMembers, onDealClick }) {
+  const activeDeals = useMemo(() => deals.filter(d => d.status === 'active'), [deals]);
+  const closestToMoney = useMemo(() => activeDeals.filter(d => ['proposal','procurement'].includes(d.stage)), [activeDeals]);
+  const totalPipeline = activeDeals.reduce((s, d) => s + (d.deal_value || 0), 0);
+  const closeToMoneyVal = closestToMoney.reduce((s, d) => s + (d.deal_value || 0), 0);
+  const weightedRev = activeDeals.reduce((s, d) => s + (d.deal_value || 0) * (WEIGHT_MAP[d.stage] || 0), 0);
+  const overdueCount = activeDeals.filter(d => d.next_action_due && daysUntil(d.next_action_due) < 0).length;
+
+  return (
+    <div className="revenue-wrapper">
+      <div className="revenue-header-stats">
+        <div className="rev-stat">
+          <div className="rev-stat-label">Weighted Revenue</div>
+          <div className="rev-stat-value" style={{color:'var(--accent)'}}>{fmt(weightedRev)}</div>
+          <div className="rev-stat-sub">Probability-adjusted</div>
+        </div>
+        <div className="rev-stat">
+          <div className="rev-stat-label">Close to Money</div>
+          <div className="rev-stat-value" style={{color:'var(--stage-procurement)'}}>{fmt(closeToMoneyVal)}</div>
+          <div className="rev-stat-sub">{closestToMoney.length} deals in proposal/procurement</div>
+        </div>
+        <div className="rev-stat">
+          <div className="rev-stat-label">Overdue Actions</div>
+          <div className="rev-stat-value" style={{color:'var(--orange)'}}>{overdueCount}</div>
+          <div className="rev-stat-sub">Blocking revenue</div>
+        </div>
+        <div className="rev-stat">
+          <div className="rev-stat-label">Total Pipeline</div>
+          <div className="rev-stat-value" style={{color:'var(--blue)'}}>{fmt(totalPipeline)}</div>
+          <div className="rev-stat-sub">{activeDeals.length} active deals</div>
+        </div>
+      </div>
+
+      <PriorityActionsBoard deals={deals} teamMembers={teamMembers} />
+
+      <div className="revenue-grid" style={{marginTop:20}}>
+        <AccountGrowthVsNewBusiness deals={deals} teamMembers={teamMembers} onDealClick={onDealClick} />
+      </div>
+
+      <div style={{marginTop:20}}>
+        <PathwayToInvoice deals={deals} teamMembers={teamMembers} onDealClick={onDealClick} />
+      </div>
+    </div>
+  );
+}
+
 function App() {
   const [deals, setDeals] = useState([]);
   const [team, setTeam] = useState([]);
@@ -962,6 +1287,33 @@ function App() {
     return <AccountView dealId={selId} deals={deals} teamMembers={team} onBack={() => {setPage('board'); setSelId(null);}} />;
   }
 
+  if (page === 'revenue') {
+    return (
+      <div>
+        <div className="header">
+          <div className="header-left">
+            <div className="logo">
+              <span className="logo-conquer">Conquer</span><span className="logo-ai">AI</span>
+            </div>
+            <div className="logo-divider"></div>
+            <span className="logo-product">Control Room</span>
+          </div>
+          <div className="header-right">
+            <div className="view-toggle">
+              <button className="view-btn" onClick={()=>{setPage('board');setView('kanban');}}>Board</button>
+              <button className="view-btn" onClick={()=>{setPage('board');setView('table');}}>Table</button>
+              <button className="view-btn active" style={{background:'var(--stage-procurement)',color:'white'}}>Revenue</button>
+            </div>
+            <button className="refresh-btn" onClick={load}>↻ Refresh</button>
+            <span className="timestamp">{ts.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span>
+          </div>
+        </div>
+        <RevenueView deals={deals} teamMembers={team} onDealClick={(id) => {setSelId(id); setPage('account');}} />
+        {toast && <div className="toast">{toast}</div>}
+      </div>
+    );
+  }
+
   return (
     <div>
       {/* Header */}
@@ -975,8 +1327,9 @@ function App() {
         </div>
         <div className="header-right">
           <div className="view-toggle">
-            <button className={`view-btn ${view==='kanban'?'active':''}`} onClick={()=>setView('kanban')}>Board</button>
-            <button className={`view-btn ${view==='table'?'active':''}`} onClick={()=>setView('table')}>Table</button>
+            <button className={`view-btn ${page==='board'&&view==='kanban'?'active':''}`} onClick={()=>{setPage('board');setView('kanban');}}>Board</button>
+            <button className={`view-btn ${page==='board'&&view==='table'?'active':''}`} onClick={()=>{setPage('board');setView('table');}}>Table</button>
+            <button className={`view-btn ${page==='revenue'?'active':''}`} onClick={()=>setPage('revenue')} style={page==='revenue'?{background:'var(--stage-procurement)',color:'white'}:{}}>Revenue</button>
           </div>
           <button className="refresh-btn" onClick={load}>↻ Refresh</button>
           <span className="timestamp">{ts.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span>
@@ -1107,3 +1460,4 @@ ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 </script>
 </body>
 </html>
+
