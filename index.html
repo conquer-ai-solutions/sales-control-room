@@ -888,7 +888,7 @@ function AccountView({ dealId, deals, teamMembers, onBack, onDealUpdated }) {
 
   const saveDeal = async () => {
     const u = {};
-    ['stage','deal_owner_id','next_action','next_action_due','next_action_owner_id','champion_name','deal_value','status','stall_reason','notes','partner_id'].forEach(k => {
+    ['stage','deal_owner_id','next_action','next_action_due','next_action_owner_id','champion_name','deal_value','status','stall_reason','notes','partner_id','region'].forEach(k => {
       if (form[k] !== undefined) u[k] = form[k];
     });
     const { error } = await supabase.from('deals').update(u).eq('id', deal.id);
@@ -934,6 +934,15 @@ function AccountView({ dealId, deals, teamMembers, onBack, onDealUpdated }) {
               <select className="edit-field" value={form.status} onChange={e => setForm({...form,status:e.target.value})}>
                 <option value="active">Active</option>
                 <option value="stalled">Stalled</option>
+              </select>
+            </div>
+            <div className="edit-row">
+              <label className="edit-label">Region</label>
+              <select className="edit-field" value={form.region||''} onChange={e => setForm({...form,region:e.target.value||null})}>
+                <option value="">No Region</option>
+                <option value="Brazil">Brazil</option>
+                <option value="UK">UK</option>
+                <option value="US">US</option>
               </select>
             </div>
             <div className="edit-row">
@@ -1327,7 +1336,7 @@ function App() {
 
   const save = async () => {
     const u = {};
-    ['stage','deal_owner_id','next_action','next_action_due','next_action_owner_id','champion_name','deal_value','status','stall_reason','notes','partner_id'].forEach(k => {
+    ['stage','deal_owner_id','next_action','next_action_due','next_action_owner_id','champion_name','deal_value','status','stall_reason','notes','partner_id','region'].forEach(k => {
       if (form[k] !== undefined) u[k] = k === 'deal_value' ? (form[k] || null) : (k === 'partner_id' ? (form[k] || null) : form[k]);
     });
     const { error } = await supabase.from('deals').update(u).eq('id', sel.id);
