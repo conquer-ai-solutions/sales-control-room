@@ -246,7 +246,38 @@
   .tab-btn.active { color:var(--accent); border-bottom-color:var(--accent); }
   .tab-btn:hover:not(.active) { color:var(--text-dim); }
 
-  .tab-content { padding:32px 32px; }
+  .tab-content { padding:28px 32px; max-width:960px; }
+
+  .overview-hero { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:28px; }
+  .hero-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:20px; }
+  .hero-card-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin-bottom:10px; }
+  .hero-card-action { font-size:15px; font-weight:600; color:var(--text); line-height:1.4; margin-bottom:8px; }
+  .hero-card-meta { font-size:12px; color:var(--text-dim); display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+  .hero-due-badge { display:inline-flex; align-items:center; gap:4px; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; }
+  .hero-due-overdue { background:var(--red-bg); color:var(--red); }
+  .hero-due-soon { background:var(--orange-bg); color:var(--orange); }
+  .hero-due-ok { background:var(--accent-subtle); color:var(--accent); }
+  .hero-value { font-size:22px; font-weight:700; color:var(--accent); }
+  .hero-value-sub { font-size:12px; color:var(--text-dim); margin-top:4px; }
+  .overview-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .overview-grid-full { grid-column:1 / -1; }
+  .field-group { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:16px 20px; }
+  .field-group-title { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+  .field-row { display:flex; justify-content:space-between; align-items:center; padding:6px 0; }
+  .field-row + .field-row { border-top:1px solid rgba(60,60,60,0.3); }
+  .field-label { font-size:12px; color:var(--text-dim); }
+  .field-value { font-size:13px; font-weight:500; color:var(--text); text-align:right; max-width:60%; }
+  .field-value-empty { color:var(--text-muted); font-style:italic; font-weight:400; }
+  .field-value-status { display:inline-flex; align-items:center; gap:6px; }
+  .status-dot { width:7px; height:7px; border-radius:50%; display:inline-block; }
+  .status-dot-active { background:var(--accent); }
+  .status-dot-stalled { background:var(--red); }
+  .header-edit-btn { background:none; border:1px solid var(--border); padding:6px 16px; border-radius:var(--radius); color:var(--text-dim); cursor:pointer; font-size:12px; font-weight:500; font-family:var(--font); transition:all 0.15s; }
+  .header-edit-btn:hover { border-color:var(--accent); color:var(--accent); }
+  .edit-section { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:20px; margin-bottom:16px; }
+  .edit-section-title { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin-bottom:14px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+  .edit-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px 16px; }
+  .edit-grid-full { grid-column:1 / -1; }
 
   /* ACTIVITY TIMELINE */
   .activity-timeline { margin-top:32px; }
@@ -476,100 +507,68 @@ function OverviewTab({ deal, teamMembers, onEditDeal }) {
   const dealOwner = tmMap[deal.deal_owner_id];
   const nextActionOwner = tmMap[deal.next_action_owner_id];
 
+  const dueD = deal.next_action_due ? daysUntil(deal.next_action_due) : null;
+  const dueClass = dueD !== null ? (dueD < 0 ? 'hero-due-overdue' : dueD <= 2 ? 'hero-due-soon' : 'hero-due-ok') : '';
+  const dueLabel = dueD !== null ? (dueD < 0 ? Math.abs(dueD) + 'd overdue' : dueD === 0 ? 'Due today' : 'Due in ' + dueD + 'd') : null;
+  const fv = (v) => v || null;
+
   return (
     <div>
-      <div className="panel-section">
-        <div className="panel-section-title">Deal Information</div>
-        <div className="panel-field">
-          <span className="panel-field-label">Account</span>
-          <span className="panel-field-value">{deal.account_name}</span>
+      <div className="overview-hero">
+        <div className="hero-card" style={dueD !== null && dueD < 0 ? {borderColor:'var(--red)',borderWidth:1} : {}}>
+          <div className="hero-card-label">Next Action</div>
+          <div className="hero-card-action">{deal.next_action || <span style={{color:'var(--text-muted)',fontStyle:'italic'}}>No action set</span>}</div>
+          <div className="hero-card-meta">
+            {nextActionOwner ? <span>{nextActionOwner.display_name}</span> : dealOwner ? <span>{dealOwner.display_name}</span> : null}
+            {dueLabel && <span className={'hero-due-badge ' + dueClass}>{dueLabel}</span>}
+          </div>
         </div>
-        <div className="panel-field">
-          <span className="panel-field-label">Project</span>
-          <span className="panel-field-value">{deal.project_name}</span>
-        </div>
-        <div className="panel-field">
-          <span className="panel-field-label">Stage</span>
-          <span className="panel-field-value">{stageInfo?.label}</span>
-        </div>
-        <div className="panel-field">
-          <span className="panel-field-label">Value</span>
-          <span className="panel-field-value">{fmt(deal.deal_value, deal.deal_value_note)}</span>
-        </div>
-        <div className="panel-field">
-          <span className="panel-field-label">Region</span>
-          <span className="panel-field-value">{deal.region}</span>
-        </div>
-        <div className="panel-field">
-          <span className="panel-field-label">Status</span>
-          <span className="panel-field-value" style={{color:deal.status==='stalled'?'var(--red)':'var(--text)'}}>{deal.status}</span>
+        <div className="hero-card">
+          <div className="hero-card-label">Deal Value</div>
+          <div className="hero-value">{deal.deal_value ? fmt(deal.deal_value) : <span style={{color:'var(--text-muted)',fontSize:16,fontWeight:400,fontStyle:'italic'}}>Not set</span>}</div>
+          <div className="hero-value-sub">
+            <span className="field-value-status"><span className={'status-dot ' + (deal.status==='stalled'?'status-dot-stalled':'status-dot-active')}></span>{deal.status==='stalled'?'Stalled':'Active'}</span>
+            {deal.region && <span style={{marginLeft:12}}>{deal.region}</span>}
+          </div>
         </div>
       </div>
 
-      <div className="panel-section">
-        <div className="panel-section-title">Ownership</div>
-        <div className="panel-field">
-          <span className="panel-field-label">Deal Owner</span>
-          <span className="panel-field-value">{dealOwner?.display_name||'—'}</span>
-        </div>
-        <div className="panel-field">
-          <span className="panel-field-label">Champion</span>
-          <span className="panel-field-value">{deal.champion_name||'—'}</span>
-        </div>
-        <div className="panel-field">
-          <span className="panel-field-label">Decision Maker</span>
-          <span className="panel-field-value">{deal.decision_maker_name||'—'}</span>
-        </div>
-      </div>
-
-      <div className="panel-section">
-        <div className="panel-section-title">Next Action</div>
-        <div className="panel-field">
-          <span className="panel-field-label">Action</span>
-          <span className="panel-field-value">{deal.next_action||'—'}</span>
-        </div>
-        <div className="panel-field">
-          <span className="panel-field-label">Owner</span>
-          <span className="panel-field-value">{nextActionOwner?.display_name||'—'}</span>
-        </div>
-        <div className="panel-field">
-          <span className="panel-field-label">Due</span>
-          <span className="panel-field-value">{deal.next_action_due?new Date(deal.next_action_due).toLocaleDateString('en-GB'):'—'}</span>
-        </div>
-      </div>
-
-      <div className="panel-section">
-        <div className="panel-section-title">Activity</div>
-        <div className="panel-field">
-          <span className="panel-field-label">Last Activity</span>
-          <span className="panel-field-value">{deal.last_activity_date?new Date(deal.last_activity_date).toLocaleDateString('en-GB'):'—'}</span>
-        </div>
-        <div className="panel-field">
-          <span className="panel-field-label">Source</span>
-          <span className="panel-field-value">{deal.last_activity_source||'—'}</span>
-        </div>
-      </div>
-
-      {deal.stall_reason && (
-        <div className="panel-section">
-          <div className="panel-section-title">Stall Reason</div>
-          <div style={{fontSize:'12px',color:'var(--text)',padding:'8px 0'}}>{deal.stall_reason}</div>
+      {deal.status === 'stalled' && (
+        <div style={{background:'var(--red-bg)',border:'1px solid rgba(236,53,64,0.2)',borderRadius:'var(--radius-lg)',padding:'14px 20px',marginBottom:16}}>
+          <div style={{fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:1,color:'var(--red)',marginBottom:6}}>Stall Reason</div>
+          <div style={{fontSize:13,color:'var(--text)',lineHeight:1.5}}>{deal.stall_reason || <span style={{color:'var(--text-muted)',fontStyle:'italic'}}>No reason provided</span>}</div>
         </div>
       )}
 
-      {deal.notes && (
-        <div className="panel-section">
-          <div className="panel-section-title">Notes</div>
-          <div style={{fontSize:'12px',color:'var(--text)',padding:'8px 0',whiteSpace:'pre-wrap'}}>{deal.notes}</div>
+      <div className="overview-grid">
+        <div className="field-group">
+          <div className="field-group-title">Deal Information</div>
+          <div className="field-row"><span className="field-label">Stage</span><span className="field-value"><span className="stage-badge-lg" style={{background:stageInfo?.color,padding:'2px 10px',fontSize:10}}>{stageInfo?.label}</span></span></div>
+          <div className="field-row"><span className="field-label">Project</span><span className={fv(deal.project_name)?'field-value':'field-value field-value-empty'}>{deal.project_name||'Not set'}</span></div>
+          <div className="field-row"><span className="field-label">Region</span><span className={fv(deal.region)?'field-value':'field-value field-value-empty'}>{deal.region||'Not set'}</span></div>
+          <div className="field-row"><span className="field-label">Source</span><span className={fv(deal.last_activity_source)?'field-value':'field-value field-value-empty'}>{deal.last_activity_source||'None'}</span></div>
+          {deal.last_activity_date && <div className="field-row"><span className="field-label">Last Activity</span><span className="field-value">{new Date(deal.last_activity_date).toLocaleDateString('en-GB')}</span></div>}
         </div>
-      )}
 
-      <button className="btn btn-primary" onClick={() => onEditDeal(deal)} style={{width:'100%',marginTop:'16px'}}>Edit Deal</button>
+        <div className="field-group">
+          <div className="field-group-title">People</div>
+          <div className="field-row"><span className="field-label">Deal Owner</span><span className={dealOwner?'field-value':'field-value field-value-empty'}>{dealOwner?.display_name||'Unassigned'}</span></div>
+          <div className="field-row"><span className="field-label">Champion</span><span className={fv(deal.champion_name)?'field-value':'field-value field-value-empty'}>{deal.champion_name||'Not set'}</span></div>
+          <div className="field-row"><span className="field-label">Decision Maker</span><span className={fv(deal.decision_maker_name)?'field-value':'field-value field-value-empty'}>{deal.decision_maker_name||'Not set'}</span></div>
+        </div>
+
+        {deal.notes && (
+          <div className="field-group overview-grid-full">
+            <div className="field-group-title">Notes</div>
+            <div style={{fontSize:13,color:'var(--text)',lineHeight:1.6,whiteSpace:'pre-wrap'}}>{deal.notes}</div>
+          </div>
+        )}
+      </div>
 
       <div className="activity-timeline">
-        <div className="panel-section-title">Recent Activity</div>
+        <div className="panel-section-title" style={{marginTop:28}}>Activity Log</div>
         {activities.length === 0 ? (
-          <div style={{fontSize:'12px',color:'var(--text-muted)',padding:'12px 0'}}>No activity logged</div>
+          <div style={{fontSize:12,color:'var(--text-muted)',padding:'12px 0'}}>No activity logged yet. Stage changes and edits will appear here.</div>
         ) : (
           activities.slice(0, 10).map(act => (
             <div key={act.id} className="activity-item">
@@ -910,6 +909,7 @@ function AccountView({ dealId, deals, teamMembers, onBack, onDealUpdated }) {
               <span className="stage-badge-lg" style={{background:stageInfo?.color,color:'white'}}>{stageInfo?.label}</span>
             </div>
           </div>
+          {!editing && <button className="header-edit-btn" onClick={() => { setForm(deal); setEditing(true); }}>Edit</button>}
         </div>
         <div className="tab-bar">
           <button className={`tab-btn ${activeTab==='overview'?'active':''}`} onClick={() => setActiveTab('overview')}>Overview</button>
@@ -922,43 +922,75 @@ function AccountView({ dealId, deals, teamMembers, onBack, onDealUpdated }) {
       <div className="tab-content">
         {activeTab === 'overview' && !editing && <OverviewTab deal={deal} teamMembers={teamMembers} onEditDeal={handleEditDeal} />}
         {activeTab === 'overview' && editing && (
-          <div>
-            <div className="edit-row">
-              <label className="edit-label">Stage</label>
-              <select className="edit-field" value={form.stage} onChange={e => setForm({...form,stage:e.target.value})}>
-                {STAGES.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}
-              </select>
-            </div>
-            <div className="edit-row">
-              <label className="edit-label">Status</label>
-              <select className="edit-field" value={form.status} onChange={e => setForm({...form,status:e.target.value})}>
-                <option value="active">Active</option>
-                <option value="stalled">Stalled</option>
-              </select>
-            </div>
-            <div className="edit-row">
-              <label className="edit-label">Region</label>
-              <select className="edit-field" value={form.region||''} onChange={e => setForm({...form,region:e.target.value||null})}>
-                <option value="">No Region</option>
-                <option value="Brazil">Brazil</option>
-                <option value="UK">UK</option>
-                <option value="US">US</option>
-              </select>
-            </div>
-            <div className="edit-row">
-              <label className="edit-label">Stall Reason</label>
-              <textarea className="edit-field" value={form.stall_reason||''} onChange={e => setForm({...form,stall_reason:e.target.value})}></textarea>
-            </div>
-            <div className="edit-row">
-              <label className="edit-label">Notes</label>
-              <textarea className="edit-field" value={form.notes||''} onChange={e => setForm({...form,notes:e.target.value})}></textarea>
-            </div>
-            <div className="btn-row">
-              <button className="btn btn-primary" onClick={saveDeal}>Save</button>
-              <button className="btn btn-secondary" onClick={() => setEditing(false)}>Cancel</button>
-            </div>
-          </div>
-        )}
+              <div>
+                <div className="edit-section">
+                  <div className="edit-section-title">Core</div>
+                  <div className="edit-grid">
+                    <div>
+                      <label className="edit-label">Stage</label>
+                      <select className="edit-field" value={form.stage} onChange={e => setForm({...form,stage:e.target.value})}>
+                        {STAGES.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="edit-label">Status</label>
+                      <select className="edit-field" value={form.status||'active'} onChange={e => setForm({...form,status:e.target.value})}>
+                        <option value="active">Active</option><option value="stalled">Stalled</option><option value="on_hold">On Hold</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="edit-label">Region</label>
+                      <select className="edit-field" value={form.region||''} onChange={e => setForm({...form,region:e.target.value})}>
+                        <option value="">Select region</option><option value="UK">UK</option><option value="US">US</option><option value="EU">EU</option><option value="APAC">APAC</option><option value="Global">Global</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="edit-label">Deal Value</label>
+                      <input className="edit-field" type="text" placeholder="e.g. 150000" value={form.deal_value||''} onChange={e => setForm({...form,deal_value:e.target.value})} />
+                    </div>
+                  </div>
+                </div>
+                <div className="edit-section">
+                  <div className="edit-section-title">Next Action</div>
+                  <div className="edit-grid">
+                    <div className="edit-grid-full">
+                      <label className="edit-label">Action</label>
+                      <input className="edit-field" type="text" placeholder="What needs to happen next?" value={form.next_action||''} onChange={e => setForm({...form,next_action:e.target.value})} />
+                    </div>
+                    <div>
+                      <label className="edit-label">Due Date</label>
+                      <input className="edit-field" type="date" value={form.next_action_due||''} onChange={e => setForm({...form,next_action_due:e.target.value})} />
+                    </div>
+                  </div>
+                </div>
+                <div className="edit-section">
+                  <div className="edit-section-title">People</div>
+                  <div className="edit-grid">
+                    <div>
+                      <label className="edit-label">Champion Name</label>
+                      <input className="edit-field" type="text" placeholder="Key contact name" value={form.champion_name||''} onChange={e => setForm({...form,champion_name:e.target.value})} />
+                    </div>
+                  </div>
+                </div>
+                <div className="edit-section">
+                  <div className="edit-section-title">Additional</div>
+                  <div className="edit-grid">
+                    <div className="edit-grid-full">
+                      <label className="edit-label">Stall Reason</label>
+                      <input className="edit-field" type="text" value={form.stall_reason||''} onChange={e => setForm({...form,stall_reason:e.target.value})} />
+                    </div>
+                    <div className="edit-grid-full">
+                      <label className="edit-label">Notes</label>
+                      <textarea className="edit-field" rows={3} value={form.notes||''} onChange={e => setForm({...form,notes:e.target.value})} />
+                    </div>
+                  </div>
+                </div>
+                <div style={{display:'flex',gap:'8px',marginTop:'16px'}}>
+                  <button className="btn btn-primary" onClick={saveEdit}>Save</button>
+                  <button className="btn btn-ghost" onClick={() => setEditing(false)}>Cancel</button>
+                </div>
+              </div>
+            )}
         {activeTab === 'tasks' && <TasksTab deal={deal} teamMembers={teamMembers} />}
         {activeTab === 'gameplan' && <GameplanTab deal={deal} />}
         {activeTab === 'route' && <RouteToCashTab deal={deal} />}
