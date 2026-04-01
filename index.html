@@ -119,7 +119,10 @@
   .stat-card:nth-child(4)::before { background:var(--orange); }
   .stat-card:nth-child(5)::before { background:var(--red); }
   .stat-card:nth-child(6)::before { background:var(--blue); }
-  .stat-card:hover { border-color:var(--border-light); }
+  .stat-card:hover { border-color:var(--border-light); cursor:pointer; }
+  .stat-card.stat-clickable:hover { transform:translateY(-1px); box-shadow:0 4px 12px rgba(0,0,0,0.2); }
+  .stat-card.stat-active { border-color:var(--accent); background:var(--accent-subtle); box-shadow:0 0 0 1px var(--accent), 0 4px 12px rgba(55,165,132,0.15); }
+  .stat-card.stat-active .stat-label { color:var(--accent); }
   .stat-label { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); margin-bottom:6px; }
   .stat-value { font-size:24px; font-weight:700; letter-spacing:-1px; font-variant-numeric:tabular-nums; }
   .stat-sub { font-size:11px; color:var(--text-dim); margin-top:3px; }
@@ -1734,6 +1737,7 @@ function App() {
   const [stageF, setStageF] = useState('all');
   const [regionF, setRegionF] = useState('all');
   const [friendlyF, setFriendlyF] = useState(false);
+  const [statFilter, setStatFilter] = useState(null);
   const [toast, setToast] = useState(null);
   const [ts, setTs] = useState(new Date());
 
@@ -1768,6 +1772,19 @@ function App() {
   const cm = useMemo(() => Object.fromEntries(clients.map(c => [c.id, c])), [clients]);
 
   const filtered = useMemo(() => deals.filter(d => {
+    // Stat card filters take priority
+    if (statFilter === 'opportunities') { return d.status === 'active'; }
+    if (statFilter === 'proposals') { return ['proposal','procurement'].includes(d.stage); }
+    if (statFilter === 'closing30') {
+      if (!d.expected_close_date) return false;
+      const cd = new Date(d.expected_close_date);
+      const now = new Date();
+      return cd >= now && cd <= new Date(now.getTime() + 30 * 86400000);
+    }
+    if (statFilter === 'atRisk') {
+      return d.status === 'stalled' || (daysUntil(d.next_action_due) < 0 && d.status === 'active');
+    }
+    // Normal filters
     if (search) {
       const s = search.toLowerCase();
       const clientName = cm[d.client_id]?.name || '';
@@ -1777,7 +1794,7 @@ function App() {
     if (regionF !== 'all' && d.region !== regionF) return false;
     if (friendlyF && !d.is_friendly_client) return false;
     return true;
-  }), [deals, search, stageF, regionF, friendlyF, cm]);
+  }), [deals, search, stageF, regionF, friendlyF, statFilter, cm]);
 
   const stats = useMemo(() => {
     const active = deals.filter(d => d.status === 'active');
@@ -1848,6 +1865,11 @@ function App() {
   const cancelDrop = () => { setDragTarget(null); setDragNotes(''); };
 
   const flash = msg => { setToast(msg); setTimeout(() => setToast(null), 2500); };
+
+  const toggleStatFilter = (key) => {
+    if (statFilter === key) { setStatFilter(null); }
+    else { setStatFilter(key); setStageF('all'); setRegionF('all'); setFriendlyF(false); setSearch(''); }
+  };
 
   const save = async () => {
     const u = {};
@@ -1959,7 +1981,7 @@ function App() {
           <div className="stat-value" style={{color:'var(--accent)'}}>{fmt(stats.val)}</div>
           <div className="stat-sub">Weighted: {fmt(Math.round(stats.w))}</div>
         </div>
-        <div className="stat-card">
+        <div className={`stat-card stat-clickable ${statFilter==='opportunities'?'stat-active':''}`} onClick={()=>toggleStatFilter('opportunities')}>
           <div className="stat-label">Opportunities</div>
           <div className="stat-row">
             <div className="stat-value" style={{color:'var(--teal)'}}>{stats.total}</div>
@@ -1967,28 +1989,28 @@ function App() {
           </div>
           <div className="stat-sub">{stats.commercial} in commercial territory</div>
         </div>
-        <div className="stat-card">
+        <div className={`stat-card stat-clickable ${statFilter==='proposals'?'stat-active':''}`} onClick={()=>toggleStatFilter('proposals')}>
           <div className="stat-label">Proposals Active</div>
           <div className="stat-row">
             <div className="stat-value" style={{color:'var(--stage-procurement)'}}>{stats.proposals}</div>
           </div>
           <div className="stat-sub">{fmt(stats.proposalVal)} total value</div>
         </div>
-        <div className="stat-card">
+        <div className={`stat-card stat-clickable ${statFilter==='closing30'?'stat-active':''}`} onClick={()=>toggleStatFilter('closing30')}>
           <div className="stat-label">Closing in 30 Days</div>
           <div className="stat-row">
             <div className="stat-value" style={{color:'var(--orange)'}}>{stats.closing30}</div>
           </div>
           <div className="stat-sub">{fmt(Math.round(stats.closing30Weighted))} weighted</div>
         </div>
-        <div className="stat-card">
+        <div className={`stat-card stat-clickable ${statFilter==='atRisk'?'stat-active':''}`} onClick={()=>toggleStatFilter('atRisk')}>
           <div className="stat-label">At Risk</div>
           <div className="stat-row">
             <div className="stat-value" style={{color:stats.atRisk>0?'var(--red)':'var(--text-dim)'}}>{stats.atRisk}</div>
           </div>
           <div className="stat-sub">{stats.stalled} stalled · {stats.overdue} overdue</div>
         </div>
-        <div className="stat-card">
+        <div className={`stat-card stat-clickable ${statFilter==='analytics'?'stat-active':''}`} onClick={()=>toggleStatFilter('analytics')}>
           <div className="stat-label">Avg Close Probability</div>
           <div className="stat-row">
             <div className="stat-value" style={{color:stats.avgProb>=50?'var(--accent)':stats.avgProb>=30?'var(--orange)':'var(--red)'}}>{stats.avgProb}%</div>
@@ -1997,20 +2019,205 @@ function App() {
         </div>
       </div>
 
+      {/* Active stat filter banner */}
+      {statFilter && statFilter !== 'analytics' && (
+        <div style={{display:'flex',alignItems:'center',gap:10,padding:'8px 16px',margin:'0 0 -4px 0',background:'var(--accent-subtle)',borderRadius:'var(--radius)',border:'1px solid var(--accent)'}}>
+          <span style={{fontSize:12,fontWeight:600,color:'var(--accent)'}}>
+            {statFilter === 'opportunities' && `Showing ${filtered.length} active opportunities`}
+            {statFilter === 'proposals' && `Showing ${filtered.length} proposals & procurement opportunities`}
+            {statFilter === 'closing30' && `Showing ${filtered.length} opportunities closing within 30 days`}
+            {statFilter === 'atRisk' && `Showing ${filtered.length} at-risk opportunities (stalled + overdue)`}
+          </span>
+          <button onClick={()=>setStatFilter(null)} style={{marginLeft:'auto',background:'none',border:'1px solid var(--accent)',borderRadius:4,color:'var(--accent)',fontSize:11,fontWeight:600,padding:'3px 10px',cursor:'pointer'}}>✕ Clear filter</button>
+        </div>
+      )}
+
       {/* Filters */}
+      {statFilter !== 'analytics' && (
       <div className="filter-bar">
-        <input className="search-input" placeholder="Search opportunities…" value={search} onChange={e=>setSearch(e.target.value)} />
-        <button className={`filter-chip ${stageF==='all'?'active':''}`} onClick={()=>setStageF('all')}>All</button>
-        {STAGES.map(s => <button key={s.key} className={`filter-chip ${stageF===s.key?'active':''}`} onClick={()=>setStageF(s.key)}>{s.label}</button>)}
+        <input className="search-input" placeholder="Search opportunities…" value={search} onChange={e=>{setSearch(e.target.value); setStatFilter(null);}} />
+        <button className={`filter-chip ${stageF==='all'&&!statFilter?'active':''}`} onClick={()=>{setStageF('all'); setStatFilter(null);}}>All</button>
+        {STAGES.map(s => <button key={s.key} className={`filter-chip ${stageF===s.key&&!statFilter?'active':''}`} onClick={()=>{setStageF(s.key); setStatFilter(null);}}>{s.label}</button>)}
         <div className="filter-sep"></div>
-        <button className={`filter-chip ${regionF==='all'?'active':''}`} onClick={()=>setRegionF('all')}>All Regions</button>
-        {regions.map(r => <button key={r} className={`filter-chip ${regionF===r?'active':''}`} onClick={()=>setRegionF(r)}>{r}</button>)}
+        <button className={`filter-chip ${regionF==='all'?'active':''}`} onClick={()=>{setRegionF('all'); setStatFilter(null);}}>All Regions</button>
+        {regions.map(r => <button key={r} className={`filter-chip ${regionF===r?'active':''}`} onClick={()=>{setRegionF(r); setStatFilter(null);}}>{r}</button>)}
         <div className="filter-sep"></div>
-        <button className={`filter-chip ${friendlyF?'active':''}`} onClick={()=>setFriendlyF(!friendlyF)} style={friendlyF?{borderColor:'#6B72DB',background:'rgba(107,114,219,0.08)',color:'#6B72DB'}:{}}>Friendly Clients</button>
+        <button className={`filter-chip ${friendlyF?'active':''}`} onClick={()=>{setFriendlyF(!friendlyF); setStatFilter(null);}} style={friendlyF?{borderColor:'#6B72DB',background:'rgba(107,114,219,0.08)',color:'#6B72DB'}:{}}>Friendly Clients</button>
       </div>
+      )}
+
+      {/* Analytics View */}
+      {statFilter === 'analytics' && (() => {
+        const commercial = deals.filter(d => ['proposal','procurement','contract_signed'].includes(d.stage));
+        const withProb = commercial.filter(d => d.close_probability > 0);
+        const noProb = commercial.filter(d => !d.close_probability);
+        const avgProb = withProb.length ? Math.round(withProb.reduce((s,d) => s + d.close_probability, 0) / withProb.length) : 0;
+        const totalWeighted = commercial.reduce((s,d) => s + (d.deal_value || 0) * ((d.close_probability || 0) / 100), 0);
+        const totalPipeline = commercial.reduce((s,d) => s + (d.deal_value || 0), 0);
+        // Probability distribution buckets
+        const buckets = [{label:'0–20%',min:0,max:20,color:'var(--red)'},{label:'21–40%',min:21,max:40,color:'var(--orange)'},{label:'41–60%',min:41,max:60,color:'var(--text-muted)'},{label:'61–80%',min:61,max:80,color:'var(--teal)'},{label:'81–100%',min:81,max:100,color:'var(--accent)'}];
+        const bucketData = buckets.map(b => {
+          const ds = withProb.filter(d => d.close_probability >= b.min && d.close_probability <= b.max);
+          return {...b, count:ds.length, value:ds.reduce((s,d) => s + (d.deal_value||0), 0)};
+        });
+        const maxBucket = Math.max(...bucketData.map(b => b.count), 1);
+        // Stage breakdown
+        const stageBreakdown = ['proposal','procurement'].map(st => {
+          const sd = commercial.filter(d => d.stage === st);
+          const avg = sd.filter(d => d.close_probability > 0);
+          return { stage:STAGE_MAP[st]?.label||st, count:sd.length, avgProb:avg.length?Math.round(avg.reduce((s,d)=>s+d.close_probability,0)/avg.length):0, value:sd.reduce((s,d)=>s+(d.deal_value||0),0), weighted:sd.reduce((s,d)=>s+(d.deal_value||0)*((d.close_probability||0)/100),0) };
+        });
+        // Top opportunities by weighted value
+        const topOpps = [...commercial].filter(d => d.deal_value > 0).sort((a,b) => (b.deal_value||0)*(b.close_probability||0) - (a.deal_value||0)*(a.close_probability||0)).slice(0, 8);
+        // Deals missing probability
+        const missingProb = noProb.filter(d => d.deal_value > 0).sort((a,b) => (b.deal_value||0)-(a.deal_value||0));
+        // Stalled in commercial
+        const stalledCommercial = commercial.filter(d => d.status === 'stalled');
+        // Recommendations engine
+        const recommendations = [];
+        if (noProb.length > 0) recommendations.push({type:'warning',title:`${noProb.length} commercial opportunities have no close probability set`,detail:'These are excluded from weighted pipeline calculations. Setting probabilities gives you a more accurate revenue forecast.',action:'Review and assign probabilities'});
+        if (avgProb < 40) recommendations.push({type:'alert',title:`Average close probability is low at ${avgProb}%`,detail:'This suggests deals may be stuck or poorly qualified. Consider reviewing qualification criteria and champion engagement for deals below 30%.',action:'Audit low-probability deals'});
+        if (stalledCommercial.length > 0) recommendations.push({type:'alert',title:`${stalledCommercial.length} commercial opportunities are stalled`,detail:'Stalled deals at proposal/procurement stage represent real revenue at risk. Re-engage champions or consider re-qualifying.',action:'Reactivate or close out stalled deals'});
+        if (totalWeighted < totalPipeline * 0.4) recommendations.push({type:'info',title:'Weighted pipeline is less than 40% of total',detail:`Only ${fmt(Math.round(totalWeighted))} of ${fmt(totalPipeline)} is weighted. This may indicate too many early-stage or low-confidence deals in the commercial pipeline.`,action:'Focus on advancing high-value deals'});
+        if (avgProb >= 60) recommendations.push({type:'success',title:`Strong pipeline confidence at ${avgProb}%`,detail:'Your commercial pipeline is well-qualified. Focus on accelerating deals through procurement to close.',action:'Push for signed contracts'});
+        const missingVal = commercial.filter(d => !d.deal_value);
+        if (missingVal.length > 0) recommendations.push({type:'warning',title:`${missingVal.length} commercial opportunities have no deal value`,detail:'Without values, these can\'t contribute to weighted pipeline calculations. Even rough estimates improve forecasting.',action:'Add estimated values'});
+        const recColors = {alert:'var(--red)',warning:'var(--orange)',info:'var(--blue)',success:'var(--accent)'};
+        const recBg = {alert:'var(--red-bg)',warning:'var(--orange-bg)',info:'var(--blue-bg)',success:'var(--teal-bg)'};
+        return (
+          <div style={{padding:'0 0 32px 0'}}>
+            {/* Summary cards */}
+            <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:20}}>
+              <div className="context-card" style={{padding:16,textAlign:'center'}}>
+                <div style={{fontSize:10,fontWeight:600,textTransform:'uppercase',letterSpacing:'0.8px',color:'var(--text-muted)',marginBottom:6}}>Avg Close Probability</div>
+                <div style={{fontSize:32,fontWeight:700,color:avgProb>=50?'var(--accent)':avgProb>=30?'var(--orange)':'var(--red)'}}>{avgProb}%</div>
+                <div style={{fontSize:11,color:'var(--text-dim)',marginTop:4}}>Across {withProb.length} rated opportunities</div>
+              </div>
+              <div className="context-card" style={{padding:16,textAlign:'center'}}>
+                <div style={{fontSize:10,fontWeight:600,textTransform:'uppercase',letterSpacing:'0.8px',color:'var(--text-muted)',marginBottom:6}}>Weighted Pipeline</div>
+                <div style={{fontSize:32,fontWeight:700,color:'var(--accent)'}}>{fmt(Math.round(totalWeighted))}</div>
+                <div style={{fontSize:11,color:'var(--text-dim)',marginTop:4}}>of {fmt(totalPipeline)} total</div>
+              </div>
+              <div className="context-card" style={{padding:16,textAlign:'center'}}>
+                <div style={{fontSize:10,fontWeight:600,textTransform:'uppercase',letterSpacing:'0.8px',color:'var(--text-muted)',marginBottom:6}}>Conversion Rate</div>
+                <div style={{fontSize:32,fontWeight:700,color:'var(--text)'}}>{totalPipeline>0?Math.round(totalWeighted/totalPipeline*100):0}%</div>
+                <div style={{fontSize:11,color:'var(--text-dim)',marginTop:4}}>Weighted ÷ Total pipeline</div>
+              </div>
+              <div className="context-card" style={{padding:16,textAlign:'center'}}>
+                <div style={{fontSize:10,fontWeight:600,textTransform:'uppercase',letterSpacing:'0.8px',color:'var(--text-muted)',marginBottom:6}}>Unrated Opportunities</div>
+                <div style={{fontSize:32,fontWeight:700,color:noProb.length>0?'var(--orange)':'var(--text-dim)'}}>{noProb.length}</div>
+                <div style={{fontSize:11,color:'var(--text-dim)',marginTop:4}}>No probability assigned</div>
+              </div>
+            </div>
+
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
+              {/* Probability distribution */}
+              <div className="context-card" style={{padding:16}}>
+                <div style={{fontSize:14,fontWeight:600,color:'var(--text)',marginBottom:16}}>Probability Distribution</div>
+                <div style={{display:'flex',flexDirection:'column',gap:10}}>
+                  {bucketData.map(b => (
+                    <div key={b.label} style={{display:'flex',alignItems:'center',gap:10}}>
+                      <span style={{fontSize:11,fontWeight:600,color:'var(--text-muted)',width:50,textAlign:'right'}}>{b.label}</span>
+                      <div style={{flex:1,height:24,background:'var(--bg-secondary)',borderRadius:4,overflow:'hidden',position:'relative'}}>
+                        <div style={{width:`${(b.count/maxBucket)*100}%`,height:'100%',background:b.color,borderRadius:4,transition:'width 0.3s',minWidth:b.count>0?2:0}}></div>
+                      </div>
+                      <span style={{fontSize:12,fontWeight:600,color:'var(--text)',width:20,textAlign:'right'}}>{b.count}</span>
+                      <span style={{fontSize:11,color:'var(--text-muted)',width:60,textAlign:'right'}}>{fmt(b.value)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Stage breakdown */}
+              <div className="context-card" style={{padding:16}}>
+                <div style={{fontSize:14,fontWeight:600,color:'var(--text)',marginBottom:16}}>Stage Breakdown</div>
+                <div style={{display:'flex',flexDirection:'column',gap:12}}>
+                  {stageBreakdown.map(sb => (
+                    <div key={sb.stage} style={{padding:'12px 14px',background:'var(--bg-secondary)',borderRadius:'var(--radius)'}}>
+                      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
+                        <span style={{fontSize:13,fontWeight:600,color:'var(--text)'}}>{sb.stage}</span>
+                        <span style={{fontSize:11,color:'var(--text-muted)'}}>{sb.count} opportunities</span>
+                      </div>
+                      <div style={{display:'flex',gap:16}}>
+                        <div><span style={{fontSize:10,color:'var(--text-muted)'}}>Avg Prob</span><div style={{fontSize:16,fontWeight:700,color:sb.avgProb>=50?'var(--accent)':sb.avgProb>=30?'var(--orange)':'var(--red)'}}>{sb.avgProb}%</div></div>
+                        <div><span style={{fontSize:10,color:'var(--text-muted)'}}>Pipeline</span><div style={{fontSize:16,fontWeight:700,color:'var(--text)'}}>{fmt(sb.value)}</div></div>
+                        <div><span style={{fontSize:10,color:'var(--text-muted)'}}>Weighted</span><div style={{fontSize:16,fontWeight:700,color:'var(--accent)'}}>{fmt(Math.round(sb.weighted))}</div></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Recommendations */}
+            {recommendations.length > 0 && (
+              <div className="context-card" style={{padding:16,marginBottom:20}}>
+                <div style={{fontSize:14,fontWeight:600,color:'var(--text)',marginBottom:12}}>Recommendations</div>
+                <div style={{display:'flex',flexDirection:'column',gap:8}}>
+                  {recommendations.map((r, i) => (
+                    <div key={i} style={{padding:'12px 14px',background:'var(--bg-secondary)',borderRadius:'var(--radius)',borderLeft:'3px solid '+recColors[r.type]}}>
+                      <div style={{fontSize:13,fontWeight:600,color:'var(--text)',marginBottom:4}}>{r.title}</div>
+                      <div style={{fontSize:12,color:'var(--text-secondary)',lineHeight:1.5,marginBottom:6}}>{r.detail}</div>
+                      <span style={{fontSize:10,fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em',padding:'2px 8px',borderRadius:4,color:recColors[r.type],background:recBg[r.type]}}>{r.action}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Top weighted opportunities */}
+            {topOpps.length > 0 && (
+              <div className="context-card" style={{padding:16,marginBottom:20}}>
+                <div style={{fontSize:14,fontWeight:600,color:'var(--text)',marginBottom:12}}>Top Opportunities by Weighted Value</div>
+                <div style={{display:'flex',flexDirection:'column',gap:6}}>
+                  {topOpps.map(d => {
+                    const weighted = Math.round((d.deal_value||0) * ((d.close_probability||0)/100));
+                    const owner = tm[d.deal_owner_id];
+                    return (
+                      <div key={d.id} onClick={()=>{setSelId(d.id);setPage('account');setStatFilter(null);}} style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'10px 14px',background:'var(--bg-secondary)',borderRadius:'var(--radius)',cursor:'pointer',transition:'background 0.15s'}} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-card-hover)'} onMouseLeave={e=>e.currentTarget.style.background='var(--bg-secondary)'}>
+                        <div>
+                          <div style={{fontSize:13,fontWeight:600,color:'var(--text)'}}>{d.account_name}</div>
+                          <div style={{fontSize:11,color:'var(--text-muted)',marginTop:2}}>{d.project_name}</div>
+                        </div>
+                        <div style={{display:'flex',alignItems:'center',gap:12}}>
+                          <div style={{textAlign:'right'}}>
+                            <div style={{fontSize:13,fontWeight:700,color:'var(--accent)'}}>{fmt(weighted)}</div>
+                            <div style={{fontSize:10,color:'var(--text-muted)'}}>{d.close_probability}% × {fmt(d.deal_value)}</div>
+                          </div>
+                          <span className="stage-badge" style={{background:STAGE_MAP[d.stage]?.color}}>{STAGE_MAP[d.stage]?.label}</span>
+                          {owner && <span style={{fontSize:10,color:'var(--text-muted)',width:60}}>{owner.display_name}</span>}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Missing probability */}
+            {missingProb.length > 0 && (
+              <div className="context-card" style={{padding:16}}>
+                <div style={{fontSize:14,fontWeight:600,color:'var(--orange)',marginBottom:12}}>⚠ Missing Close Probability ({missingProb.length})</div>
+                <div style={{fontSize:12,color:'var(--text-secondary)',marginBottom:12}}>These commercial opportunities have deal values but no probability set — they don't contribute to weighted pipeline.</div>
+                <div style={{display:'flex',flexDirection:'column',gap:6}}>
+                  {missingProb.map(d => (
+                    <div key={d.id} onClick={()=>{setSelId(d.id);setPage('account');setStatFilter(null);}} style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'8px 14px',background:'var(--bg-secondary)',borderRadius:'var(--radius)',cursor:'pointer'}} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-card-hover)'} onMouseLeave={e=>e.currentTarget.style.background='var(--bg-secondary)'}>
+                      <div style={{fontSize:13,color:'var(--text)'}}>{d.account_name} — {d.project_name}</div>
+                      <div style={{display:'flex',alignItems:'center',gap:8}}>
+                        <span style={{fontSize:12,fontWeight:600,color:'var(--text)'}}>{fmt(d.deal_value)}</span>
+                        <span className="stage-badge" style={{background:STAGE_MAP[d.stage]?.color}}>{STAGE_MAP[d.stage]?.label}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {/* Kanban */}
-      {view === 'kanban' && (
+      {statFilter !== 'analytics' && view === 'kanban' && (
         <div className="kanban-container">
           {STAGES.map(stage => {
             const sd = filtered.filter(d => d.stage === stage.key).sort((a,b) => (b.deal_value||0) - (a.deal_value||0));
@@ -2062,7 +2269,7 @@ function App() {
       )}
 
       {/* Table */}
-      {view === 'table' && (
+      {statFilter !== 'analytics' && view === 'table' && (
         <div className="table-container">
           <table className="data-table">
             <thead>
