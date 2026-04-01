@@ -538,6 +538,65 @@ function daysUntil(d) {
   return Math.round((dt - now) / 86400000);
 }
 
+// Deal Health Engine — computes risk signals from real data
+function getDealHealth(d) {
+  const signals = [];
+  const now = new Date(); now.setHours(0,0,0,0);
+  const daysSince = (dateStr) => { if (!dateStr) return null; const dt = new Date(dateStr); dt.setHours(0,0,0,0); return Math.round((now - dt) / 86400000); };
+
+  // 1. Overdue next action
+  const dueDays = daysUntil(d.next_action_due);
+  if (dueDays !== null && dueDays < 0) {
+    const severity = -dueDays >= 7 ? 'high' : -dueDays >= 3 ? 'medium' : 'low';
+    signals.push({ id:'overdue', severity, label:`Next action ${-dueDays}d overdue` });
+  }
+
+  // 2. Inactivity — stage-aware thresholds
+  const inactivityThresholds = { intro:14, discovery:14, poc:10, proposal:7, procurement:7 };
+  const threshold = inactivityThresholds[d.stage] || 14;
+  const lastActivityAge = daysSince(d.last_activity_date);
+  const createdAge = daysSince(d.created_at);
+  const effectiveAge = lastActivityAge !== null ? lastActivityAge : createdAge;
+  if (effectiveAge !== null && effectiveAge > threshold) {
+    const severity = effectiveAge > threshold * 2 ? 'high' : 'medium';
+    const src = lastActivityAge !== null ? 'last activity' : 'created';
+    signals.push({ id:'inactive', severity, label:`No activity for ${effectiveAge}d (${src})` });
+  }
+
+  // 3. Stage age — how long in current stage
+  const stageAge = daysSince(d.stage_entered_date || d.stage_entered_at);
+  const stageThresholds = { intro:21, discovery:30, poc:21, proposal:14, procurement:21 };
+  const stageLimit = stageThresholds[d.stage] || 21;
+  if (stageAge !== null && stageAge > stageLimit) {
+    signals.push({ id:'stuck', severity: stageAge > stageLimit * 1.5 ? 'high' : 'medium', label:`In ${d.stage} for ${stageAge}d` });
+  }
+
+  // 4. No champion on commercial deals
+  if (['proposal','procurement'].includes(d.stage) && !d.champion_name) {
+    signals.push({ id:'no_champion', severity:'medium', label:'No champion identified' });
+  }
+
+  // 5. Zero engagement on non-new deals
+  if (createdAge > 10 && (d.meeting_count || 0) === 0 && (d.email_count || 0) === 0) {
+    signals.push({ id:'no_engagement', severity:'medium', label:'Zero meetings & emails logged' });
+  }
+
+  // 6. Commercial deal missing value
+  if (['proposal','procurement'].includes(d.stage) && !d.deal_value) {
+    signals.push({ id:'no_value', severity:'low', label:'No deal value set' });
+  }
+
+  // Compute overall health
+  const highCount = signals.filter(s => s.severity === 'high').length;
+  const medCount = signals.filter(s => s.severity === 'medium').length;
+  let health = 'healthy';
+  if (highCount >= 2 || (highCount >= 1 && medCount >= 1)) health = 'critical';
+  else if (highCount >= 1 || medCount >= 2) health = 'at_risk';
+  else if (medCount >= 1 || signals.length >= 2) health = 'watch';
+
+  return { health, signals, highCount, medCount };
+}
+
 function initials(name) {
   return name ? name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase() : '?';
 }
@@ -626,13 +685,25 @@ function OverviewTab({ deal, teamMembers, clients, allDeals, onEditDeal, onSelec
         </div>
       </div>
 
-      {/* STALL REASON prominent if present */}
-      {deal.status === 'stalled' && (
-        <div style={{background:'var(--red-bg)',border:'1px solid rgba(236,53,64,0.2)',borderRadius:'var(--radius-lg)',padding:'14px 20px',marginBottom:16}}>
-          <div style={{fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:1,color:'var(--red)',marginBottom:6}}>Stall Reason</div>
-          <div style={{fontSize:13,color:'var(--text)',lineHeight:1.5}}>{deal.stall_reason || <span style={{color:'var(--text-muted)',fontStyle:'italic'}}>No reason provided</span>}</div>
-        </div>
-      )}
+      {/* Health signals — computed risk assessment */}
+      {(() => {
+        const h = getDealHealth(deal);
+        if (h.health === 'healthy') return null;
+        const bgMap = {critical:'var(--red-bg)',at_risk:'var(--orange-bg)',watch:'rgba(109,114,135,0.08)'};
+        const borderMap = {critical:'rgba(236,53,64,0.2)',at_risk:'rgba(245,166,35,0.2)',watch:'rgba(109,114,135,0.15)'};
+        const colorMap = {critical:'var(--red)',at_risk:'var(--orange)',watch:'var(--text-muted)'};
+        const labelMap = {critical:'Critical Risk',at_risk:'At Risk',watch:'Watch'};
+        return (
+          <div style={{background:bgMap[h.health],border:`1px solid ${borderMap[h.health]}`,borderRadius:'var(--radius-lg)',padding:'12px 20px',marginBottom:16}}>
+            <div style={{fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:1,color:colorMap[h.health],marginBottom:6}}>{labelMap[h.health]}</div>
+            <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
+              {h.signals.map((s,i) => (
+                <span key={i} style={{fontSize:11,padding:'2px 8px',borderRadius:3,background:s.severity==='high'?'var(--red-bg)':s.severity==='medium'?'var(--orange-bg)':'rgba(109,114,135,0.1)',color:s.severity==='high'?'var(--red)':s.severity==='medium'?'var(--orange)':'var(--text-dim)',fontWeight:500}}>{s.label}</span>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
 
       {/* ENGAGEMENT PULSE */}
       <div className="pulse-bar">
@@ -1771,6 +1842,13 @@ function App() {
   const tm = useMemo(() => Object.fromEntries(team.map(t => [t.id, t])), [team]);
   const cm = useMemo(() => Object.fromEntries(clients.map(c => [c.id, c])), [clients]);
 
+  // Compute health for every deal once
+  const healthMap = useMemo(() => {
+    const map = {};
+    deals.forEach(d => { map[d.id] = getDealHealth(d); });
+    return map;
+  }, [deals]);
+
   const filtered = useMemo(() => deals.filter(d => {
     // Stat card filters take priority
     if (statFilter === 'opportunities') { return d.status === 'active'; }
@@ -1782,7 +1860,8 @@ function App() {
       return cd >= now && cd <= new Date(now.getTime() + 30 * 86400000);
     }
     if (statFilter === 'atRisk') {
-      return d.status === 'stalled' || (daysUntil(d.next_action_due) < 0 && d.status === 'active');
+      const h = healthMap[d.id];
+      return h && (h.health === 'at_risk' || h.health === 'critical');
     }
     // Normal filters
     if (search) {
@@ -1794,12 +1873,10 @@ function App() {
     if (regionF !== 'all' && d.region !== regionF) return false;
     if (friendlyF && !d.is_friendly_client) return false;
     return true;
-  }), [deals, search, stageF, regionF, friendlyF, statFilter, cm]);
+  }), [deals, search, stageF, regionF, friendlyF, statFilter, cm, healthMap]);
 
   const stats = useMemo(() => {
     const active = deals.filter(d => d.status === 'active');
-    const stalled = deals.filter(d => d.status === 'stalled');
-    const overdue = deals.filter(d => daysUntil(d.next_action_due) < 0 && d.status === 'active');
     const val = active.reduce((s, d) => s + (d.deal_value || 0), 0);
     const w = active.reduce((s, d) => {
       const prob = d.close_probability || 0;
@@ -1809,10 +1886,8 @@ function App() {
     const commercial = deals.filter(d => ['proposal','procurement','contract_signed'].includes(d.stage));
     const preVal = preCommercial.reduce((s, d) => s + (d.deal_value || 0), 0);
     const comVal = commercial.reduce((s, d) => s + (d.deal_value || 0), 0);
-    // Proposals active (proposal + procurement stages with value)
     const proposals = deals.filter(d => ['proposal','procurement'].includes(d.stage));
     const proposalVal = proposals.reduce((s, d) => s + (d.deal_value || 0), 0);
-    // Expected close in next 30 days
     const now = new Date();
     const in30 = new Date(now.getTime() + 30 * 86400000);
     const closing30 = deals.filter(d => {
@@ -1822,13 +1897,14 @@ function App() {
     });
     const closing30Val = closing30.reduce((s, d) => s + (d.deal_value || 0), 0);
     const closing30Weighted = closing30.reduce((s, d) => s + (d.deal_value || 0) * ((d.close_probability || 0) / 100), 0);
-    // At risk = stalled + overdue
-    const atRisk = deals.filter(d => d.status === 'stalled' || (daysUntil(d.next_action_due) < 0 && d.status === 'active'));
-    // Avg close probability (commercial opportunities with value)
+    // Use precomputed healthMap
+    const atRiskDeals = deals.filter(d => { const h = healthMap[d.id]; return h && (h.health === 'at_risk' || h.health === 'critical'); });
+    const criticalDeals = deals.filter(d => { const h = healthMap[d.id]; return h && h.health === 'critical'; });
+    const watchDeals = deals.filter(d => { const h = healthMap[d.id]; return h && h.health === 'watch'; });
     const probDeals = commercial.filter(d => d.close_probability > 0);
     const avgProb = probDeals.length ? Math.round(probDeals.reduce((s,d) => s + d.close_probability, 0) / probDeals.length) : 0;
-    return { total:deals.length, active:active.length, stalled:stalled.length, overdue:overdue.length, val, w, preCommercial:preCommercial.length, commercial:commercial.length, preVal, comVal, proposals:proposals.length, proposalVal, closing30:closing30.length, closing30Val, closing30Weighted, atRisk:atRisk.length, avgProb };
-  }, [deals]);
+    return { total:deals.length, active:active.length, val, w, preCommercial:preCommercial.length, commercial:commercial.length, preVal, comVal, proposals:proposals.length, proposalVal, closing30:closing30.length, closing30Val, closing30Weighted, atRisk:atRiskDeals.length, critical:criticalDeals.length, watch:watchDeals.length, avgProb };
+  }, [deals, healthMap]);
 
   const regions = useMemo(() => [...new Set(deals.map(d => d.region).filter(Boolean))].sort(), [deals]);
 
@@ -2008,7 +2084,7 @@ function App() {
           <div className="stat-row">
             <div className="stat-value" style={{color:stats.atRisk>0?'var(--red)':'var(--text-dim)'}}>{stats.atRisk}</div>
           </div>
-          <div className="stat-sub">{stats.stalled} stalled · {stats.overdue} overdue</div>
+          <div className="stat-sub">{stats.critical} critical · {stats.watch} watch</div>
         </div>
         <div className={`stat-card stat-clickable ${statFilter==='analytics'?'stat-active':''}`} onClick={()=>toggleStatFilter('analytics')}>
           <div className="stat-label">Avg Close Probability</div>
@@ -2026,7 +2102,7 @@ function App() {
             {statFilter === 'opportunities' && `Showing ${filtered.length} active opportunities`}
             {statFilter === 'proposals' && `Showing ${filtered.length} proposals & procurement opportunities`}
             {statFilter === 'closing30' && `Showing ${filtered.length} opportunities closing within 30 days`}
-            {statFilter === 'atRisk' && `Showing ${filtered.length} at-risk opportunities (stalled + overdue)`}
+            {statFilter === 'atRisk' && `Showing ${filtered.length} at-risk opportunities (${stats.critical} critical · ${stats.atRisk - stats.critical} elevated)`}
           </span>
           <button onClick={()=>setStatFilter(null)} style={{marginLeft:'auto',background:'none',border:'1px solid var(--accent)',borderRadius:3,color:'var(--accent)',fontSize:10,fontWeight:600,padding:'2px 8px',cursor:'pointer',transition:'all 0.15s'}} onMouseEnter={e=>{e.currentTarget.style.background='var(--accent)';e.currentTarget.style.color='#fff';}} onMouseLeave={e=>{e.currentTarget.style.background='none';e.currentTarget.style.color='var(--accent)';}}>Clear filter</button>
         </div>
@@ -2067,11 +2143,11 @@ function App() {
         });
         const topOpps = [...commercial].filter(d => d.deal_value > 0).sort((a,b) => (b.deal_value||0)*(b.close_probability||0) - (a.deal_value||0)*(a.close_probability||0)).slice(0, 8);
         const missingProb = noProb.filter(d => d.deal_value > 0).sort((a,b) => (b.deal_value||0)-(a.deal_value||0));
-        const stalledCommercial = commercial.filter(d => d.status === 'stalled');
+        const stalledCommercial = commercial.filter(d => { const h = healthMap[d.id]; return h && (h.health === 'critical' || h.health === 'at_risk'); });
         const recommendations = [];
         if (noProb.length > 0) recommendations.push({type:'warning',title:`${noProb.length} opportunities missing close probability`,detail:'Excluded from weighted pipeline. Assigning probabilities improves forecast accuracy.',action:'Review and assign'});
         if (avgProb < 40) recommendations.push({type:'alert',title:`Average probability low at ${avgProb}%`,detail:'Deals may be stuck or poorly qualified. Review champion engagement for deals below 30%.',action:'Audit low-probability deals'});
-        if (stalledCommercial.length > 0) recommendations.push({type:'alert',title:`${stalledCommercial.length} commercial opportunities stalled`,detail:'Stalled deals at proposal/procurement represent revenue at risk. Re-engage or re-qualify.',action:'Reactivate stalled deals'});
+        if (stalledCommercial.length > 0) recommendations.push({type:'alert',title:`${stalledCommercial.length} commercial opportunities at risk`,detail:'These have multiple risk signals (inactivity, overdue actions, stuck in stage). Re-engage or re-qualify.',action:'Review at-risk deals'});
         if (totalWeighted < totalPipeline * 0.4) recommendations.push({type:'info',title:'Weighted pipeline below 40% of total',detail:`${fmt(Math.round(totalWeighted))} of ${fmt(totalPipeline)} weighted. May indicate too many low-confidence deals.`,action:'Advance high-value deals'});
         if (avgProb >= 60) recommendations.push({type:'success',title:`Strong confidence at ${avgProb}%`,detail:'Pipeline is well-qualified. Focus on accelerating through procurement to close.',action:'Push for signed contracts'});
         const missingVal = commercial.filter(d => !d.deal_value);
@@ -2244,7 +2320,10 @@ function App() {
                   {sd.map(d => {
                     const owner = tm[d.deal_owner_id];
                     const clientObj = cm[d.client_id];
-                    const isStalled = d.status === 'stalled';
+                    const health = healthMap[d.id] || getDealHealth(d);
+                    const isCritical = health.health === 'critical';
+                    const isAtRisk = health.health === 'at_risk';
+                    const isWatch = health.health === 'watch';
                     const dueDays = daysUntil(d.next_action_due);
                     const isOverdue = dueDays !== null && dueDays < 0;
                     const hasMultiOpp = clientObj && deals.filter(x => x.client_id === clientObj.id).length > 1;
@@ -2252,14 +2331,15 @@ function App() {
                       <div key={d.id} draggable="true"
                         onDragStart={() => setDragId(d.id)}
                         onDragEnd={() => setDragId(null)}
-                        className={`deal-card ${isStalled?'stalled':''} ${isOverdue?'overdue':''} ${dragId===d.id?'dragging':''}`}
+                        className={`deal-card ${isCritical?'stalled':''} ${isOverdue?'overdue':''} ${dragId===d.id?'dragging':''}`}
                         onClick={() => {setSelId(d.id); setPage('account');}}>
                         <div className="deal-name">{clientObj ? clientObj.name : d.account_name}{hasMultiOpp && <span style={{fontSize:9,color:'var(--text-muted)',marginLeft:6,fontWeight:400}}>({deals.filter(x=>x.client_id===clientObj.id).length})</span>}</div>
                         <div className="deal-project">{d.account_name !== clientObj?.name ? d.account_name + ' — ' : ''}{d.project_name}</div>
                         <div className="deal-meta">
                           {d.region && <span className="deal-tag tag-region">{d.region}</span>}
                           <span className="deal-tag tag-value">{fmt(d.deal_value,d.deal_value_note)}</span>
-                          {isStalled && <span className="deal-tag tag-stalled">Stalled</span>}
+                          {isCritical && <span className="deal-tag tag-stalled">Critical</span>}
+                          {isAtRisk && !isCritical && <span className="deal-tag" style={{background:'var(--orange-bg)',color:'var(--orange)'}}>At Risk</span>}
                           {isOverdue && <span className="deal-tag tag-overdue">Overdue</span>}
                           {d.is_friendly_client && <span className="deal-tag tag-friendly">Friendly</span>}
                         </div>
@@ -2307,7 +2387,7 @@ function App() {
                     <td><span className="stage-badge" style={{background:stageInfo?.color}}>{stageInfo?.label}</span></td>
                     <td>{fmt(d.deal_value,d.deal_value_note)}</td>
                     <td>{owner?.display_name||'—'}</td>
-                    <td style={{color:d.status==='stalled'?'var(--red)':'inherit'}}>{d.status}</td>
+                    <td style={{color:(healthMap[d.id]||{}).health==='critical'?'var(--red)':(healthMap[d.id]||{}).health==='at_risk'?'var(--orange)':'inherit'}}>{(healthMap[d.id]||{}).health==='critical'?'Critical':(healthMap[d.id]||{}).health==='at_risk'?'At Risk':(healthMap[d.id]||{}).health==='watch'?'Watch':'Healthy'}</td>
                     <td>{d.next_action||'—'}</td>
                     <td style={{color:isOverdue?'var(--orange)':'inherit'}}>{d.next_action_due?`${isOverdue?'-':''}${Math.abs(dueDays||0)}d`:'—'}</td>
                   </tr>
