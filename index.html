@@ -170,6 +170,7 @@
   .tag-value { background:var(--teal-bg); color:var(--teal); }
   .tag-stalled { background:var(--red-bg); color:var(--red); }
   .tag-overdue { background:var(--orange-bg); color:var(--orange); }
+  .tag-friendly { background:rgba(107,114,219,0.15); color:#6B72DB; }
   .deal-action { font-size:11px; color:var(--text-dim); padding-top:8px; border-top:1px solid rgba(30,34,100,0.5); display:flex; align-items:start; gap:5px; line-height:1.4; }
   .deal-action-arrow { color:var(--accent); font-weight:600; flex-shrink:0; }
   .deal-due { font-size:10px; color:var(--text-muted); margin-top:4px; }
@@ -674,6 +675,8 @@ function OverviewTab({ deal, teamMembers, onEditDeal }) {
           <div className="field-row"><span className="field-label">Region</span><span className={fv(deal.region)?'field-value':'field-value field-value-empty'}>{deal.region||'Not set'}</span></div>
           <div className="field-row"><span className="field-label">Source</span><span className={fv(deal.last_activity_source)?'field-value':'field-value field-value-empty'}>{deal.last_activity_source||'None'}</span></div>
           {deal.last_activity_date && <div className="field-row"><span className="field-label">Last Activity</span><span className="field-value">{new Date(deal.last_activity_date).toLocaleDateString('en-GB')}</span></div>}
+          <div className="field-row"><span className="field-label">Friendly Client</span><span className={deal.is_friendly_client?'field-value':'field-value field-value-empty'}>{deal.is_friendly_client ? <span className="field-value-status"><span className="status-dot" style={{background:'#6B72DB'}}></span>Yes</span> : 'No'}</span></div>
+          {deal.is_friendly_client && deal.friendly_client_notes && <div className="field-row"><span className="field-label">Testing Notes</span><span className="field-value" style={{fontSize:11,lineHeight:1.4}}>{deal.friendly_client_notes}</span></div>}
         </div>
 
         <div className="field-group">
@@ -1015,7 +1018,7 @@ function AccountView({ dealId, deals, teamMembers, onBack, onDealUpdated }) {
 
   const saveDeal = async () => {
     const u = {};
-    ['stage','deal_owner_id','next_action','next_action_due','next_action_owner_id','champion_name','deal_value','status','stall_reason','notes','partner_id','region'].forEach(k => {
+    ['stage','deal_owner_id','next_action','next_action_due','next_action_owner_id','champion_name','deal_value','status','stall_reason','notes','partner_id','region','is_friendly_client','friendly_client_notes'].forEach(k => {
       if (form[k] !== undefined) u[k] = form[k];
     });
     const { error } = await supabase.from('deals').update(u).eq('id', deal.id);
@@ -1070,6 +1073,17 @@ function AccountView({ dealId, deals, teamMembers, onBack, onDealUpdated }) {
                   <label className="edit-label">Deal Value</label>
                   <input type="number" className="edit-field" value={form.deal_value||''} placeholder="e.g. 100000" onChange={e => setForm({...form,deal_value:e.target.value?Number(e.target.value):null})} />
                 </div>
+                <div className="edit-row">
+                  <label className="edit-label">Friendly Client</label>
+                  <div style={{display:'flex',alignItems:'center',gap:10}}>
+                    <input type="checkbox" checked={!!form.is_friendly_client} onChange={e => setForm({...form,is_friendly_client:e.target.checked})} style={{width:16,height:16,accentColor:'#6B72DB',cursor:'pointer'}} />
+                    <span style={{fontSize:12,color:form.is_friendly_client?'#6B72DB':'var(--text-muted)'}}>{form.is_friendly_client?'Yes — available for feature testing':'No'}</span>
+                  </div>
+                </div>
+                {form.is_friendly_client && <div className="edit-row edit-grid-full">
+                  <label className="edit-label">Friendly Client Notes</label>
+                  <textarea className="edit-field" value={form.friendly_client_notes||''} placeholder="What are we testing with this client? e.g. Client Engagement Pack, self-service portal..." onChange={e => setForm({...form,friendly_client_notes:e.target.value||null})} />
+                </div>}
               </div>
             </div>
 
@@ -1477,6 +1491,7 @@ function App() {
   const [search, setSearch] = useState('');
   const [stageF, setStageF] = useState('all');
   const [regionF, setRegionF] = useState('all');
+  const [friendlyF, setFriendlyF] = useState(false);
   const [toast, setToast] = useState(null);
   const [ts, setTs] = useState(new Date());
 
@@ -1512,8 +1527,9 @@ function App() {
     }
     if (stageF !== 'all' && d.stage !== stageF) return false;
     if (regionF !== 'all' && d.region !== regionF) return false;
+    if (friendlyF && !d.is_friendly_client) return false;
     return true;
-  }), [deals, search, stageF, regionF]);
+  }), [deals, search, stageF, regionF, friendlyF]);
 
   const stats = useMemo(() => {
     const active = deals.filter(d => d.status === 'active');
@@ -1587,7 +1603,7 @@ function App() {
 
   const save = async () => {
     const u = {};
-    ['stage','deal_owner_id','next_action','next_action_due','next_action_owner_id','champion_name','deal_value','status','stall_reason','notes','partner_id','region'].forEach(k => {
+    ['stage','deal_owner_id','next_action','next_action_due','next_action_owner_id','champion_name','deal_value','status','stall_reason','notes','partner_id','region','is_friendly_client','friendly_client_notes'].forEach(k => {
       if (form[k] !== undefined) u[k] = k === 'deal_value' ? (form[k] || null) : (k === 'partner_id' ? (form[k] || null) : form[k]);
     });
     const { error } = await supabase.from('deals').update(u).eq('id', sel.id);
@@ -1711,6 +1727,8 @@ function App() {
         <div className="filter-sep"></div>
         <button className={`filter-chip ${regionF==='all'?'active':''}`} onClick={()=>setRegionF('all')}>All Regions</button>
         {regions.map(r => <button key={r} className={`filter-chip ${regionF===r?'active':''}`} onClick={()=>setRegionF(r)}>{r}</button>)}
+        <div className="filter-sep"></div>
+        <button className={`filter-chip ${friendlyF?'active':''}`} onClick={()=>setFriendlyF(!friendlyF)} style={friendlyF?{borderColor:'#6B72DB',background:'rgba(107,114,219,0.08)',color:'#6B72DB'}:{}}>Friendly Clients</button>
       </div>
 
       {/* Kanban */}
@@ -1747,6 +1765,7 @@ function App() {
                           <span className="deal-tag tag-value">{fmt(d.deal_value,d.deal_value_note)}</span>
                           {isStalled && <span className="deal-tag tag-stalled">Stalled</span>}
                           {isOverdue && <span className="deal-tag tag-overdue">Overdue</span>}
+                          {d.is_friendly_client && <span className="deal-tag tag-friendly">Friendly</span>}
                         </div>
                         {d.next_action && <div className="deal-action"><span className="deal-action-arrow">›</span>{d.next_action}</div>}
                         {d.next_action_due && <div className={`deal-due ${isOverdue?'overdue':''}`}>{isOverdue?`${-dueDays}d overdue`:`Due ${dueDays}d`}</div>}
@@ -1786,7 +1805,7 @@ function App() {
                 const isOverdue = dueDays !== null && dueDays < 0;
                 return (
                   <tr key={d.id} onClick={() => {setSelId(d.id); setPage('account');}}>
-                    <td>{d.account_name}</td>
+                    <td>{d.account_name}{d.is_friendly_client && <span className="deal-tag tag-friendly" style={{marginLeft:6,verticalAlign:'middle'}}>Friendly</span>}</td>
                     <td>{d.project_name}</td>
                     <td><span className="stage-badge" style={{background:stageInfo?.color}}>{stageInfo?.label}</span></td>
                     <td>{fmt(d.deal_value,d.deal_value_note)}</td>
