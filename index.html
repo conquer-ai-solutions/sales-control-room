@@ -539,9 +539,11 @@ function initials(name) {
   return name ? name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase() : '?';
 }
 
-function OverviewTab({ deal, teamMembers, onEditDeal }) {
+function OverviewTab({ deal, teamMembers, clients, allDeals, onEditDeal, onSelectDeal }) {
   const [activities, setActivities] = useState([]);
   const tmMap = useMemo(() => Object.fromEntries(teamMembers.map(t => [t.id, t])), [teamMembers]);
+  const client = clients?.find(c => c.id === deal.client_id);
+  const relatedDeals = client ? (allDeals || []).filter(d => d.client_id === client.id && d.id !== deal.id) : [];
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -728,6 +730,32 @@ function OverviewTab({ deal, teamMembers, onEditDeal }) {
           </div>
         )}
       </div>
+
+      {/* RELATED OPPORTUNITIES */}
+      {relatedDeals.length > 0 && (
+        <div className="context-card" style={{marginTop:16}}>
+          <div style={{fontSize:14,fontWeight:600,color:'var(--text)',marginBottom:12}}>Related Opportunities — {client.name}</div>
+          <div style={{display:'flex',flexDirection:'column',gap:8}}>
+            {relatedDeals.map(rd => {
+              const rdStage = STAGE_MAP[rd.stage];
+              const rdOwner = tmMap[rd.deal_owner_id];
+              return (
+                <div key={rd.id} onClick={() => onSelectDeal && onSelectDeal(rd.id)} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'10px 14px',background:'var(--bg-secondary)',borderRadius:'var(--radius)',cursor:'pointer',transition:'background 0.15s'}} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-tertiary)'} onMouseLeave={e=>e.currentTarget.style.background='var(--bg-secondary)'}>
+                  <div>
+                    <div style={{fontSize:13,fontWeight:600,color:'var(--text)'}}>{rd.account_name}</div>
+                    <div style={{fontSize:11,color:'var(--text-muted)',marginTop:2}}>{rd.project_name}</div>
+                  </div>
+                  <div style={{display:'flex',alignItems:'center',gap:8}}>
+                    {rd.deal_value && <span style={{fontSize:11,color:'var(--text-muted)'}}>{fmt(rd.deal_value)}</span>}
+                    <span className="stage-badge" style={{background:rdStage?.color}}>{rdStage?.label}</span>
+                    {rdOwner && <span style={{fontSize:10,color:'var(--text-muted)'}}>{rdOwner.display_name}</span>}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* ACTIVITY TIMELINE */}
       <div className="activity-timeline">
@@ -1031,7 +1059,7 @@ function RouteToCashTab({ deal }) {
   );
 }
 
-function AccountView({ dealId, deals, teamMembers, onBack, onDealUpdated }) {
+function AccountView({ dealId, deals, teamMembers, clients, onBack, onDealUpdated, onSelectDeal }) {
   const deal = deals.find(d => d.id === dealId);
   const [activeTab, setActiveTab] = useState('overview');
   const [editing, setEditing] = useState(false);
@@ -1044,6 +1072,8 @@ function AccountView({ dealId, deals, teamMembers, onBack, onDealUpdated }) {
   if (!deal) return <div className="loading-screen"><div className="loading-spinner"></div></div>;
 
   const stageInfo = STAGE_MAP[deal.stage];
+  const client = clients?.find(c => c.id === deal.client_id);
+  const relatedDeals = client ? deals.filter(d => d.client_id === client.id && d.id !== deal.id) : [];
 
   const handleEditDeal = (d) => {
     setForm(d);
@@ -1052,7 +1082,7 @@ function AccountView({ dealId, deals, teamMembers, onBack, onDealUpdated }) {
 
   const saveDeal = async () => {
     const u = {};
-    ['stage','deal_owner_id','next_action','next_action_due','next_action_owner_id','champion_name','deal_value','status','stall_reason','notes','partner_id','region','is_friendly_client','friendly_client_notes'].forEach(k => {
+    ['stage','deal_owner_id','next_action','next_action_due','next_action_owner_id','champion_name','deal_value','status','stall_reason','notes','partner_id','region','is_friendly_client','friendly_client_notes','client_id'].forEach(k => {
       if (form[k] !== undefined) u[k] = form[k];
     });
     const { error } = await supabase.from('deals').update(u).eq('id', deal.id);
@@ -1067,11 +1097,12 @@ function AccountView({ dealId, deals, teamMembers, onBack, onDealUpdated }) {
         <div className="account-header-top">
           <button className="back-btn" onClick={onBack}>← Back to Pipeline</button>
           <div className="account-title">
-            <div className="account-name">{deal.account_name}</div>
+            <div className="account-name">{client ? client.name : deal.account_name}</div>
             <div className="account-meta">
-              <span>{deal.project_name}</span>
+              <span>{deal.account_name !== (client?.name || deal.account_name) ? deal.account_name + ' · ' : ''}{deal.project_name}</span>
               <span style={{color:'var(--text-dim)'}}>•</span>
               <span className="stage-badge-lg" style={{background:stageInfo?.color,color:'white'}}>{stageInfo?.label}</span>
+              {relatedDeals.length > 0 && <span style={{fontSize:10,color:'var(--text-muted)',background:'var(--bg-secondary)',padding:'2px 8px',borderRadius:'var(--radius)'}}>{relatedDeals.length + 1} opportunities</span>}
             </div>
           </div>
           {!editing && <button className="header-edit-btn" onClick={() => { setForm(deal); setEditing(true); }}>Edit</button>}
@@ -1085,12 +1116,19 @@ function AccountView({ dealId, deals, teamMembers, onBack, onDealUpdated }) {
       </div>
 
       <div className="tab-content">
-        {activeTab === 'overview' && !editing && <OverviewTab deal={deal} teamMembers={teamMembers} onEditDeal={handleEditDeal} />}
+        {activeTab === 'overview' && !editing && <OverviewTab deal={deal} teamMembers={teamMembers} clients={clients} allDeals={deals} onEditDeal={handleEditDeal} onSelectDeal={onSelectDeal} />}
         {activeTab === 'overview' && editing && (
           <div>
             <div className="edit-section">
               <div className="edit-section-title">Core</div>
               <div className="edit-grid">
+                <div className="edit-row">
+                  <label className="edit-label">Parent Client</label>
+                  <select className="edit-field" value={form.client_id||''} onChange={e => setForm({...form,client_id:e.target.value||null})}>
+                    <option value="">— No client —</option>
+                    {(clients||[]).map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                  </select>
+                </div>
                 <div className="edit-row">
                   <label className="edit-label">Stage</label>
                   <select className="edit-field" value={form.stage} onChange={e => setForm({...form,stage:e.target.value})}>{STAGES.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}</select>
@@ -1529,14 +1567,18 @@ function App() {
   const [toast, setToast] = useState(null);
   const [ts, setTs] = useState(new Date());
 
+  const [clients, setClients] = useState([]);
+
   const load = useCallback(async () => {
     setLoading(true);
-    const [d, t] = await Promise.all([
+    const [d, t, c] = await Promise.all([
       supabase.from('deals').select('*').order('stage_entered_at', {ascending:false}),
       supabase.from('team_members').select('*'),
+      supabase.from('clients').select('*').order('name'),
     ]);
     if (d.data) setDeals(d.data);
     if (t.data) setTeam(t.data);
+    if (c.data) setClients(c.data);
     setLoading(false);
     setTs(new Date());
   }, []);
@@ -1553,17 +1595,19 @@ function App() {
   }, []);
 
   const tm = useMemo(() => Object.fromEntries(team.map(t => [t.id, t])), [team]);
+  const cm = useMemo(() => Object.fromEntries(clients.map(c => [c.id, c])), [clients]);
 
   const filtered = useMemo(() => deals.filter(d => {
     if (search) {
       const s = search.toLowerCase();
-      if (!(d.account_name||'').toLowerCase().includes(s) && !(d.project_name||'').toLowerCase().includes(s) && !(d.champion_name||'').toLowerCase().includes(s)) return false;
+      const clientName = cm[d.client_id]?.name || '';
+      if (!(d.account_name||'').toLowerCase().includes(s) && !(d.project_name||'').toLowerCase().includes(s) && !(d.champion_name||'').toLowerCase().includes(s) && !clientName.toLowerCase().includes(s)) return false;
     }
     if (stageF !== 'all' && d.stage !== stageF) return false;
     if (regionF !== 'all' && d.region !== regionF) return false;
     if (friendlyF && !d.is_friendly_client) return false;
     return true;
-  }), [deals, search, stageF, regionF, friendlyF]);
+  }), [deals, search, stageF, regionF, friendlyF, cm]);
 
   const stats = useMemo(() => {
     const active = deals.filter(d => d.status === 'active');
@@ -1637,7 +1681,7 @@ function App() {
 
   const save = async () => {
     const u = {};
-    ['stage','deal_owner_id','next_action','next_action_due','next_action_owner_id','champion_name','deal_value','status','stall_reason','notes','partner_id','region','is_friendly_client','friendly_client_notes'].forEach(k => {
+    ['stage','deal_owner_id','next_action','next_action_due','next_action_owner_id','champion_name','deal_value','status','stall_reason','notes','partner_id','region','is_friendly_client','friendly_client_notes','client_id'].forEach(k => {
       if (form[k] !== undefined) u[k] = k === 'deal_value' ? (form[k] || null) : (k === 'partner_id' ? (form[k] || null) : form[k]);
     });
     const { error } = await supabase.from('deals').update(u).eq('id', sel.id);
@@ -1656,7 +1700,7 @@ function App() {
   );
 
   if (page === 'account') {
-    return <AccountView dealId={selId} deals={deals} teamMembers={team} onBack={() => {setPage('board'); setSelId(null);}} onDealUpdated={(id, u) => setDeals(prev => prev.map(d => d.id === id ? {...d, ...u} : d))} />;
+    return <AccountView dealId={selId} deals={deals} teamMembers={team} clients={clients} onBack={() => {setPage('board'); setSelId(null);}} onDealUpdated={(id, u) => setDeals(prev => prev.map(d => d.id === id ? {...d, ...u} : d))} onSelectDeal={(id) => {setSelId(id); setPage('account');}} />;
   }
 
   if (page === 'revenue') {
@@ -1783,17 +1827,19 @@ function App() {
                   onDrop={e => { e.currentTarget.classList.remove('drag-over'); handleDrop(stage.key); }}>
                   {sd.map(d => {
                     const owner = tm[d.deal_owner_id];
+                    const clientObj = cm[d.client_id];
                     const isStalled = d.status === 'stalled';
                     const dueDays = daysUntil(d.next_action_due);
                     const isOverdue = dueDays !== null && dueDays < 0;
+                    const hasMultiOpp = clientObj && deals.filter(x => x.client_id === clientObj.id).length > 1;
                     return (
                       <div key={d.id} draggable="true"
                         onDragStart={() => setDragId(d.id)}
                         onDragEnd={() => setDragId(null)}
                         className={`deal-card ${isStalled?'stalled':''} ${isOverdue?'overdue':''} ${dragId===d.id?'dragging':''}`}
                         onClick={() => {setSelId(d.id); setPage('account');}}>
-                        <div className="deal-name">{d.account_name}</div>
-                        <div className="deal-project">{d.project_name}</div>
+                        <div className="deal-name">{clientObj ? clientObj.name : d.account_name}{hasMultiOpp && <span style={{fontSize:9,color:'var(--text-muted)',marginLeft:6,fontWeight:400}}>({deals.filter(x=>x.client_id===clientObj.id).length})</span>}</div>
+                        <div className="deal-project">{d.account_name !== clientObj?.name ? d.account_name + ' — ' : ''}{d.project_name}</div>
                         <div className="deal-meta">
                           {d.region && <span className="deal-tag tag-region">{d.region}</span>}
                           <span className="deal-tag tag-value">{fmt(d.deal_value,d.deal_value_note)}</span>
@@ -1821,8 +1867,8 @@ function App() {
           <table className="data-table">
             <thead>
               <tr>
-                <th>Account</th>
-                <th>Project</th>
+                <th>Client</th>
+                <th>Opportunity</th>
                 <th>Stage</th>
                 <th>Value</th>
                 <th>Owner</th>
@@ -1834,13 +1880,14 @@ function App() {
             <tbody>
               {filtered.map(d => {
                 const owner = tm[d.deal_owner_id];
+                const clientObj = cm[d.client_id];
                 const stageInfo = STAGE_MAP[d.stage];
                 const dueDays = daysUntil(d.next_action_due);
                 const isOverdue = dueDays !== null && dueDays < 0;
                 return (
                   <tr key={d.id} onClick={() => {setSelId(d.id); setPage('account');}}>
-                    <td>{d.account_name}{d.is_friendly_client && <span className="deal-tag tag-friendly" style={{marginLeft:6,verticalAlign:'middle'}}>Friendly</span>}</td>
-                    <td>{d.project_name}</td>
+                    <td>{clientObj ? clientObj.name : d.account_name}{d.is_friendly_client && <span className="deal-tag tag-friendly" style={{marginLeft:6,verticalAlign:'middle'}}>Friendly</span>}</td>
+                    <td>{d.account_name !== clientObj?.name ? d.account_name + ' — ' : ''}{d.project_name}</td>
                     <td><span className="stage-badge" style={{background:stageInfo?.color}}>{stageInfo?.label}</span></td>
                     <td>{fmt(d.deal_value,d.deal_value_note)}</td>
                     <td>{owner?.display_name||'—'}</td>
