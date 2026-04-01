@@ -541,6 +541,7 @@ function initials(name) {
 
 function OverviewTab({ deal, teamMembers, clients, allDeals, onEditDeal, onSelectDeal }) {
   const [activities, setActivities] = useState([]);
+  const [useCases, setUseCases] = useState([]);
   const tmMap = useMemo(() => Object.fromEntries(teamMembers.map(t => [t.id, t])), [teamMembers]);
   const client = clients?.find(c => c.id === deal.client_id);
   const relatedDeals = client ? (allDeals || []).filter(d => d.client_id === client.id && d.id !== deal.id) : [];
@@ -550,7 +551,12 @@ function OverviewTab({ deal, teamMembers, clients, allDeals, onEditDeal, onSelec
       const { data } = await supabase.from('deal_activity_log').select('*').eq('deal_id', deal.id).order('logged_at', { ascending: false });
       if (data) setActivities(data);
     };
+    const fetchUseCases = async () => {
+      const { data } = await supabase.from('deal_use_cases').select('*').eq('deal_id', deal.id).order('created_at');
+      if (data) setUseCases(data);
+    };
     fetchActivities();
+    fetchUseCases();
   }, [deal.id]);
 
   const stageInfo = STAGE_MAP[deal.stage];
@@ -750,6 +756,29 @@ function OverviewTab({ deal, teamMembers, clients, allDeals, onEditDeal, onSelec
                     <span className="stage-badge" style={{background:rdStage?.color}}>{rdStage?.label}</span>
                     {rdOwner && <span style={{fontSize:10,color:'var(--text-muted)'}}>{rdOwner.display_name}</span>}
                   </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* USE CASES */}
+      {useCases.length > 0 && (
+        <div className="context-card" style={{marginTop:16}}>
+          <div style={{fontSize:14,fontWeight:600,color:'var(--text)',marginBottom:12}}>Use Cases ({useCases.length})</div>
+          <div style={{display:'flex',flexDirection:'column',gap:8}}>
+            {useCases.map(uc => {
+              const statusColor = uc.status === 'active' ? 'var(--accent)' : uc.status === 'potential' ? 'var(--orange)' : 'var(--text-muted)';
+              const statusBg = uc.status === 'active' ? 'var(--teal-bg)' : uc.status === 'potential' ? 'var(--orange-bg)' : 'var(--blue-bg)';
+              return (
+                <div key={uc.id} style={{padding:'10px 14px',background:'var(--bg-secondary)',borderRadius:'var(--radius)',borderLeft:'3px solid '+statusColor}}>
+                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                    <div style={{fontSize:13,fontWeight:600,color:'var(--text)'}}>{uc.name}</div>
+                    <span style={{fontSize:10,fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em',padding:'2px 8px',borderRadius:4,color:statusColor,background:statusBg}}>{uc.status}</span>
+                  </div>
+                  {uc.department && <div style={{fontSize:11,color:'var(--text-muted)',marginTop:3}}>{uc.department}</div>}
+                  {uc.description && <div style={{fontSize:12,color:'var(--text-secondary)',marginTop:6,lineHeight:1.5}}>{uc.description}</div>}
                 </div>
               );
             })}
