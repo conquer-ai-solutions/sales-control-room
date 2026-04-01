@@ -693,7 +693,7 @@ function OverviewTab({ deal, teamMembers, clients, allDeals, onEditDeal, onSelec
         const bgMap = {critical:'var(--red-bg)',at_risk:'var(--orange-bg)',watch:'rgba(109,114,135,0.08)'};
         const borderMap = {critical:'rgba(236,53,64,0.2)',at_risk:'rgba(245,166,35,0.2)',watch:'rgba(109,114,135,0.15)'};
         const colorMap = {critical:'var(--red)',at_risk:'var(--orange)',watch:'var(--text-muted)'};
-        const labelMap = {critical:'Critical Risk',at_risk:'At Risk',watch:'Watch'};
+        const labelMap = {critical:'Critical',at_risk:'Needs Attention',watch:'Watch'};
         return (
           <div style={{background:bgMap[h.health],border:`1px solid ${borderMap[h.health]}`,borderRadius:'var(--radius-lg)',padding:'12px 20px',marginBottom:16}}>
             <div style={{fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:1,color:colorMap[h.health],marginBottom:6}}>{labelMap[h.health]}</div>
@@ -2081,7 +2081,7 @@ function App() {
           <div className="stat-sub">{fmt(Math.round(stats.closing30Weighted))} weighted</div>
         </div>
         <div className={`stat-card stat-clickable ${statFilter==='atRisk'?'stat-active':''}`} onClick={()=>toggleStatFilter('atRisk')}>
-          <div className="stat-label">At Risk</div>
+          <div className="stat-label">Needs Attention</div>
           <div className="stat-row">
             <div className="stat-value" style={{color:stats.atRisk>0?'var(--red)':'var(--text-dim)'}}>{stats.atRisk}</div>
           </div>
@@ -2103,7 +2103,7 @@ function App() {
             {statFilter === 'opportunities' && `Showing ${filtered.length} active opportunities`}
             {statFilter === 'proposals' && `Showing ${filtered.length} proposals & procurement opportunities`}
             {statFilter === 'closing30' && `Showing ${filtered.length} opportunities closing within 30 days`}
-            {statFilter === 'atRisk' && `Showing ${filtered.length} at-risk opportunities (${stats.critical} critical · ${stats.atRisk - stats.critical} elevated)`}
+            {statFilter === 'atRisk' && `Showing ${filtered.length} opportunities needing attention (${stats.critical} critical · ${stats.atRisk - stats.critical} elevated)`}
           </span>
           <button onClick={()=>setStatFilter(null)} style={{marginLeft:'auto',background:'none',border:'1px solid var(--accent)',borderRadius:3,color:'var(--accent)',fontSize:10,fontWeight:600,padding:'2px 8px',cursor:'pointer',transition:'all 0.15s'}} onMouseEnter={e=>{e.currentTarget.style.background='var(--accent)';e.currentTarget.style.color='#fff';}} onMouseLeave={e=>{e.currentTarget.style.background='none';e.currentTarget.style.color='var(--accent)';}}>Clear filter</button>
         </div>
@@ -2148,7 +2148,7 @@ function App() {
         const recommendations = [];
         if (noProb.length > 0) recommendations.push({type:'warning',title:`${noProb.length} opportunities missing close probability`,detail:'Excluded from weighted pipeline. Assigning probabilities improves forecast accuracy.',action:'Review and assign'});
         if (avgProb < 40) recommendations.push({type:'alert',title:`Average probability low at ${avgProb}%`,detail:'Deals may be stuck or poorly qualified. Review champion engagement for deals below 30%.',action:'Audit low-probability deals'});
-        if (stalledCommercial.length > 0) recommendations.push({type:'alert',title:`${stalledCommercial.length} commercial opportunities at risk`,detail:'These have multiple risk signals (inactivity, overdue actions, stuck in stage). Re-engage or re-qualify.',action:'Review at-risk deals'});
+        if (stalledCommercial.length > 0) recommendations.push({type:'alert',title:`${stalledCommercial.length} commercial opportunities need attention`,detail:'These have multiple risk signals (inactivity, overdue actions, stuck in stage). Re-engage or re-qualify.',action:'Review flagged deals'});
         if (totalWeighted < totalPipeline * 0.4) recommendations.push({type:'info',title:'Weighted pipeline below 40% of total',detail:`${fmt(Math.round(totalWeighted))} of ${fmt(totalPipeline)} weighted. May indicate too many low-confidence deals.`,action:'Advance high-value deals'});
         if (avgProb >= 60) recommendations.push({type:'success',title:`Strong confidence at ${avgProb}%`,detail:'Pipeline is well-qualified. Focus on accelerating through procurement to close.',action:'Push for signed contracts'});
         const missingVal = commercial.filter(d => !d.deal_value);
@@ -2340,7 +2340,7 @@ function App() {
                           {d.region && <span className="deal-tag tag-region">{d.region}</span>}
                           <span className="deal-tag tag-value">{fmt(d.deal_value,d.deal_value_note)}</span>
                           {isCritical && <span className="deal-tag tag-stalled">Critical</span>}
-                          {isAtRisk && !isCritical && <span className="deal-tag" style={{background:'var(--orange-bg)',color:'var(--orange)'}}>At Risk</span>}
+                          {isAtRisk && !isCritical && <span className="deal-tag" style={{background:'var(--orange-bg)',color:'var(--orange)'}}>Needs Attention</span>}
                           {isOverdue && <span className="deal-tag tag-overdue">Overdue</span>}
                           {d.is_friendly_client && <span className="deal-tag tag-friendly">Friendly</span>}
                         </div>
@@ -2388,7 +2388,7 @@ function App() {
                     <td><span className="stage-badge" style={{background:stageInfo?.color}}>{stageInfo?.label}</span></td>
                     <td>{fmt(d.deal_value,d.deal_value_note)}</td>
                     <td>{owner?.display_name||'—'}</td>
-                    <td style={{color:(healthMap[d.id]||{}).health==='critical'?'var(--red)':(healthMap[d.id]||{}).health==='at_risk'?'var(--orange)':'inherit'}}>{(healthMap[d.id]||{}).health==='critical'?'Critical':(healthMap[d.id]||{}).health==='at_risk'?'At Risk':(healthMap[d.id]||{}).health==='watch'?'Watch':'Healthy'}</td>
+                    <td style={{color:(healthMap[d.id]||{}).health==='critical'?'var(--red)':(healthMap[d.id]||{}).health==='at_risk'?'var(--orange)':'inherit'}}>{(healthMap[d.id]||{}).health==='critical'?'Critical':(healthMap[d.id]||{}).health==='at_risk'?'Needs Attention':(healthMap[d.id]||{}).health==='watch'?'Watch':'Healthy'}</td>
                     <td>{d.next_action||'—'}</td>
                     <td style={{color:isOverdue?'var(--orange)':'inherit'}}>{d.next_action_due?`${isOverdue?'-':''}${Math.abs(dueDays||0)}d`:'—'}</td>
                   </tr>
