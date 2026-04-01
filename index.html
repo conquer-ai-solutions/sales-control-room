@@ -97,12 +97,14 @@
   .timestamp { font-size:11px; color:var(--text-muted); font-variant-numeric:tabular-nums; }
 
   /* STATS */
-  .stats-bar { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px; padding:20px 32px 12px; }
+  .stats-bar { display:grid; grid-template-columns:repeat(6,1fr); gap:10px; padding:20px 32px 12px; }
+  @media (max-width:1200px) { .stats-bar { grid-template-columns:repeat(3,1fr); } }
+  @media (max-width:768px) { .stats-bar { grid-template-columns:repeat(2,1fr); } }
   .stat-card {
     background:var(--bg-card);
     border:1px solid var(--border);
     border-radius:var(--radius-lg);
-    padding:16px 20px;
+    padding:14px 16px;
     transition:all 0.2s;
     position:relative;
     overflow:hidden;
@@ -113,12 +115,16 @@
   }
   .stat-card:nth-child(1)::before { background:var(--accent); }
   .stat-card:nth-child(2)::before { background:var(--teal); }
-  .stat-card:nth-child(3)::before { background:var(--red); }
+  .stat-card:nth-child(3)::before { background:var(--stage-procurement); }
   .stat-card:nth-child(4)::before { background:var(--orange); }
+  .stat-card:nth-child(5)::before { background:var(--red); }
+  .stat-card:nth-child(6)::before { background:var(--blue); }
   .stat-card:hover { border-color:var(--border-light); }
-  .stat-label { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); margin-bottom:8px; }
-  .stat-value { font-size:28px; font-weight:700; letter-spacing:-1px; font-variant-numeric:tabular-nums; }
-  .stat-sub { font-size:12px; color:var(--text-dim); margin-top:4px; }
+  .stat-label { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); margin-bottom:6px; }
+  .stat-value { font-size:24px; font-weight:700; letter-spacing:-1px; font-variant-numeric:tabular-nums; }
+  .stat-sub { font-size:11px; color:var(--text-dim); margin-top:3px; }
+  .stat-row { display:flex; align-items:baseline; gap:8px; }
+  .stat-badge { font-size:10px; padding:1px 6px; border-radius:4px; font-weight:600; }
 
   /* FILTERS */
   .filter-bar { display:flex; gap:6px; padding:8px 32px 16px; flex-wrap:wrap; align-items:center; }
@@ -233,21 +239,24 @@
     position:sticky; top:0; z-index:90;
     backdrop-filter:blur(16px);
   }
-  .account-header-top { display:flex; align-items:center; gap:16px; margin-bottom:16px; }
+  .account-header-top { display:flex; align-items:center; gap:16px; margin-bottom:0; }
   .back-btn { background:none; border:1px solid var(--border); padding:6px 12px; border-radius:var(--radius); color:var(--text-dim); cursor:pointer; font-size:13px; font-family:var(--font); transition:all 0.15s; }
   .back-btn:hover { border-color:var(--accent); color:var(--text); }
   .account-title { flex:1; }
   .account-name { font-size:20px; font-weight:700; color:var(--text); margin-bottom:4px; }
   .account-meta { display:flex; gap:12px; align-items:center; font-size:12px; color:var(--text-dim); }
   .stage-badge-lg { display:inline-block; padding:4px 12px; border-radius:6px; font-size:11px; font-weight:600; color:white; text-transform:uppercase; letter-spacing:0.3px; }
+  .header-edit-btn { background:none; border:1px solid var(--border); padding:6px 16px; border-radius:var(--radius); color:var(--text-dim); cursor:pointer; font-size:12px; font-weight:500; font-family:var(--font); transition:all 0.15s; }
+  .header-edit-btn:hover { border-color:var(--accent); color:var(--accent); }
 
-  .tab-bar { display:flex; gap:2px; border-bottom:1px solid var(--border); padding:0 32px; margin:16px 0 0 0; }
+  .tab-bar { display:flex; gap:2px; border-bottom:1px solid var(--border); padding:0 32px; margin:12px 0 0 0; }
   .tab-btn { padding:12px 20px; border:none; background:transparent; color:var(--text-muted); cursor:pointer; font-size:13px; font-weight:500; font-family:var(--font); border-bottom:2px solid transparent; transition:all 0.15s; }
   .tab-btn.active { color:var(--accent); border-bottom-color:var(--accent); }
   .tab-btn:hover:not(.active) { color:var(--text-dim); }
 
   .tab-content { padding:28px 32px; max-width:960px; }
 
+  /* OVERVIEW HERO CARDS */
   .overview-hero { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:28px; }
   .hero-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:20px; }
   .hero-card-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin-bottom:10px; }
@@ -259,8 +268,12 @@
   .hero-due-ok { background:var(--accent-subtle); color:var(--accent); }
   .hero-value { font-size:22px; font-weight:700; color:var(--accent); }
   .hero-value-sub { font-size:12px; color:var(--text-dim); margin-top:4px; }
+
+  /* OVERVIEW GRID */
   .overview-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
   .overview-grid-full { grid-column:1 / -1; }
+
+  /* FIELD GROUP CARD */
   .field-group { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:16px 20px; }
   .field-group-title { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid var(--border); }
   .field-row { display:flex; justify-content:space-between; align-items:center; padding:6px 0; }
@@ -272,29 +285,8 @@
   .status-dot { width:7px; height:7px; border-radius:50%; display:inline-block; }
   .status-dot-active { background:var(--accent); }
   .status-dot-stalled { background:var(--red); }
-  .header-edit-btn { background:none; border:1px solid var(--border); padding:6px 16px; border-radius:var(--radius); color:var(--text-dim); cursor:pointer; font-size:12px; font-weight:500; font-family:var(--font); transition:all 0.15s; }
-  .header-edit-btn:hover { border-color:var(--accent); color:var(--accent); }
-    .pulse-bar { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:20px; }
-    .pulse-item { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:14px 16px; text-align:center; }
-    .pulse-value { font-size:20px; font-weight:700; color:var(--text); }
-    .pulse-label { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin-top:4px; }
-    .timing-bar { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:20px; }
-    .timing-item { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:14px 16px; text-align:center; }
-    .timing-value { font-size:15px; font-weight:600; color:var(--text); }
-    .timing-label { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin-top:4px; }
-    .qual-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:16px 20px; margin-bottom:20px; }
-    .qual-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; }
-    .qual-item { text-align:center; padding:10px 6px; border-radius:var(--radius); border:1px solid var(--border); transition:all 0.15s; }
-    .qual-item-yes { background:rgba(74,222,128,0.08); border-color:var(--accent); }
-    .qual-item-no { background:transparent; }
-    .qual-item-unknown { background:transparent; border-style:dashed; }
-    .qual-icon { font-size:18px; margin-bottom:4px; }
-    .qual-item-label { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-dim); }
-    .context-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:16px 20px; margin-bottom:20px; }
-    .context-summary { font-size:13px; color:var(--text); line-height:1.6; margin-bottom:12px; }
-    .context-meta { display:flex; gap:16px; flex-wrap:wrap; }
-    .context-tag { display:inline-flex; align-items:center; gap:5px; padding:4px 10px; background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:var(--radius); font-size:11px; color:var(--text-dim); }
-    .context-tag-label { font-weight:600; color:var(--text-muted); }
+
+  /* EDIT FORM SECTIONS */
   .edit-section { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:20px; margin-bottom:16px; }
   .edit-section-title { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin-bottom:14px; padding-bottom:8px; border-bottom:1px solid var(--border); }
   .edit-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px 16px; }
@@ -515,6 +507,7 @@ function initials(name) {
 function OverviewTab({ deal, teamMembers, onEditDeal }) {
   const [activities, setActivities] = useState([]);
   const tmMap = useMemo(() => Object.fromEntries(teamMembers.map(t => [t.id, t])), [teamMembers]);
+
   useEffect(() => {
     const fetchActivities = async () => {
       const { data } = await supabase.from('deal_activity_log').select('*').eq('deal_id', deal.id).order('logged_at', { ascending: false });
@@ -522,28 +515,51 @@ function OverviewTab({ deal, teamMembers, onEditDeal }) {
     };
     fetchActivities();
   }, [deal.id]);
+
   const stageInfo = STAGE_MAP[deal.stage];
   const dealOwner = tmMap[deal.deal_owner_id];
   const nextActionOwner = tmMap[deal.next_action_owner_id];
+
   const dueD = deal.next_action_due ? daysUntil(deal.next_action_due) : null;
   const dueClass = dueD !== null ? (dueD < 0 ? 'hero-due-overdue' : dueD <= 2 ? 'hero-due-soon' : 'hero-due-ok') : '';
   const dueLabel = dueD !== null ? (dueD < 0 ? Math.abs(dueD) + 'd overdue' : dueD === 0 ? 'Due today' : 'Due in ' + dueD + 'd') : null;
+
   const fv = (v) => v || null;
-  const lastAD = deal.last_activity_date ? new Date(deal.last_activity_date) : null;
-  const daysSinceTouch = lastAD ? Math.floor((new Date() - lastAD) / 86400000) : null;
-  const engTrend = daysSinceTouch === null ? '\u2014' : daysSinceTouch < 7 ? '\u2191 Active' : daysSinceTouch < 14 ? '\u2192 Steady' : '\u2193 Cooling';
-  const engColor = daysSinceTouch === null ? 'var(--text-muted)' : daysSinceTouch < 7 ? 'var(--accent)' : daysSinceTouch < 14 ? 'var(--text-muted)' : 'var(--red)';
-  const createdD = deal.created_date ? new Date(deal.created_date) : null;
-  const stageEntD = deal.stage_entered_date ? new Date(deal.stage_entered_date) : null;
-  const daysInStage = stageEntD ? Math.floor((new Date() - stageEntD) / 86400000) : null;
-  const dealAge = createdD ? Math.floor((new Date() - createdD) / 86400000) : null;
-  const daysAgo = (d) => { if(!d) return ''; const n=Math.floor((new Date()-new Date(d))/86400000); return n===0?'today':n===1?'1 day ago':n+' days ago'; };
-  const qualItems = [{k:'pain_validated',l:'Pain Validated'},{k:'budget_identified',l:'Budget Identified'},{k:'decision_maker_access',l:'DM Access'},{k:'compelling_event',l:'Compelling Event'},{k:'competition_known',l:'Competition Known'}];
-  const healthScore = qualItems.filter(q => deal[q.k] === true).length;
-  const hb = healthScore >= 4 ? {l:'Strong',c:'var(--accent)'} : healthScore >= 2 ? {l:'Medium',c:'var(--orange)'} : {l:'Weak',c:'var(--red)'};
-  const weightedVal = deal.deal_value && deal.close_probability ? fmt(Math.round(deal.deal_value * deal.close_probability / 100)) : null;
+
+  // Compute engagement metrics
+  const lastActivityDate = deal.last_activity_date ? new Date(deal.last_activity_date) : null;
+  const daysSinceTouch = lastActivityDate ? Math.floor((new Date() - lastActivityDate) / (1000*60*60*24)) : null;
+  const engagementTrend = daysSinceTouch === null ? '—' : daysSinceTouch < 7 ? '↑ Active' : daysSinceTouch < 14 ? '→ Steady' : '↓ Cooling';
+  const engagementColor = daysSinceTouch === null ? 'var(--text-muted)' : daysSinceTouch < 7 ? 'var(--accent)' : daysSinceTouch < 14 ? 'var(--text-muted)' : 'var(--red)';
+
+  // Compute timing metrics
+  const createdDate = deal.created_date ? new Date(deal.created_date) : null;
+  const stageEnteredDate = deal.stage_entered_date ? new Date(deal.stage_entered_date) : null;
+  const daysInStage = stageEnteredDate ? Math.floor((new Date() - stageEnteredDate) / (1000*60*60*24)) : null;
+  const dealAge = createdDate ? Math.floor((new Date() - createdDate) / (1000*60*60*24)) : null;
+  const daysAgoStr = (date) => {
+    if (!date) return null;
+    const days = Math.floor((new Date() - new Date(date)) / (1000*60*60*24));
+    return days === 0 ? 'today' : days === 1 ? '1 day ago' : days + ' days ago';
+  };
+
+  // Compute qualification score
+  const qualItems = [
+    { key: 'pain_validated', label: 'Pain Validated' },
+    { key: 'budget_identified', label: 'Budget Identified' },
+    { key: 'decision_maker_access', label: 'DM Access' },
+    { key: 'compelling_event', label: 'Compelling Event' },
+    { key: 'competition_known', label: 'Competition Known' }
+  ];
+  const healthScore = qualItems.filter(q => deal[q.key] === true).length;
+  const healthBadge = healthScore >= 4 ? { label: 'Strong', color: 'var(--accent)' } : healthScore >= 2 ? { label: 'Medium', color: 'var(--orange)' } : { label: 'Weak', color: 'var(--red)' };
+
+  // Weighted value
+  const weightedValue = deal.deal_value && deal.close_probability ? fmt(Math.round(deal.deal_value * deal.close_probability / 100)) : null;
+
   return (
     <div>
+      {/* HERO: Next Action + Enhanced Value */}
       <div className="overview-hero">
         <div className="hero-card" style={dueD !== null && dueD < 0 ? {borderColor:'var(--red)',borderWidth:1} : {}}>
           <div className="hero-card-label">Next Action</div>
@@ -557,49 +573,90 @@ function OverviewTab({ deal, teamMembers, onEditDeal }) {
           <div className="hero-card-label">Deal Value</div>
           <div className="hero-value">{deal.deal_value ? fmt(deal.deal_value) : <span style={{color:'var(--text-muted)',fontSize:16,fontWeight:400,fontStyle:'italic'}}>Not set</span>}</div>
           <div className="hero-value-sub">
-            {weightedVal && <span style={{marginRight:8}}>Weighted: {weightedVal}</span>}
-            {deal.close_probability > 0 && <span style={{fontSize:10,background:'rgba(255,255,255,0.06)',padding:'2px 8px',borderRadius:4,marginRight:8}}>{deal.close_probability}%</span>}
-            {deal.contract_basis && <span style={{fontSize:10,background:'rgba(255,255,255,0.06)',padding:'2px 8px',borderRadius:4}}>{deal.contract_basis}</span>}
+            {weightedValue && <span style={{fontSize:12,color:'var(--text-muted)',marginRight:12}}>Weighted: {weightedValue}</span>}
+            {deal.close_probability !== undefined && <span style={{fontSize:10,background:'var(--bg-secondary)',padding:'2px 8px',borderRadius:'var(--radius)',marginRight:8}}>{deal.close_probability}%</span>}
+            {deal.contract_basis && <span style={{fontSize:10,background:'var(--bg-secondary)',padding:'2px 8px',borderRadius:'var(--radius)'}}>{deal.contract_basis}</span>}
           </div>
         </div>
       </div>
+
+      {/* STALL REASON prominent if present */}
       {deal.status === 'stalled' && (
         <div style={{background:'var(--red-bg)',border:'1px solid rgba(236,53,64,0.2)',borderRadius:'var(--radius-lg)',padding:'14px 20px',marginBottom:16}}>
           <div style={{fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:1,color:'var(--red)',marginBottom:6}}>Stall Reason</div>
           <div style={{fontSize:13,color:'var(--text)',lineHeight:1.5}}>{deal.stall_reason || <span style={{color:'var(--text-muted)',fontStyle:'italic'}}>No reason provided</span>}</div>
         </div>
       )}
+
+      {/* ENGAGEMENT PULSE */}
       <div className="pulse-bar">
-        <div className="pulse-item"><div className="pulse-value">{deal.meeting_count || 0}</div><div className="pulse-label">Meetings</div></div>
-        <div className="pulse-item"><div className="pulse-value">{deal.email_count || 0}</div><div className="pulse-label">Emails</div></div>
-        <div className="pulse-item"><div className="pulse-value">{daysSinceTouch !== null ? daysSinceTouch : '\u2014'}</div><div className="pulse-label">Days Since Touch</div></div>
-        <div className="pulse-item"><div className="pulse-value" style={{color:engColor,fontSize:15}}>{engTrend}</div><div className="pulse-label">Trend</div></div>
+        <div className="pulse-item">
+          <div className="pulse-value">{deal.meeting_count || 0}</div>
+          <div className="pulse-label">Meetings</div>
+        </div>
+        <div className="pulse-item">
+          <div className="pulse-value">{deal.email_count || 0}</div>
+          <div className="pulse-label">Emails</div>
+        </div>
+        <div className="pulse-item">
+          <div className="pulse-value">{daysSinceTouch !== null ? daysSinceTouch : '—'}</div>
+          <div className="pulse-label">Days Since Touch</div>
+        </div>
+        <div className="pulse-item">
+          <div className="pulse-value" style={{color:engagementColor}}>{engagementTrend}</div>
+          <div className="pulse-label">Engagement Trend</div>
+        </div>
       </div>
+
+      {/* DEAL TIMING */}
       <div className="timing-bar">
-        <div className="timing-item"><div className="timing-value">{createdD ? createdD.toLocaleDateString('en-GB') : '\u2014'}</div><div className="timing-label">Created {daysAgo(deal.created_date)}</div></div>
-        <div className="timing-item"><div className="timing-value">{daysInStage !== null ? daysInStage : '\u2014'}</div><div className="timing-label">Days in Stage</div></div>
-        <div className="timing-item"><div className="timing-value">{deal.expected_close_date ? new Date(deal.expected_close_date).toLocaleDateString('en-GB') : <span style={{fontStyle:'italic',color:'var(--text-muted)'}}>Not set</span>}</div><div className="timing-label">Expected Close</div></div>
-        <div className="timing-item"><div className="timing-value">{dealAge !== null ? dealAge : '\u2014'}</div><div className="timing-label">Deal Age (days)</div></div>
+        <div className="timing-item">
+          <div className="timing-value">{createdDate ? createdDate.toLocaleDateString('en-GB',{day:'2-digit',month:'2-digit',year:'numeric'}) : '—'}</div>
+          <div className="timing-label">Created {daysAgoStr(deal.created_date)}</div>
+        </div>
+        <div className="timing-item">
+          <div className="timing-value">{daysInStage !== null ? daysInStage : '—'}</div>
+          <div className="timing-label">Days in Stage</div>
+        </div>
+        <div className="timing-item">
+          <div className="timing-value">{deal.expected_close_date ? new Date(deal.expected_close_date).toLocaleDateString('en-GB',{day:'2-digit',month:'2-digit',year:'numeric'}) : <span style={{fontStyle:'italic'}}>Not set</span>}</div>
+          <div className="timing-label">Expected Close</div>
+        </div>
+        <div className="timing-item">
+          <div className="timing-value">{dealAge !== null ? dealAge : '—'}</div>
+          <div className="timing-label">Deal Age (days)</div>
+        </div>
       </div>
+
+      {/* QUALIFICATION SCORECARD */}
       <div className="qual-card">
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
           <div style={{fontSize:14,fontWeight:600,color:'var(--text)'}}>Qualification</div>
-          <div style={{fontSize:11,fontWeight:700,padding:'4px 10px',borderRadius:'var(--radius)',background:hb.c+'15',color:hb.c,textTransform:'uppercase',letterSpacing:0.5}}>{hb.l} ({healthScore}/5)</div>
+          <div style={{fontSize:11,fontWeight:700,padding:'4px 10px',borderRadius:'var(--radius)',background:healthBadge.color+'15',color:healthBadge.color,textTransform:'uppercase',letterSpacing:0.5}}>{healthBadge.label} ({healthScore}/5)</div>
         </div>
         <div className="qual-grid">
           {qualItems.map(q => {
-            const v = deal[q.k]; const yes = v===true; const no = v===false;
-            return <div key={q.k} className={'qual-item '+(yes?'qual-item-yes':no?'qual-item-no':'qual-item-unknown')}>
-              <div className="qual-icon" style={{color:yes?'var(--accent)':no?'var(--red)':'var(--text-muted)'}}>{yes?'\u2713':no?'\u2717':'?'}</div>
-              <div className="qual-item-label">{q.l}</div>
-            </div>;
+            const val = deal[q.key];
+            const isYes = val === true;
+            const isNo = val === false;
+            const isUnknown = val === null || val === undefined;
+            return (
+              <div key={q.key} className={'qual-item ' + (isYes ? 'qual-item-yes' : isNo ? 'qual-item-no' : 'qual-item-unknown')}>
+                <div className="qual-icon" style={{color:isYes?'var(--accent)':isNo?'var(--red)':'var(--text-muted)'}}>{isYes ? '✓' : isNo ? '✗' : '?'}</div>
+                <div className="qual-item-label">{q.label}</div>
+              </div>
+            );
           })}
         </div>
       </div>
+
+      {/* KEY CONTEXT */}
       {(deal.deal_summary || deal.use_case || deal.industry || deal.icp_tier) && (
         <div className="context-card">
           <div style={{fontSize:14,fontWeight:600,color:'var(--text)',marginBottom:12}}>Key Context</div>
-          {deal.deal_summary && <div className="context-summary">{deal.deal_summary}</div>}
+          {deal.deal_summary && (
+            <div className="context-summary">{deal.deal_summary}</div>
+          )}
           <div className="context-meta">
             {deal.use_case && <span className="context-tag"><span className="context-tag-label">Use Case:</span> {deal.use_case}</span>}
             {deal.industry && <span className="context-tag"><span className="context-tag-label">Industry:</span> {deal.industry}</span>}
@@ -607,6 +664,8 @@ function OverviewTab({ deal, teamMembers, onEditDeal }) {
           </div>
         </div>
       )}
+
+      {/* DETAIL GRID */}
       <div className="overview-grid">
         <div className="field-group">
           <div className="field-group-title">Deal Information</div>
@@ -616,13 +675,15 @@ function OverviewTab({ deal, teamMembers, onEditDeal }) {
           <div className="field-row"><span className="field-label">Source</span><span className={fv(deal.last_activity_source)?'field-value':'field-value field-value-empty'}>{deal.last_activity_source||'None'}</span></div>
           {deal.last_activity_date && <div className="field-row"><span className="field-label">Last Activity</span><span className="field-value">{new Date(deal.last_activity_date).toLocaleDateString('en-GB')}</span></div>}
         </div>
+
         <div className="field-group">
           <div className="field-group-title">People</div>
           <div className="field-row"><span className="field-label">Deal Owner</span><span className={dealOwner?'field-value':'field-value field-value-empty'}>{dealOwner?.display_name||'Unassigned'}</span></div>
           <div className="field-row"><span className="field-label">Champion</span><span className={fv(deal.champion_name)?'field-value':'field-value field-value-empty'}>{deal.champion_name||'Not set'}</span></div>
           <div className="field-row"><span className="field-label">Decision Maker</span><span className={fv(deal.decision_maker_name)?'field-value':'field-value field-value-empty'}>{deal.decision_maker_name||'Not set'}</span></div>
-          <div className="field-row"><span className="field-label">Economic Buyer</span><span className={fv(deal.economic_buyer)?'field-value':'field-value field-value-empty'}>{deal.economic_buyer||'Not set'}</span></div>
+          {deal.economic_buyer && <div className="field-row"><span className="field-label">Economic Buyer</span><span className="field-value">{deal.economic_buyer}</span></div>}
         </div>
+
         {deal.notes && (
           <div className="field-group overview-grid-full">
             <div className="field-group-title">Notes</div>
@@ -630,6 +691,8 @@ function OverviewTab({ deal, teamMembers, onEditDeal }) {
           </div>
         )}
       </div>
+
+      {/* ACTIVITY TIMELINE */}
       <div className="activity-timeline">
         <div className="panel-section-title" style={{marginTop:28}}>Activity Log</div>
         {activities.length === 0 ? (
@@ -991,66 +1054,143 @@ function AccountView({ dealId, deals, teamMembers, onBack, onDealUpdated }) {
             <div className="edit-section">
               <div className="edit-section-title">Core</div>
               <div className="edit-grid">
-                <div><label className="edit-label">Stage</label><select className="edit-field" value={form.stage} onChange={e => setForm({...form,stage:e.target.value})}>{STAGES.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}</select></div>
-                <div><label className="edit-label">Status</label><select className="edit-field" value={form.status} onChange={e => setForm({...form,status:e.target.value})}><option value="active">Active</option><option value="stalled">Stalled</option><option value="on_hold">On Hold</option></select></div>
-                <div><label className="edit-label">Region</label><select className="edit-field" value={form.region||''} onChange={e => setForm({...form,region:e.target.value||null})}><option value="">No Region</option><option value="UK">UK</option><option value="US">US</option><option value="EU">EU</option><option value="APAC">APAC</option><option value="Brazil">Brazil</option><option value="Global">Global</option></select></div>
-                <div><label className="edit-label">Deal Value</label><input type="number" className="edit-field" value={form.deal_value||''} placeholder="e.g. 100000" onChange={e => setForm({...form,deal_value:e.target.value?Number(e.target.value):null})} /></div>
+                <div className="edit-row">
+                  <label className="edit-label">Stage</label>
+                  <select className="edit-field" value={form.stage} onChange={e => setForm({...form,stage:e.target.value})}>{STAGES.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}</select>
+                </div>
+                <div className="edit-row">
+                  <label className="edit-label">Status</label>
+                  <select className="edit-field" value={form.status} onChange={e => setForm({...form,status:e.target.value})}><option value="active">Active</option><option value="stalled">Stalled</option><option value="on_hold">On Hold</option></select>
+                </div>
+                <div className="edit-row">
+                  <label className="edit-label">Region</label>
+                  <select className="edit-field" value={form.region||''} onChange={e => setForm({...form,region:e.target.value||null})}><option value="">No Region</option><option value="UK">UK</option><option value="US">US</option><option value="EU">EU</option><option value="APAC">APAC</option><option value="Brazil">Brazil</option><option value="Global">Global</option></select>
+                </div>
+                <div className="edit-row">
+                  <label className="edit-label">Deal Value</label>
+                  <input type="number" className="edit-field" value={form.deal_value||''} placeholder="e.g. 100000" onChange={e => setForm({...form,deal_value:e.target.value?Number(e.target.value):null})} />
+                </div>
               </div>
             </div>
+
             <div className="edit-section">
               <div className="edit-section-title">Forecast</div>
               <div className="edit-grid">
-                <div><label className="edit-label">Close Probability (%)</label><input type="number" className="edit-field" min="0" max="100" value={form.close_probability||''} placeholder="0-100" onChange={e => setForm({...form,close_probability:e.target.value?Number(e.target.value):null})} /></div>
-                <div><label className="edit-label">Expected Close</label><input type="date" className="edit-field" value={form.expected_close_date?form.expected_close_date.substring(0,10):''} onChange={e => setForm({...form,expected_close_date:e.target.value||null})} /></div>
-                <div><label className="edit-label">Revenue Type</label><select className="edit-field" value={form.revenue_type||''} onChange={e => setForm({...form,revenue_type:e.target.value||null})}><option value="">Select</option><option value="New">New</option><option value="Expansion">Expansion</option><option value="Renewal">Renewal</option></select></div>
-                <div><label className="edit-label">Contract Basis</label><select className="edit-field" value={form.contract_basis||''} onChange={e => setForm({...form,contract_basis:e.target.value||null})}><option value="">Select</option><option value="One-off">One-off</option><option value="Retainer">Retainer</option><option value="ARR">ARR</option></select></div>
+                <div className="edit-row">
+                  <label className="edit-label">Close Probability (%)</label>
+                  <input type="number" className="edit-field" min="0" max="100" value={form.close_probability||''} placeholder="0-100" onChange={e => setForm({...form,close_probability:e.target.value?Number(e.target.value):null})} />
+                </div>
+                <div className="edit-row">
+                  <label className="edit-label">Expected Close Date</label>
+                  <input type="date" className="edit-field" value={form.expected_close_date?form.expected_close_date.substring(0,10):''} onChange={e => setForm({...form,expected_close_date:e.target.value||null})} />
+                </div>
+                <div className="edit-row">
+                  <label className="edit-label">Revenue Type</label>
+                  <select className="edit-field" value={form.revenue_type||''} onChange={e => setForm({...form,revenue_type:e.target.value||null})}><option value="">Select</option><option value="New">New</option><option value="Expansion">Expansion</option><option value="Renewal">Renewal</option></select>
+                </div>
+                <div className="edit-row">
+                  <label className="edit-label">Contract Basis</label>
+                  <select className="edit-field" value={form.contract_basis||''} onChange={e => setForm({...form,contract_basis:e.target.value||null})}><option value="">Select</option><option value="One-off">One-off</option><option value="Retainer">Retainer</option><option value="ARR">ARR</option></select>
+                </div>
               </div>
             </div>
+
             <div className="edit-section">
               <div className="edit-section-title">Next Action</div>
-              <div><label className="edit-label">Action</label><input type="text" className="edit-field" value={form.next_action||''} placeholder="What needs to happen next?" onChange={e => setForm({...form,next_action:e.target.value})} /></div>
-              <div className="edit-grid" style={{marginTop:12}}><div><label className="edit-label">Due Date</label><input type="date" className="edit-field" value={form.next_action_due?form.next_action_due.substring(0,10):''} onChange={e => setForm({...form,next_action_due:e.target.value||null})} /></div></div>
+              <div className="edit-row">
+                <label className="edit-label">Action</label>
+                <input type="text" className="edit-field" value={form.next_action||''} placeholder="What needs to happen next?" onChange={e => setForm({...form,next_action:e.target.value})} />
+              </div>
+              <div className="edit-grid" style={{marginTop:12}}>
+                <div className="edit-row">
+                  <label className="edit-label">Due Date</label>
+                  <input type="date" className="edit-field" value={form.next_action_due?form.next_action_due.substring(0,10):''} onChange={e => setForm({...form,next_action_due:e.target.value||null})} />
+                </div>
+              </div>
             </div>
+
             <div className="edit-section">
               <div className="edit-section-title">Qualification</div>
-              <div style={{display:'flex',flexWrap:'wrap',gap:16}}>
+              <div className="edit-grid">
                 {[{k:'pain_validated',l:'Pain Validated'},{k:'budget_identified',l:'Budget Identified'},{k:'decision_maker_access',l:'DM Access'},{k:'compelling_event',l:'Compelling Event'},{k:'competition_known',l:'Competition Known'}].map(q => (
-                  <label key={q.k} style={{display:'flex',alignItems:'center',gap:6,fontSize:12,color:'var(--text-dim)',cursor:'pointer'}}>
-                    <input type="checkbox" checked={!!form[q.k]} onChange={e => setForm({...form,[q.k]:e.target.checked})} style={{width:16,height:16,accentColor:'var(--accent)'}} />{q.l}
-                  </label>
+                  <div key={q.k} className="edit-row" style={{display:'flex',alignItems:'center',gap:8}}>
+                    <input type="checkbox" checked={!!form[q.k]} onChange={e => setForm({...form,[q.k]:e.target.checked})} style={{width:16,height:16,accentColor:'var(--accent)'}} />
+                    <label className="edit-label" style={{margin:0}}>{q.l}</label>
+                  </div>
                 ))}
               </div>
             </div>
+
             <div className="edit-section">
               <div className="edit-section-title">People</div>
               <div className="edit-grid">
-                <div><label className="edit-label">Champion</label><input type="text" className="edit-field" value={form.champion_name||''} placeholder="Client-side champion" onChange={e => setForm({...form,champion_name:e.target.value})} /></div>
-                <div><label className="edit-label">Decision Maker</label><input type="text" className="edit-field" value={form.decision_maker_name||''} placeholder="Key decision maker" onChange={e => setForm({...form,decision_maker_name:e.target.value})} /></div>
-                <div><label className="edit-label">Economic Buyer</label><input type="text" className="edit-field" value={form.economic_buyer||''} placeholder="Budget holder" onChange={e => setForm({...form,economic_buyer:e.target.value})} /></div>
+                <div className="edit-row">
+                  <label className="edit-label">Champion</label>
+                  <input type="text" className="edit-field" value={form.champion_name||''} placeholder="Client-side champion" onChange={e => setForm({...form,champion_name:e.target.value})} />
+                </div>
+                <div className="edit-row">
+                  <label className="edit-label">Decision Maker</label>
+                  <input type="text" className="edit-field" value={form.decision_maker_name||''} placeholder="Key decision maker" onChange={e => setForm({...form,decision_maker_name:e.target.value})} />
+                </div>
+                <div className="edit-row">
+                  <label className="edit-label">Economic Buyer</label>
+                  <input type="text" className="edit-field" value={form.economic_buyer||''} placeholder="Budget holder" onChange={e => setForm({...form,economic_buyer:e.target.value})} />
+                </div>
               </div>
             </div>
+
             <div className="edit-section">
               <div className="edit-section-title">Key Context</div>
-              <div><label className="edit-label">Deal Summary</label><textarea className="edit-field" rows={2} value={form.deal_summary||''} placeholder="Why this deal? What\u2019s the opportunity?" onChange={e => setForm({...form,deal_summary:e.target.value})}></textarea></div>
+              <div className="edit-row">
+                <label className="edit-label">Deal Summary</label>
+                <textarea className="edit-field" rows={2} value={form.deal_summary||''} placeholder="Why this deal? What's the opportunity?" onChange={e => setForm({...form,deal_summary:e.target.value})}></textarea>
+              </div>
               <div className="edit-grid" style={{marginTop:12}}>
-                <div><label className="edit-label">Use Case</label><input type="text" className="edit-field" value={form.use_case||''} placeholder="Primary use case" onChange={e => setForm({...form,use_case:e.target.value})} /></div>
-                <div><label className="edit-label">Industry</label><input type="text" className="edit-field" value={form.industry||''} placeholder="e.g. Financial Services" onChange={e => setForm({...form,industry:e.target.value})} /></div>
-                <div><label className="edit-label">ICP Tier</label><select className="edit-field" value={form.icp_tier||''} onChange={e => setForm({...form,icp_tier:e.target.value||null})}><option value="">Select</option><option value="Tier 1">Tier 1</option><option value="Tier 2">Tier 2</option><option value="Tier 3">Tier 3</option></select></div>
+                <div className="edit-row">
+                  <label className="edit-label">Use Case</label>
+                  <input type="text" className="edit-field" value={form.use_case||''} placeholder="Primary use case" onChange={e => setForm({...form,use_case:e.target.value})} />
+                </div>
+                <div className="edit-row">
+                  <label className="edit-label">Industry</label>
+                  <input type="text" className="edit-field" value={form.industry||''} placeholder="e.g. Financial Services" onChange={e => setForm({...form,industry:e.target.value})} />
+                </div>
+                <div className="edit-row">
+                  <label className="edit-label">ICP Tier</label>
+                  <select className="edit-field" value={form.icp_tier||''} onChange={e => setForm({...form,icp_tier:e.target.value||null})}><option value="">Select</option><option value="Tier 1">Tier 1</option><option value="Tier 2">Tier 2</option><option value="Tier 3">Tier 3</option></select>
+                </div>
               </div>
             </div>
+
             <div className="edit-section">
               <div className="edit-section-title">Engagement Metrics</div>
               <div className="edit-grid">
-                <div><label className="edit-label">Meeting Count</label><input type="number" className="edit-field" min="0" value={form.meeting_count||''} onChange={e => setForm({...form,meeting_count:e.target.value?Number(e.target.value):null})} /></div>
-                <div><label className="edit-label">Email Count</label><input type="number" className="edit-field" min="0" value={form.email_count||''} onChange={e => setForm({...form,email_count:e.target.value?Number(e.target.value):null})} /></div>
+                <div className="edit-row">
+                  <label className="edit-label">Meeting Count</label>
+                  <input type="number" className="edit-field" min="0" value={form.meeting_count||''} onChange={e => setForm({...form,meeting_count:e.target.value?Number(e.target.value):null})} />
+                </div>
+                <div className="edit-row">
+                  <label className="edit-label">Email Count</label>
+                  <input type="number" className="edit-field" min="0" value={form.email_count||''} onChange={e => setForm({...form,email_count:e.target.value?Number(e.target.value):null})} />
+                </div>
               </div>
             </div>
+
             <div className="edit-section">
               <div className="edit-section-title">Additional</div>
-              <div><label className="edit-label">Stall Reason</label><textarea className="edit-field" value={form.stall_reason||''} onChange={e => setForm({...form,stall_reason:e.target.value})}></textarea></div>
-              <div style={{marginTop:12}}><label className="edit-label">Notes</label><textarea className="edit-field" value={form.notes||''} onChange={e => setForm({...form,notes:e.target.value})}></textarea></div>
+              <div className="edit-row">
+                <label className="edit-label">Stall Reason</label>
+                <textarea className="edit-field" value={form.stall_reason||''} onChange={e => setForm({...form,stall_reason:e.target.value})}></textarea>
+              </div>
+              <div className="edit-row" style={{marginTop:12}}>
+                <label className="edit-label">Notes</label>
+                <textarea className="edit-field" value={form.notes||''} onChange={e => setForm({...form,notes:e.target.value})}></textarea>
+              </div>
             </div>
-            <div className="btn-row"><button className="btn btn-primary" onClick={saveDeal}>Save</button><button className="btn btn-secondary" onClick={() => setEditing(false)}>Cancel</button></div>
+
+            <div className="btn-row">
+              <button className="btn btn-primary" onClick={saveDeal}>Save</button>
+              <button className="btn btn-secondary" onClick={() => setEditing(false)}>Cancel</button>
+            </div>
           </div>
         )}
         {activeTab === 'tasks' && <TasksTab deal={deal} teamMembers={teamMembers} />}
@@ -1381,20 +1521,37 @@ function App() {
     const overdue = deals.filter(d => daysUntil(d.next_action_due) < 0 && d.status === 'active');
     const val = active.reduce((s, d) => s + (d.deal_value || 0), 0);
     const w = active.reduce((s, d) => {
-      const m = {intro:0.05,discovery:0.15,poc:0.3,proposal:0.5,procurement:0.75,contract_signed:1};
-      return s + (d.deal_value || 0) * (m[d.stage] || 0);
+      const prob = d.close_probability || 0;
+      return s + (d.deal_value || 0) * (prob / 100);
     }, 0);
     const preCommercial = deals.filter(d => ['intro','discovery','poc'].includes(d.stage));
     const commercial = deals.filter(d => ['proposal','procurement','contract_signed'].includes(d.stage));
     const preVal = preCommercial.reduce((s, d) => s + (d.deal_value || 0), 0);
     const comVal = commercial.reduce((s, d) => s + (d.deal_value || 0), 0);
-    return { total:deals.length, active:active.length, stalled:stalled.length, overdue:overdue.length, val, w, preCommercial:preCommercial.length, commercial:commercial.length, preVal, comVal };
+    // Proposals active (proposal + procurement stages with value)
+    const proposals = deals.filter(d => ['proposal','procurement'].includes(d.stage));
+    const proposalVal = proposals.reduce((s, d) => s + (d.deal_value || 0), 0);
+    // Expected close in next 30 days
+    const now = new Date();
+    const in30 = new Date(now.getTime() + 30 * 86400000);
+    const closing30 = deals.filter(d => {
+      if (!d.expected_close_date) return false;
+      const cd = new Date(d.expected_close_date);
+      return cd >= now && cd <= in30;
+    });
+    const closing30Val = closing30.reduce((s, d) => s + (d.deal_value || 0), 0);
+    const closing30Weighted = closing30.reduce((s, d) => s + (d.deal_value || 0) * ((d.close_probability || 0) / 100), 0);
+    // At risk = stalled + overdue
+    const atRisk = deals.filter(d => d.status === 'stalled' || (daysUntil(d.next_action_due) < 0 && d.status === 'active'));
+    // Avg close probability (commercial deals with value)
+    const probDeals = commercial.filter(d => d.close_probability > 0);
+    const avgProb = probDeals.length ? Math.round(probDeals.reduce((s,d) => s + d.close_probability, 0) / probDeals.length) : 0;
+    return { total:deals.length, active:active.length, stalled:stalled.length, overdue:overdue.length, val, w, preCommercial:preCommercial.length, commercial:commercial.length, preVal, comVal, proposals:proposals.length, proposalVal, closing30:closing30.length, closing30Val, closing30Weighted, atRisk:atRisk.length, avgProb };
   }, [deals]);
 
   const regions = useMemo(() => [...new Set(deals.map(d => d.region).filter(Boolean))].sort(), [deals]);
 
   const [dragId, setDragId] = useState(null);
-
   const [dragTarget, setDragTarget] = useState(null);
   const [dragNotes, setDragNotes] = useState('');
 
@@ -1412,7 +1569,7 @@ function App() {
     const { deal, targetStage } = dragTarget;
     const now = new Date().toISOString();
     const updates = { stage: targetStage, stage_entered_at: now };
-    if (dragNotes.trim()) updates.notes = (deal.notes ? deal.notes + '\n' : '') + '[' + new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short'}) + '] Moved to ' + (STAGE_MAP[targetStage]?.label || targetStage) + ': ' + dragNotes.trim();
+    if (dragNotes.trim()) updates.notes = (deal.notes ? deal.notes + '\n' : '') + `[${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short'})}] Moved to ${STAGE_MAP[targetStage]?.label}: ${dragNotes.trim()}`;
     setDeals(prev => prev.map(d => d.id === deal.id ? {...d, ...updates} : d));
     setDragTarget(null);
     const { error } = await supabase.from('deals').update(updates).eq('id', deal.id);
@@ -1420,7 +1577,7 @@ function App() {
       setDeals(prev => prev.map(d => d.id === deal.id ? {...d, stage: deal.stage, stage_entered_at: deal.stage_entered_at, notes: deal.notes} : d));
       flash('Error moving deal: ' + error.message);
     } else {
-      flash('Moved ' + deal.account_name + ' to ' + (STAGE_MAP[targetStage]?.label || targetStage) + (deal.intel_engagement_id ? ' — Intel sync queued' : ''));
+      flash(`Moved ${deal.account_name} to ${STAGE_MAP[targetStage]?.label}${deal.intel_engagement_id ? ' — Intel sync queued' : ''}`);
     }
   };
 
@@ -1504,19 +1661,45 @@ function App() {
       {/* Stats */}
       <div className="stats-bar">
         <div className="stat-card">
-          <div className="stat-label">Pipeline Deals</div>
-          <div className="stat-value" style={{color:'var(--accent)'}}>{stats.total}</div>
-          <div className="stat-sub">{stats.active} active</div>
+          <div className="stat-label">Pipeline Value</div>
+          <div className="stat-value" style={{color:'var(--accent)'}}>{fmt(stats.val)}</div>
+          <div className="stat-sub">Weighted: {fmt(Math.round(stats.w))}</div>
         </div>
         <div className="stat-card">
-          <div className="stat-label">Pre-Commercial</div>
-          <div className="stat-value" style={{color:'var(--orange)'}}>{stats.preCommercial}</div>
-          <div className="stat-sub">Intro · Discovery · POC</div>
+          <div className="stat-label">Active Deals</div>
+          <div className="stat-row">
+            <div className="stat-value" style={{color:'var(--teal)'}}>{stats.active}</div>
+            <span className="stat-badge" style={{background:'var(--orange-bg)',color:'var(--orange)'}}>{stats.preCommercial} early</span>
+          </div>
+          <div className="stat-sub">{stats.commercial} in commercial territory</div>
         </div>
         <div className="stat-card">
-          <div className="stat-label">Commercial Territory</div>
-          <div className="stat-value" style={{color:'var(--teal)'}}>{stats.commercial}</div>
-          <div className="stat-sub">{stats.comVal ? fmt(stats.comVal) + ' value' : 'Proposal · Procurement · Signed'}</div>
+          <div className="stat-label">Proposals Active</div>
+          <div className="stat-row">
+            <div className="stat-value" style={{color:'var(--stage-procurement)'}}>{stats.proposals}</div>
+          </div>
+          <div className="stat-sub">{fmt(stats.proposalVal)} total value</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-label">Closing in 30 Days</div>
+          <div className="stat-row">
+            <div className="stat-value" style={{color:'var(--orange)'}}>{stats.closing30}</div>
+          </div>
+          <div className="stat-sub">{fmt(Math.round(stats.closing30Weighted))} weighted</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-label">At Risk</div>
+          <div className="stat-row">
+            <div className="stat-value" style={{color:stats.atRisk>0?'var(--red)':'var(--text-dim)'}}>{stats.atRisk}</div>
+          </div>
+          <div className="stat-sub">{stats.stalled} stalled · {stats.overdue} overdue</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-label">Avg Close Probability</div>
+          <div className="stat-row">
+            <div className="stat-value" style={{color:stats.avgProb>=50?'var(--accent)':stats.avgProb>=30?'var(--orange)':'var(--red)'}}>{stats.avgProb}%</div>
+          </div>
+          <div className="stat-sub">Across {stats.commercial} commercial deals</div>
         </div>
       </div>
 
@@ -1552,7 +1735,11 @@ function App() {
                     const dueDays = daysUntil(d.next_action_due);
                     const isOverdue = dueDays !== null && dueDays < 0;
                     return (
-                      <div key={d.id} draggable="true" onDragStart={() => setDragId(d.id)} onDragEnd={() => setDragId(null)} className={`deal-card ${isStalled?'stalled':''} ${isOverdue?'overdue':''} ${dragId===d.id?'dragging':''}`} onClick={() => {setSelId(d.id); setPage('account');}}>
+                      <div key={d.id} draggable="true"
+                        onDragStart={() => setDragId(d.id)}
+                        onDragEnd={() => setDragId(null)}
+                        className={`deal-card ${isStalled?'stalled':''} ${isOverdue?'overdue':''} ${dragId===d.id?'dragging':''}`}
+                        onClick={() => {setSelId(d.id); setPage('account');}}>
                         <div className="deal-name">{d.account_name}</div>
                         <div className="deal-project">{d.project_name}</div>
                         <div className="deal-meta">
@@ -1645,4 +1832,3 @@ ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 </script>
 </body>
 </html>
-
