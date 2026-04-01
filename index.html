@@ -1550,6 +1550,147 @@ function RevenueView({ deals, teamMembers, onDealClick }) {
   );
 }
 
+function ClientsView({ clients, deals, teamMembers, onDealClick }) {
+  const [search, setSearch] = useState('');
+  const [expanded, setExpanded] = useState(null);
+  const [sortBy, setSortBy] = useState('name');
+
+  const tmMap = useMemo(() => Object.fromEntries(teamMembers.map(t => [t.id, t])), [teamMembers]);
+
+  const enriched = useMemo(() => clients.map(c => {
+    const cDeals = deals.filter(d => d.client_id === c.id);
+    const activeDeals = cDeals.filter(d => d.status === 'active');
+    const totalValue = cDeals.reduce((s, d) => s + (d.deal_value || 0), 0);
+    const weightedValue = cDeals.reduce((s, d) => s + (d.deal_value || 0) * ((d.close_probability || 0) / 100), 0);
+    const latestActivity = cDeals.reduce((latest, d) => {
+      if (!d.last_activity_date) return latest;
+      return !latest || new Date(d.last_activity_date) > new Date(latest) ? d.last_activity_date : latest;
+    }, null);
+    const stages = [...new Set(cDeals.map(d => d.stage))];
+    const furthestStage = STAGES.reduce((f, s) => cDeals.some(d => d.stage === s.key) ? s : f, null);
+    return { ...c, deals: cDeals, activeDeals, totalValue, weightedValue, latestActivity, stages, furthestStage, dealCount: cDeals.length };
+  }), [clients, deals]);
+
+  const filtered = useMemo(() => {
+    let list = enriched;
+    if (search) {
+      const s = search.toLowerCase();
+      list = list.filter(c => c.name.toLowerCase().includes(s) || (c.industry || '').toLowerCase().includes(s) || (c.region || '').toLowerCase().includes(s));
+    }
+    if (sortBy === 'name') list = [...list].sort((a, b) => a.name.localeCompare(b.name));
+    else if (sortBy === 'value') list = [...list].sort((a, b) => b.totalValue - a.totalValue);
+    else if (sortBy === 'deals') list = [...list].sort((a, b) => b.dealCount - a.dealCount);
+    else if (sortBy === 'activity') list = [...list].sort((a, b) => (b.latestActivity || '') > (a.latestActivity || '') ? 1 : -1);
+    return list;
+  }, [enriched, search, sortBy]);
+
+  const totalPipeline = enriched.reduce((s, c) => s + c.totalValue, 0);
+  const totalWeighted = enriched.reduce((s, c) => s + c.weightedValue, 0);
+  const multiOpp = enriched.filter(c => c.dealCount > 1).length;
+
+  return (
+    <div>
+      {/* Stats */}
+      <div className="stats-bar">
+        <div className="stat-card">
+          <div className="stat-label">Total Clients</div>
+          <div className="stat-value" style={{color:'var(--accent)'}}>{clients.length}</div>
+          <div className="stat-sub">{multiOpp} with multiple opportunities</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-label">Total Pipeline</div>
+          <div className="stat-value" style={{color:'var(--teal)'}}>{fmt(totalPipeline)}</div>
+          <div className="stat-sub">Weighted: {fmt(Math.round(totalWeighted))}</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-label">Active Opportunities</div>
+          <div className="stat-value" style={{color:'var(--stage-procurement)'}}>{deals.length}</div>
+          <div className="stat-sub">Across {clients.length} clients</div>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div className="filter-bar">
+        <input className="search-input" placeholder="Search clients…" value={search} onChange={e => setSearch(e.target.value)} />
+        <div className="filter-sep"></div>
+        <span style={{fontSize:11,color:'var(--text-muted)',marginRight:6}}>Sort:</span>
+        {[{k:'name',l:'Name'},{k:'value',l:'Value'},{k:'deals',l:'Opportunities'},{k:'activity',l:'Last Activity'}].map(s => (
+          <button key={s.k} className={`filter-chip ${sortBy===s.k?'active':''}`} onClick={() => setSortBy(s.k)}>{s.l}</button>
+        ))}
+      </div>
+
+      {/* Client List */}
+      <div style={{padding:'0 24px 40px'}}>
+        {filtered.map(c => {
+          const isExpanded = expanded === c.id;
+          return (
+            <div key={c.id} style={{background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:'var(--radius-lg)',marginBottom:8,overflow:'hidden',transition:'all 0.15s'}}>
+              {/* Client Row */}
+              <div onClick={() => setExpanded(isExpanded ? null : c.id)} style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'14px 20px',cursor:'pointer',transition:'background 0.1s'}} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-secondary)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+                <div style={{display:'flex',alignItems:'center',gap:14,flex:1}}>
+                  <div style={{width:36,height:36,borderRadius:'var(--radius)',background:c.furthestStage?.color || 'var(--bg-tertiary)',display:'flex',alignItems:'center',justifyContent:'center',color:'white',fontSize:13,fontWeight:700}}>{initials(c.name)}</div>
+                  <div>
+                    <div style={{fontSize:14,fontWeight:600,color:'var(--text)'}}>{c.name}</div>
+                    <div style={{fontSize:11,color:'var(--text-muted)',marginTop:2}}>
+                      {c.industry && <span>{c.industry}</span>}
+                      {c.industry && c.region && <span style={{margin:'0 6px'}}>·</span>}
+                      {c.region && <span>{c.region}</span>}
+                    </div>
+                  </div>
+                </div>
+                <div style={{display:'flex',alignItems:'center',gap:20}}>
+                  <div style={{textAlign:'center'}}>
+                    <div style={{fontSize:16,fontWeight:700,color:c.totalValue ? 'var(--text)' : 'var(--text-muted)'}}>{c.totalValue ? fmt(c.totalValue) : 'TBC'}</div>
+                    <div style={{fontSize:9,color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:0.5}}>Pipeline</div>
+                  </div>
+                  <div style={{textAlign:'center',minWidth:30}}>
+                    <div style={{fontSize:16,fontWeight:700,color:c.dealCount > 1 ? 'var(--accent)' : 'var(--text-dim)'}}>{c.dealCount}</div>
+                    <div style={{fontSize:9,color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:0.5}}>{c.dealCount === 1 ? 'Opp' : 'Opps'}</div>
+                  </div>
+                  <div style={{display:'flex',gap:4}}>
+                    {c.stages.map(stg => <span key={stg} className="stage-badge" style={{background:STAGE_MAP[stg]?.color,fontSize:9,padding:'2px 6px'}}>{STAGE_MAP[stg]?.label}</span>)}
+                  </div>
+                  <div style={{fontSize:18,color:'var(--text-muted)',transition:'transform 0.2s',transform:isExpanded?'rotate(180deg)':'rotate(0deg)'}}>▾</div>
+                </div>
+              </div>
+
+              {/* Expanded: Opportunities */}
+              {isExpanded && (
+                <div style={{borderTop:'1px solid var(--border)',padding:'12px 20px 16px',background:'var(--bg-secondary)'}}>
+                  <div style={{fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:0.8,color:'var(--text-muted)',marginBottom:10}}>Opportunities</div>
+                  {c.deals.map(d => {
+                    const stageInfo = STAGE_MAP[d.stage];
+                    const owner = tmMap[d.deal_owner_id];
+                    const dueDays = daysUntil(d.next_action_due);
+                    const isOverdue = dueDays !== null && dueDays < 0;
+                    return (
+                      <div key={d.id} onClick={() => onDealClick(d.id)} style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'10px 14px',background:'var(--bg-card)',borderRadius:'var(--radius)',marginBottom:6,cursor:'pointer',border:'1px solid var(--border)',transition:'border-color 0.15s'}} onMouseEnter={e=>e.currentTarget.style.borderColor='var(--accent)'} onMouseLeave={e=>e.currentTarget.style.borderColor='var(--border)'}>
+                        <div style={{flex:1}}>
+                          <div style={{fontSize:13,fontWeight:600,color:'var(--text)'}}>{d.account_name !== c.name ? d.account_name + ' — ' : ''}{d.project_name || 'Untitled opportunity'}</div>
+                          <div style={{fontSize:11,color:'var(--text-muted)',marginTop:3}}>
+                            {d.next_action && <span>› {d.next_action}</span>}
+                          </div>
+                        </div>
+                        <div style={{display:'flex',alignItems:'center',gap:10}}>
+                          <span style={{fontSize:12,fontWeight:600,color:d.deal_value?'var(--text)':'var(--text-muted)'}}>{d.deal_value ? fmt(d.deal_value) : 'TBC'}</span>
+                          <span className="stage-badge" style={{background:stageInfo?.color}}>{stageInfo?.label}</span>
+                          {d.status === 'stalled' && <span className="deal-tag tag-stalled">Stalled</span>}
+                          {isOverdue && <span className="deal-tag tag-overdue">Overdue</span>}
+                          {owner && <span style={{fontSize:10,color:'var(--text-muted)'}}>{owner.display_name}</span>}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function App() {
   const [deals, setDeals] = useState([]);
   const [team, setTeam] = useState([]);
@@ -1719,12 +1860,41 @@ function App() {
               <button className="view-btn" onClick={()=>{setPage('board');setView('kanban');}}>Board</button>
               <button className="view-btn" onClick={()=>{setPage('board');setView('table');}}>Table</button>
               <button className="view-btn active" style={{background:'var(--stage-procurement)',color:'white'}}>Revenue</button>
+              <button className="view-btn" onClick={()=>setPage('clients')}>Clients</button>
             </div>
             <button className="refresh-btn" onClick={load}>↻ Refresh</button>
             <span className="timestamp">{ts.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span>
           </div>
         </div>
         <RevenueView deals={deals} teamMembers={team} onDealClick={(id) => {setSelId(id); setPage('account');}} />
+        {toast && <div className="toast">{toast}</div>}
+      </div>
+    );
+  }
+
+  if (page === 'clients') {
+    return (
+      <div>
+        <div className="header">
+          <div className="header-left">
+            <div className="logo">
+              <span className="logo-conquer">Conquer</span><span className="logo-ai">AI</span>
+            </div>
+            <div className="logo-divider"></div>
+            <span className="logo-product">Control Room</span>
+          </div>
+          <div className="header-right">
+            <div className="view-toggle">
+              <button className="view-btn" onClick={()=>{setPage('board');setView('kanban');}}>Board</button>
+              <button className="view-btn" onClick={()=>{setPage('board');setView('table');}}>Table</button>
+              <button className="view-btn" onClick={()=>setPage('revenue')}>Revenue</button>
+              <button className="view-btn active" style={{background:'var(--accent)',color:'white'}}>Clients</button>
+            </div>
+            <button className="refresh-btn" onClick={load}>↻ Refresh</button>
+            <span className="timestamp">{ts.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span>
+          </div>
+        </div>
+        <ClientsView clients={clients} deals={deals} teamMembers={team} onDealClick={(id) => {setSelId(id); setPage('account');}} />
         {toast && <div className="toast">{toast}</div>}
       </div>
     );
@@ -1746,6 +1916,7 @@ function App() {
             <button className={`view-btn ${page==='board'&&view==='kanban'?'active':''}`} onClick={()=>{setPage('board');setView('kanban');}}>Board</button>
             <button className={`view-btn ${page==='board'&&view==='table'?'active':''}`} onClick={()=>{setPage('board');setView('table');}}>Table</button>
             <button className={`view-btn ${page==='revenue'?'active':''}`} onClick={()=>setPage('revenue')} style={page==='revenue'?{background:'var(--stage-procurement)',color:'white'}:{}}>Revenue</button>
+            <button className={`view-btn ${page==='clients'?'active':''}`} onClick={()=>setPage('clients')} style={page==='clients'?{background:'var(--accent)',color:'white'}:{}}>Clients</button>
           </div>
           <button className="refresh-btn" onClick={load}>↻ Refresh</button>
           <span className="timestamp">{ts.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span>
