@@ -544,10 +544,10 @@ function getDealHealth(d) {
   const now = new Date(); now.setHours(0,0,0,0);
   const daysSince = (dateStr) => { if (!dateStr) return null; const dt = new Date(dateStr); dt.setHours(0,0,0,0); return Math.round((now - dt) / 86400000); };
 
-  // 1. Overdue next action
+  // 1. Overdue next action — always at least medium
   const dueDays = daysUntil(d.next_action_due);
   if (dueDays !== null && dueDays < 0) {
-    const severity = -dueDays >= 7 ? 'high' : -dueDays >= 3 ? 'medium' : 'low';
+    const severity = -dueDays >= 7 ? 'high' : 'medium';
     signals.push({ id:'overdue', severity, label:`Next action ${-dueDays}d overdue` });
   }
 
@@ -577,21 +577,22 @@ function getDealHealth(d) {
   }
 
   // 5. Zero engagement on non-new deals
-  if (createdAge > 10 && (d.meeting_count || 0) === 0 && (d.email_count || 0) === 0) {
-    signals.push({ id:'no_engagement', severity:'medium', label:'Zero meetings & emails logged' });
+  if (createdAge > 7 && (d.meeting_count || 0) === 0 && (d.email_count || 0) === 0) {
+    signals.push({ id:'no_engagement', severity: ['proposal','procurement'].includes(d.stage) ? 'medium' : 'low', label:'Zero meetings & emails logged' });
   }
 
-  // 6. Commercial deal missing value
+  // 6. Commercial deal missing value — medium, it's a real data gap
   if (['proposal','procurement'].includes(d.stage) && !d.deal_value) {
-    signals.push({ id:'no_value', severity:'low', label:'No deal value set' });
+    signals.push({ id:'no_value', severity:'medium', label:'No deal value set' });
   }
 
   // Compute overall health
   const highCount = signals.filter(s => s.severity === 'high').length;
   const medCount = signals.filter(s => s.severity === 'medium').length;
+  const lowCount = signals.filter(s => s.severity === 'low').length;
   let health = 'healthy';
   if (highCount >= 2 || (highCount >= 1 && medCount >= 1)) health = 'critical';
-  else if (highCount >= 1 || medCount >= 2) health = 'at_risk';
+  else if (highCount >= 1 || medCount >= 2 || (medCount >= 1 && lowCount >= 1)) health = 'at_risk';
   else if (medCount >= 1 || signals.length >= 2) health = 'watch';
 
   return { health, signals, highCount, medCount };
