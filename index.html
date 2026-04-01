@@ -1411,8 +1411,8 @@ function AccountGrowthVsNewBusiness({ deals, teamMembers, onDealClick }) {
         </div>
         <div className="rev-section-body">
           <div className="split-col">
-            <div className="split-col-header"><span>{growth.length} deals</span><span>Expanding existing</span></div>
-            {growth.length === 0 && <div className="rev-empty">No account growth deals tagged</div>}
+            <div className="split-col-header"><span>{growth.length} opportunities</span><span>Expanding existing</span></div>
+            {growth.length === 0 && <div className="rev-empty">No account growth opportunities tagged</div>}
             {renderDeals(growth)}
           </div>
         </div>
@@ -1424,8 +1424,8 @@ function AccountGrowthVsNewBusiness({ deals, teamMembers, onDealClick }) {
         </div>
         <div className="rev-section-body">
           <div className="split-col">
-            <div className="split-col-header"><span>{newBiz.length} deals</span><span>Net new logos</span></div>
-            {newBiz.length === 0 && <div className="rev-empty">No new business deals</div>}
+            <div className="split-col-header"><span>{newBiz.length} opportunities</span><span>Net new logos</span></div>
+            {newBiz.length === 0 && <div className="rev-empty">No new business opportunities</div>}
             {renderDeals(newBiz)}
           </div>
         </div>
@@ -1807,7 +1807,7 @@ function App() {
     const closing30Weighted = closing30.reduce((s, d) => s + (d.deal_value || 0) * ((d.close_probability || 0) / 100), 0);
     // At risk = stalled + overdue
     const atRisk = deals.filter(d => d.status === 'stalled' || (daysUntil(d.next_action_due) < 0 && d.status === 'active'));
-    // Avg close probability (commercial deals with value)
+    // Avg close probability (commercial opportunities with value)
     const probDeals = commercial.filter(d => d.close_probability > 0);
     const avgProb = probDeals.length ? Math.round(probDeals.reduce((s,d) => s + d.close_probability, 0) / probDeals.length) : 0;
     return { total:deals.length, active:active.length, stalled:stalled.length, overdue:overdue.length, val, w, preCommercial:preCommercial.length, commercial:commercial.length, preVal, comVal, proposals:proposals.length, proposalVal, closing30:closing30.length, closing30Val, closing30Weighted, atRisk:atRisk.length, avgProb };
@@ -1960,9 +1960,9 @@ function App() {
           <div className="stat-sub">Weighted: {fmt(Math.round(stats.w))}</div>
         </div>
         <div className="stat-card">
-          <div className="stat-label">Active Deals</div>
+          <div className="stat-label">Opportunities</div>
           <div className="stat-row">
-            <div className="stat-value" style={{color:'var(--teal)'}}>{stats.active}</div>
+            <div className="stat-value" style={{color:'var(--teal)'}}>{stats.total}</div>
             <span className="stat-badge" style={{background:'var(--orange-bg)',color:'var(--orange)'}}>{stats.preCommercial} early</span>
           </div>
           <div className="stat-sub">{stats.commercial} in commercial territory</div>
@@ -1993,13 +1993,13 @@ function App() {
           <div className="stat-row">
             <div className="stat-value" style={{color:stats.avgProb>=50?'var(--accent)':stats.avgProb>=30?'var(--orange)':'var(--red)'}}>{stats.avgProb}%</div>
           </div>
-          <div className="stat-sub">Across {stats.commercial} commercial deals</div>
+          <div className="stat-sub">Across {stats.commercial} commercial opportunities</div>
         </div>
       </div>
 
       {/* Filters */}
       <div className="filter-bar">
-        <input className="search-input" placeholder="Search deals…" value={search} onChange={e=>setSearch(e.target.value)} />
+        <input className="search-input" placeholder="Search opportunities…" value={search} onChange={e=>setSearch(e.target.value)} />
         <button className={`filter-chip ${stageF==='all'?'active':''}`} onClick={()=>setStageF('all')}>All</button>
         {STAGES.map(s => <button key={s.key} className={`filter-chip ${stageF===s.key?'active':''}`} onClick={()=>setStageF(s.key)}>{s.label}</button>)}
         <div className="filter-sep"></div>
