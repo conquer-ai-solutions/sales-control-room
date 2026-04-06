@@ -473,6 +473,58 @@
 
   .rev-empty { padding:24px; text-align:center; color:var(--text-muted); font-size:12px; }
 
+  /* AUTH SCREEN */
+  .auth-wrapper { display:flex; align-items:center; justify-content:center; min-height:100vh; background:var(--bg); padding:24px; }
+  .auth-card { background:var(--bg-card); border:1px solid var(--border); border-radius:10px; padding:40px 36px; width:100%; max-width:400px; box-shadow:0 20px 60px rgba(0,0,0,0.5); animation:fadeIn 0.3s ease; text-align:center; }
+  .auth-accent-bar { height:3px; background:var(--accent); border-radius:10px 10px 0 0; margin:-40px -36px 32px; }
+  .auth-logo { display:flex; align-items:baseline; gap:2px; justify-content:center; margin-bottom:24px; }
+  .auth-logo-conquer { font-size:22px; font-weight:700; color:var(--text); }
+  .auth-logo-ai { font-size:22px; font-weight:300; color:var(--text-dim); }
+  .auth-title { font-size:16px; font-weight:600; color:var(--text); margin-bottom:8px; }
+  .auth-sub { font-size:13px; color:var(--text-muted); margin-bottom:28px; line-height:1.5; }
+  .google-btn { display:flex; align-items:center; justify-content:center; gap:10px; width:100%; padding:12px 20px; border-radius:var(--radius); border:1px solid var(--border); background:var(--bg-elevated); color:var(--text); font-size:14px; font-weight:500; font-family:var(--font); cursor:pointer; transition:all 0.15s; }
+  .google-btn:hover { border-color:var(--accent); background:var(--bg-card-hover); }
+  .auth-error { font-size:12px; color:var(--red); margin-top:16px; padding:8px 12px; background:var(--red-bg); border:1px solid rgba(236,53,64,0.2); border-radius:var(--radius); }
+  .auth-domain-note { font-size:11px; color:var(--text-muted); margin-top:14px; }
+
+  /* USER PILL */
+  .user-pill { display:flex; align-items:center; gap:7px; padding:4px 10px; border-radius:var(--radius); border:1px solid var(--border); }
+  .user-avatar { width:22px; height:22px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; font-size:8px; font-weight:700; color:white; flex-shrink:0; overflow:hidden; }
+  .user-avatar img { width:100%; height:100%; object-fit:cover; }
+  .user-name { font-size:12px; color:var(--text-dim); max-width:110px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .signout-btn { padding:5px 10px; border-radius:var(--radius); border:1px solid var(--border); background:transparent; color:var(--text-muted); cursor:pointer; font-size:11px; font-family:var(--font); transition:all 0.15s; }
+  .signout-btn:hover { border-color:var(--red); color:var(--red); }
+
+  /* AUDIT LOG */
+  .audit-btn { padding:5px 12px; border-radius:var(--radius); border:1px solid var(--border); background:transparent; color:var(--text-muted); cursor:pointer; font-size:11px; font-family:var(--font); transition:all 0.15s; }
+  .audit-btn:hover { border-color:var(--accent); color:var(--accent); }
+  .audit-panel { position:fixed; top:0; right:0; width:480px; max-width:95vw; height:100vh; background:var(--bg-panel); border-left:1px solid var(--border); z-index:201; overflow-y:auto; animation:slideIn 0.2s ease; display:flex; flex-direction:column; }
+  .audit-panel-header { padding:18px 24px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; background:var(--bg-panel); z-index:1; flex-shrink:0; }
+  .audit-panel-title { font-size:14px; font-weight:700; color:var(--text); }
+  .audit-panel-sub { font-size:11px; color:var(--text-muted); margin-top:2px; }
+  .audit-entry { padding:14px 20px; border-bottom:1px solid var(--border); animation:fadeIn 0.2s ease; }
+  .audit-entry:last-child { border-bottom:none; }
+  .audit-entry-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:5px; }
+  .audit-entry-user { display:flex; align-items:center; gap:7px; }
+  .audit-entry-avatar { width:20px; height:20px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; font-size:7px; font-weight:700; color:white; flex-shrink:0; overflow:hidden; }
+  .audit-entry-avatar img { width:100%; height:100%; object-fit:cover; }
+  .audit-entry-name { font-size:12px; font-weight:600; color:var(--text); }
+  .audit-entry-time { font-size:10px; color:var(--text-muted); }
+  .audit-entry-deal { font-size:11px; color:var(--accent); font-weight:600; letter-spacing:0.3px; margin-bottom:5px; }
+  .audit-action-label { display:inline-block; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; padding:2px 7px; border-radius:4px; margin-bottom:6px; }
+  .audit-action-stage { background:var(--teal-bg); color:var(--teal); }
+  .audit-action-edit { background:var(--blue-bg); color:var(--blue); }
+  .audit-change-row { display:flex; align-items:baseline; gap:6px; font-size:11px; color:var(--text-dim); padding:2px 0; flex-wrap:wrap; }
+  .audit-change-field { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-muted); min-width:80px; }
+  .audit-change-from { color:var(--red); }
+  .audit-change-to { color:var(--accent); }
+  .audit-change-arrow { color:var(--text-muted); }
+  .audit-notes { font-size:11px; color:var(--text-dim); font-style:italic; margin-top:5px; padding-top:5px; border-top:1px solid rgba(60,60,60,0.3); }
+  .audit-empty { flex:1; display:flex; align-items:center; justify-content:center; color:var(--text-muted); font-size:12px; flex-direction:column; gap:8px; }
+  .audit-load-more { padding:12px; text-align:center; }
+  .audit-load-more button { padding:6px 16px; border-radius:var(--radius); border:1px solid var(--border); background:transparent; color:var(--text-muted); cursor:pointer; font-size:12px; font-family:var(--font); transition:all 0.15s; }
+  .audit-load-more button:hover { border-color:var(--accent); color:var(--accent); }
+
   /* PASSWORD GATE */
   .gate-wrapper {
     display:flex; align-items:center; justify-content:center;
@@ -1278,7 +1330,7 @@ function RouteToCashTab({ deal }) {
   );
 }
 
-function AccountView({ dealId, deals, teamMembers, clients, onBack, onDealUpdated, onSelectDeal }) {
+function AccountView({ dealId, deals, teamMembers, clients, onBack, onDealUpdated, onSelectDeal, user }) {
   const deal = deals.find(d => d.id === dealId);
   const [activeTab, setActiveTab] = useState('overview');
   const [editing, setEditing] = useState(false);
@@ -1306,6 +1358,26 @@ function AccountView({ dealId, deals, teamMembers, clients, onBack, onDealUpdate
     });
     const { error } = await supabase.from('deals').update(u).eq('id', deal.id);
     if (error) { alert('Error: ' + error.message); return; }
+    if (user) {
+      const auditFields = ['stage','deal_value','status','next_action','next_action_due','champion_name','region','deal_owner_id','close_probability','notes'];
+      const changes = {};
+      auditFields.forEach(k => { if (u[k] !== undefined && String(u[k]??'') !== String(deal[k]??'')) changes[k] = { from: deal[k], to: u[k] }; });
+      if (Object.keys(changes).length > 0) {
+        try {
+          await supabase.from('audit_log').insert({
+            user_email: user.email,
+            user_name: user.user_metadata?.full_name || user.email,
+            user_avatar: user.user_metadata?.avatar_url || null,
+            action: 'deal_edit',
+            entity_type: 'deal',
+            entity_id: deal.id,
+            entity_name: deal.account_name,
+            changes,
+            notes: null
+          });
+        } catch(e) {}
+      }
+    }
     setEditing(false);
     if (onDealUpdated) onDealUpdated(deal.id, u);
   };
@@ -1910,7 +1982,93 @@ function ClientsView({ clients, deals, teamMembers, onDealClick }) {
   );
 }
 
-function App() {
+function AuditLogPanel({ onClose }) {
+  const [entries, setEntries] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(0);
+  const PAGE_SIZE = 30;
+
+  const load = async (pg = 0) => {
+    setLoading(true);
+    const { data } = await supabase
+      .from('audit_log')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .range(pg * PAGE_SIZE, pg * PAGE_SIZE + PAGE_SIZE - 1);
+    if (data) setEntries(pg === 0 ? data : prev => [...prev, ...data]);
+    setLoading(false);
+  };
+
+  useEffect(() => { load(0); }, []);
+
+  const fmtTime = (ts) => {
+    const d = new Date(ts);
+    const now = new Date();
+    const diff = Math.floor((now - d) / 1000);
+    if (diff < 60) return 'just now';
+    if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+    if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+    return d.toLocaleDateString('en-GB', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+  };
+
+  const fieldLabel = (k) => ({ stage:'Stage', deal_value:'Value', status:'Status', next_action:'Next Action', next_action_due:'Due Date', champion_name:'Champion', deal_owner_id:'Owner', region:'Region', close_probability:'Probability', notes:'Notes' }[k] || k);
+
+  return (
+    <>
+      <div className="overlay" onClick={onClose}></div>
+      <div className="audit-panel">
+        <div className="audit-panel-header">
+          <div>
+            <div className="audit-panel-title">Audit Log</div>
+            <div className="audit-panel-sub">All deal changes by team members</div>
+          </div>
+          <button className="panel-close" onClick={onClose}>✕</button>
+        </div>
+        {loading && entries.length === 0 && <div className="audit-empty"><div className="loading-spinner"></div></div>}
+        {!loading && entries.length === 0 && <div className="audit-empty"><div>No activity recorded yet</div><div style={{fontSize:10,color:'var(--text-muted)'}}>Changes will appear here</div></div>}
+        {entries.map(e => {
+          const changes = e.changes || {};
+          const isStage = e.action === 'stage_change';
+          const name = e.user_name || e.user_email;
+          const av = initials(name);
+          return (
+            <div key={e.id} className="audit-entry">
+              <div className="audit-entry-top">
+                <div className="audit-entry-user">
+                  <div className="audit-entry-avatar">
+                    {e.user_avatar ? <img src={e.user_avatar} alt="" /> : av}
+                  </div>
+                  <span className="audit-entry-name">{name}</span>
+                </div>
+                <span className="audit-entry-time">{fmtTime(e.created_at)}</span>
+              </div>
+              <div className="audit-entry-deal">{e.entity_name}</div>
+              <span className={`audit-action-label ${isStage ? 'audit-action-stage' : 'audit-action-edit'}`}>
+                {isStage ? 'Stage Change' : 'Deal Edit'}
+              </span>
+              {Object.entries(changes).map(([k, v]) => (
+                <div key={k} className="audit-change-row">
+                  <span className="audit-change-field">{fieldLabel(k)}</span>
+                  <span className="audit-change-from">{String(v.from ?? '—')}</span>
+                  <span className="audit-change-arrow">→</span>
+                  <span className="audit-change-to">{String(v.to ?? '—')}</span>
+                </div>
+              ))}
+              {e.notes && <div className="audit-notes">"{e.notes}"</div>}
+            </div>
+          );
+        })}
+        {!loading && entries.length >= PAGE_SIZE && (
+          <div className="audit-load-more">
+            <button onClick={() => { const np = page + 1; setPage(np); load(np); }}>Load more</button>
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
+
+function App({ user }) {
   const [deals, setDeals] = useState([]);
   const [team, setTeam] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -1927,6 +2085,7 @@ function App() {
   const [statFilter, setStatFilter] = useState(null);
   const [toast, setToast] = useState(null);
   const [ts, setTs] = useState(new Date());
+  const [auditOpen, setAuditOpen] = useState(false);
 
   const [clients, setClients] = useState([]);
 
@@ -2050,6 +2209,7 @@ function App() {
       setDeals(prev => prev.map(d => d.id === deal.id ? {...d, stage: deal.stage, stage_entered_at: deal.stage_entered_at, notes: deal.notes} : d));
       flash('Error moving deal: ' + error.message);
     } else {
+      logAudit('stage_change', deal.id, deal.account_name, { stage: { from: deal.stage, to: targetStage } }, dragNotes.trim() || null);
       flash(`Moved ${deal.account_name} to ${STAGE_MAP[targetStage]?.label}${deal.intel_engagement_id ? ' — Intel sync queued' : ''}`);
     }
   };
@@ -2057,6 +2217,22 @@ function App() {
   const cancelDrop = () => { setDragTarget(null); setDragNotes(''); };
 
   const flash = msg => { setToast(msg); setTimeout(() => setToast(null), 2500); };
+
+  const logAudit = async (action, entityId, entityName, changes, notes) => {
+    try {
+      await supabase.from('audit_log').insert({
+        user_email: user.email,
+        user_name: user.user_metadata?.full_name || user.email,
+        user_avatar: user.user_metadata?.avatar_url || null,
+        action,
+        entity_type: 'deal',
+        entity_id: entityId,
+        entity_name: entityName,
+        changes,
+        notes: notes || null
+      });
+    } catch(e) { /* audit failures are silent */ }
+  };
 
   const toggleStatFilter = (key) => {
     if (statFilter === key) { setStatFilter(null); }
@@ -2070,6 +2246,10 @@ function App() {
     });
     const { error } = await supabase.from('deals').update(u).eq('id', sel.id);
     if (error) { flash('Error: ' + error.message); return; }
+    const auditFields = ['stage','deal_value','status','next_action','next_action_due','champion_name','region','deal_owner_id','close_probability','notes'];
+    const changes = {};
+    auditFields.forEach(k => { if (u[k] !== undefined && String(u[k]??'') !== String(sel[k]??'')) changes[k] = { from: sel[k], to: u[k] }; });
+    if (Object.keys(changes).length > 0) logAudit('deal_edit', sel.id, sel.account_name, changes, null);
     setDeals(prev => prev.map(d => d.id === sel.id ? {...d, ...u} : d));
     setSel(prev => ({...prev, ...u}));
     setEditing(false);
@@ -2084,7 +2264,7 @@ function App() {
   );
 
   if (page === 'account') {
-    return <AccountView dealId={selId} deals={deals} teamMembers={team} clients={clients} onBack={() => {setPage('board'); setSelId(null);}} onDealUpdated={(id, u) => setDeals(prev => prev.map(d => d.id === id ? {...d, ...u} : d))} onSelectDeal={(id) => {setSelId(id); setPage('account');}} />;
+    return <AccountView dealId={selId} deals={deals} teamMembers={team} clients={clients} onBack={() => {setPage('board'); setSelId(null);}} onDealUpdated={(id, u) => setDeals(prev => prev.map(d => d.id === id ? {...d, ...u} : d))} onSelectDeal={(id) => {setSelId(id); setPage('account');}} user={user} />;
   }
 
   if (page === 'revenue') {
@@ -2106,7 +2286,12 @@ function App() {
               <button className="view-btn" onClick={()=>setPage('clients')}>Clients</button>
             </div>
             <button className="refresh-btn" onClick={load}>↻ Refresh</button>
-            <span className="timestamp">{ts.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span>
+            <button className="audit-btn" onClick={() => setAuditOpen(true)}>Audit Log</button>
+            <div className="user-pill">
+              <div className="user-avatar">{user.user_metadata?.avatar_url ? <img src={user.user_metadata.avatar_url} alt="" /> : initials(user.user_metadata?.full_name || user.email)}</div>
+              <span className="user-name">{user.user_metadata?.full_name || user.email.split('@')[0]}</span>
+            </div>
+            <button className="signout-btn" onClick={() => supabase.auth.signOut()}>Sign out</button>
           </div>
         </div>
         <RevenueView deals={deals} teamMembers={team} onDealClick={(id) => {setSelId(id); setPage('account');}} />
@@ -2134,7 +2319,12 @@ function App() {
               <button className="view-btn active" style={{background:'var(--accent)',color:'white'}}>Clients</button>
             </div>
             <button className="refresh-btn" onClick={load}>↻ Refresh</button>
-            <span className="timestamp">{ts.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span>
+            <button className="audit-btn" onClick={() => setAuditOpen(true)}>Audit Log</button>
+            <div className="user-pill">
+              <div className="user-avatar">{user.user_metadata?.avatar_url ? <img src={user.user_metadata.avatar_url} alt="" /> : initials(user.user_metadata?.full_name || user.email)}</div>
+              <span className="user-name">{user.user_metadata?.full_name || user.email.split('@')[0]}</span>
+            </div>
+            <button className="signout-btn" onClick={() => supabase.auth.signOut()}>Sign out</button>
           </div>
         </div>
         <ClientsView clients={clients} deals={deals} teamMembers={team} onDealClick={(id) => {setSelId(id); setPage('account');}} />
@@ -2162,7 +2352,12 @@ function App() {
             <button className={`view-btn ${page==='clients'?'active':''}`} onClick={()=>setPage('clients')} style={page==='clients'?{background:'var(--accent)',color:'white'}:{}}>Clients</button>
           </div>
           <button className="refresh-btn" onClick={load}>↻ Refresh</button>
-          <span className="timestamp">{ts.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span>
+          <button className="audit-btn" onClick={() => setAuditOpen(true)}>Audit Log</button>
+          <div className="user-pill">
+            <div className="user-avatar">{user.user_metadata?.avatar_url ? <img src={user.user_metadata.avatar_url} alt="" /> : initials(user.user_metadata?.full_name || user.email)}</div>
+            <span className="user-name">{user.user_metadata?.full_name || user.email.split('@')[0]}</span>
+          </div>
+          <button className="signout-btn" onClick={() => supabase.auth.signOut()}>Sign out</button>
         </div>
       </div>
 
@@ -2536,70 +2731,92 @@ function App() {
       )}
 
       {toast && <div className="toast">{toast}</div>}
+      {auditOpen && <AuditLogPanel onClose={() => setAuditOpen(false)} />}
     </div>
   );
 }
 
-const GATE_PASSWORD = 'conquer2026';
-const SESSION_KEY = 'scr_auth';
+const ALLOWED_DOMAIN = 'conquer.ai';
 
-function PasswordGate({ onUnlock }) {
-  const [pw, setPw] = React.useState('');
-  const [error, setError] = React.useState(false);
-  const [shake, setShake] = React.useState(false);
-
-  const attempt = () => {
-    if (pw === GATE_PASSWORD) {
-      sessionStorage.setItem(SESSION_KEY, '1');
-      onUnlock();
-    } else {
-      setError(true);
-      setShake(true);
-      setTimeout(() => setShake(false), 500);
-    }
+function LoginScreen({ authError, loading }) {
+  const handleGoogle = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.href,
+        queryParams: { hd: ALLOWED_DOMAIN }
+      }
+    });
   };
 
-  const handleKey = (e) => { if (e.key === 'Enter') attempt(); };
-
   return (
-    <div className="gate-wrapper">
-      <div className="gate-card" style={shake ? {animation:'shake 0.4s ease'} : {}}>
-        <div className="gate-accent-bar"></div>
-        <div className="gate-logo">
-          <span className="gate-logo-conquer">Conquer</span>
-          <span className="gate-logo-ai">AI</span>
+    <div className="auth-wrapper">
+      <div className="auth-card">
+        <div className="auth-accent-bar"></div>
+        <div className="auth-logo">
+          <span className="auth-logo-conquer">Conquer</span>
+          <span className="auth-logo-ai">AI</span>
         </div>
-        <div className="gate-title">Sales Control Room</div>
-        <div className="gate-sub">Enter your access password to continue</div>
-        <input
-          className={`gate-input${error ? ' error' : ''}`}
-          type="password"
-          placeholder="Password"
-          value={pw}
-          onChange={e => { setPw(e.target.value); setError(false); }}
-          onKeyDown={handleKey}
-          autoFocus
-        />
-        {error && <div className="gate-error">Incorrect password. Try again.</div>}
-        <button className="gate-btn" style={{marginTop: error ? 12 : 0}} onClick={attempt}>Unlock →</button>
+        <div className="auth-title">Sales Control Room</div>
+        <div className="auth-sub">Sign in with your Conquer AI Google account to access the pipeline.</div>
+        <button className="google-btn" onClick={handleGoogle} disabled={loading}>
+          <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
+            <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/>
+            <path d="M3.964 10.71c-.18-.54-.282-1.117-.282-1.71s.102-1.17.282-1.71V4.958H.957C.347 6.173 0 7.548 0 9s.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
+            <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
+          </svg>
+          {loading ? 'Signing in…' : 'Sign in with Google'}
+        </button>
+        {authError && <div className="auth-error">{authError}</div>}
+        <div className="auth-domain-note">Access restricted to @{ALLOWED_DOMAIN} accounts</div>
       </div>
-      <style>{`
-        @keyframes shake {
-          0%,100%{transform:translateX(0)}
-          20%{transform:translateX(-8px)}
-          40%{transform:translateX(8px)}
-          60%{transform:translateX(-6px)}
-          80%{transform:translateX(6px)}
-        }
-      `}</style>
     </div>
   );
 }
 
 function Root() {
-  const [authed, setAuthed] = React.useState(() => sessionStorage.getItem(SESSION_KEY) === '1');
-  if (!authed) return <PasswordGate onUnlock={() => setAuthed(true)} />;
-  return <App />;
+  const [session, setSession] = React.useState(null);
+  const [authLoading, setAuthLoading] = React.useState(true);
+  const [authError, setAuthError] = React.useState(null);
+
+  React.useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        if (!session.user.email.endsWith('@' + ALLOWED_DOMAIN)) {
+          supabase.auth.signOut();
+          setAuthError('Access restricted to @' + ALLOWED_DOMAIN + ' accounts.');
+        } else {
+          setSession(session);
+        }
+      }
+      setAuthLoading(false);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session && !session.user.email.endsWith('@' + ALLOWED_DOMAIN)) {
+        supabase.auth.signOut();
+        setAuthError('Access restricted to @' + ALLOWED_DOMAIN + ' accounts.');
+        setSession(null);
+      } else {
+        setSession(session);
+        if (session) setAuthError(null);
+      }
+      setAuthLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  if (authLoading) return (
+    <div className="loading-screen">
+      <div className="loading-spinner"></div>
+      <div style={{color:'var(--text-muted)',fontSize:13,fontWeight:500}}>Authenticating…</div>
+    </div>
+  );
+
+  if (!session) return <LoginScreen authError={authError} />;
+  return <App user={session.user} />;
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(<Root />);
