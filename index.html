@@ -472,6 +472,121 @@
   .pathway-step-due { font-size:10px; color:var(--text-muted); }
 
   .rev-empty { padding:24px; text-align:center; color:var(--text-muted); font-size:12px; }
+
+  /* PASSWORD GATE */
+  .gate-wrapper {
+    display:flex; align-items:center; justify-content:center;
+    min-height:100vh; background:var(--bg);
+    padding:24px;
+  }
+  .gate-card {
+    background:var(--bg-card); border:1px solid var(--border);
+    border-radius:10px; padding:40px 36px; width:100%; max-width:380px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.5);
+    animation:fadeIn 0.3s ease;
+  }
+  .gate-logo { display:flex; align-items:baseline; gap:2px; margin-bottom:28px; }
+  .gate-logo-conquer { font-size:20px; font-weight:700; color:var(--text); }
+  .gate-logo-ai { font-size:20px; font-weight:300; color:var(--text-dim); }
+  .gate-title { font-size:14px; font-weight:600; color:var(--text); margin-bottom:6px; }
+  .gate-sub { font-size:12px; color:var(--text-muted); margin-bottom:24px; }
+  .gate-input {
+    width:100%; padding:10px 14px; border-radius:var(--radius);
+    border:1px solid var(--border); background:var(--bg);
+    color:var(--text); font-size:14px; font-family:var(--font);
+    transition:border-color 0.15s; margin-bottom:12px;
+  }
+  .gate-input:focus { outline:none; border-color:var(--accent); }
+  .gate-input::placeholder { color:var(--text-muted); }
+  .gate-input.error { border-color:var(--red); }
+  .gate-btn {
+    width:100%; padding:10px; border-radius:var(--radius); border:none;
+    background:var(--accent); color:white; font-size:14px; font-weight:600;
+    font-family:var(--font); cursor:pointer; transition:background 0.15s;
+  }
+  .gate-btn:hover { background:var(--accent-hover); }
+  .gate-error { font-size:12px; color:var(--red); margin-top:8px; text-align:center; }
+  .gate-accent-bar { height:3px; background:var(--accent); border-radius:3px 3px 0 0; margin:-40px -36px 32px; border-radius:10px 10px 0 0; }
+
+  /* MOBILE RESPONSIVE */
+  @media (max-width:768px) {
+    /* Header */
+    .header { padding:0 16px; height:52px; }
+    .logo-divider { display:none; }
+    .logo-product { display:none; }
+    .timestamp { display:none; }
+    .header-right { gap:6px; }
+    .view-btn { padding:5px 10px; font-size:11px; }
+    .refresh-btn { padding:5px 8px; font-size:11px; }
+
+    /* Stats */
+    .stats-bar { grid-template-columns:repeat(2,1fr); padding:12px 16px 8px; gap:8px; }
+    .stat-value { font-size:20px; }
+
+    /* Filters */
+    .filter-bar { padding:6px 16px 12px; gap:5px; overflow-x:auto; flex-wrap:nowrap; -webkit-overflow-scrolling:touch; }
+    .filter-bar::-webkit-scrollbar { display:none; }
+    .search-input { width:160px; flex-shrink:0; font-size:12px; }
+    .filter-chip { flex-shrink:0; font-size:10px; padding:4px 10px; }
+    .filter-sep { display:none; }
+
+    /* Kanban */
+    .kanban-container { padding:0 12px 24px; gap:8px; }
+    .kanban-col { min-width:240px; }
+    .kanban-cards { max-height:calc(100vh - 300px); }
+
+    /* Table */
+    .table-container { padding:0 16px 24px; }
+    .data-table th:nth-child(5),
+    .data-table td:nth-child(5),
+    .data-table th:nth-child(7),
+    .data-table td:nth-child(7) { display:none; }
+    .data-table th, .data-table td { padding:8px 10px; font-size:12px; }
+
+    /* Account view */
+    .account-header { padding:14px 16px; }
+    .account-header-top { flex-wrap:wrap; gap:10px; }
+    .account-name { font-size:16px; }
+    .account-meta { flex-wrap:wrap; gap:8px; }
+    .header-edit-btn { font-size:11px; padding:5px 12px; }
+    .tab-bar { padding:0 16px; overflow-x:auto; -webkit-overflow-scrolling:touch; flex-wrap:nowrap; }
+    .tab-bar::-webkit-scrollbar { display:none; }
+    .tab-btn { padding:10px 14px; font-size:12px; white-space:nowrap; }
+    .tab-content { padding:16px; max-width:100%; }
+
+    /* Overview hero */
+    .overview-hero { grid-template-columns:1fr; gap:10px; margin-bottom:16px; }
+    .overview-grid { grid-template-columns:1fr; }
+    .pulse-bar { grid-template-columns:repeat(2,1fr); gap:8px; }
+    .timing-bar { grid-template-columns:repeat(2,1fr); gap:8px; }
+    .qual-grid { grid-template-columns:repeat(3,1fr); gap:6px; }
+
+    /* Revenue */
+    .revenue-wrapper { padding:16px; }
+    .revenue-header-stats { grid-template-columns:repeat(2,1fr); gap:8px; }
+    .revenue-grid { grid-template-columns:1fr; gap:12px; }
+
+    /* Detail panel full screen on mobile */
+    .detail-panel { width:100vw; max-width:100vw; }
+
+    /* Stage modal */
+    .stage-modal { padding:20px; }
+
+    /* Waterfall */
+    .waterfall-stages { grid-template-columns:repeat(3,1fr); gap:8px; }
+
+    /* Edit grid */
+    .edit-grid { grid-template-columns:1fr; }
+  }
+
+  @media (max-width:480px) {
+    .stats-bar { grid-template-columns:repeat(2,1fr); padding:10px 12px 6px; }
+    .stat-value { font-size:18px; }
+    .stat-label { font-size:9px; }
+    .kanban-col { min-width:220px; }
+    .revenue-header-stats { grid-template-columns:1fr 1fr; }
+    .waterfall-stages { grid-template-columns:repeat(2,1fr); }
+  }
 </style>
 </head>
 <body>
@@ -2425,7 +2540,69 @@ function App() {
   );
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+const GATE_PASSWORD = 'conquer2026';
+const SESSION_KEY = 'scr_auth';
+
+function PasswordGate({ onUnlock }) {
+  const [pw, setPw] = React.useState('');
+  const [error, setError] = React.useState(false);
+  const [shake, setShake] = React.useState(false);
+
+  const attempt = () => {
+    if (pw === GATE_PASSWORD) {
+      sessionStorage.setItem(SESSION_KEY, '1');
+      onUnlock();
+    } else {
+      setError(true);
+      setShake(true);
+      setTimeout(() => setShake(false), 500);
+    }
+  };
+
+  const handleKey = (e) => { if (e.key === 'Enter') attempt(); };
+
+  return (
+    <div className="gate-wrapper">
+      <div className="gate-card" style={shake ? {animation:'shake 0.4s ease'} : {}}>
+        <div className="gate-accent-bar"></div>
+        <div className="gate-logo">
+          <span className="gate-logo-conquer">Conquer</span>
+          <span className="gate-logo-ai">AI</span>
+        </div>
+        <div className="gate-title">Sales Control Room</div>
+        <div className="gate-sub">Enter your access password to continue</div>
+        <input
+          className={`gate-input${error ? ' error' : ''}`}
+          type="password"
+          placeholder="Password"
+          value={pw}
+          onChange={e => { setPw(e.target.value); setError(false); }}
+          onKeyDown={handleKey}
+          autoFocus
+        />
+        {error && <div className="gate-error">Incorrect password. Try again.</div>}
+        <button className="gate-btn" style={{marginTop: error ? 12 : 0}} onClick={attempt}>Unlock →</button>
+      </div>
+      <style>{`
+        @keyframes shake {
+          0%,100%{transform:translateX(0)}
+          20%{transform:translateX(-8px)}
+          40%{transform:translateX(8px)}
+          60%{transform:translateX(-6px)}
+          80%{transform:translateX(6px)}
+        }
+      `}</style>
+    </div>
+  );
+}
+
+function Root() {
+  const [authed, setAuthed] = React.useState(() => sessionStorage.getItem(SESSION_KEY) === '1');
+  if (!authed) return <PasswordGate onUnlock={() => setAuthed(true)} />;
+  return <App />;
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<Root />);
 </script>
 </body>
 </html>
