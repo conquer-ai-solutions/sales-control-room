@@ -1798,7 +1798,7 @@ function InitiativeCard({ initiative, ownerName, contributorCount, onClick }) {
   );
 }
 
-function LinkDealModal({ initiativeId, onClose, onLinked }) {
+function LinkDealModal({ initiativeId, onClose, onLinked, currentUser }) {
   const [search, setSearch] = useStateI('');
   const [deals, setDeals] = useStateI([]);
   const [loading, setLoading] = useStateI(true);
@@ -1863,7 +1863,7 @@ function LinkDealModal({ initiativeId, onClose, onLinked }) {
 }
 
 
-function InitiativeModal({ initiative, onClose, onSave }) {
+function InitiativeModal({ initiative, onClose, onSave, currentUser }) {
   var isEdit = !!initiative;
   const [title, setTitle] = useStateI(initiative ? initiative.title : '');
   const [description, setDescription] = useStateI(initiative ? (initiative.description || '') : '');
@@ -2005,7 +2005,7 @@ function InitiativeModal({ initiative, onClose, onSave }) {
 }
 
 
-function InitiativeDetail({ initiative, ownerName, contributorCount, onBack, onUpdate, onEdit }) {
+function InitiativeDetail({ initiative, ownerName, contributorCount, onBack, onUpdate, onEdit, currentUser }) {
   const [updates, setUpdates] = useStateI([]);
   const [members, setMembers] = useStateI([]);
   const [linkedDeals, setLinkedDeals] = useStateI([]);
@@ -2112,7 +2112,7 @@ function InitiativeDetail({ initiative, ownerName, contributorCount, onBack, onU
           </div>
         )}
         <button className="btn-link-deals" onClick={function() { setShowLinkDeal(true); }} style={{marginTop:'1rem'}}>+ Link a Deal</button>
-        {showLinkDeal && <LinkDealModal initiativeId={initiative.id} onClose={function() { setShowLinkDeal(false); }} onLinked={function() { setShowLinkDeal(false); supabase.from('initiative_deal_links').select('*, deals(id, account_name, project_name)').eq('initiative_id', initiative.id).order('linked_at', {ascending:false}).then(function(r) { setLinkedDeals(r.data||[]); }); }} />}
+        {showLinkDeal && <LinkDealModal currentUser={currentUser} initiativeId={initiative.id} onClose={function() { setShowLinkDeal(false); }} onLinked={function() { setShowLinkDeal(false); supabase.from('initiative_deal_links').select('*, deals(id, account_name, project_name)').eq('initiative_id', initiative.id).order('linked_at', {ascending:false}).then(function(r) { setLinkedDeals(r.data||[]); }); }} />}
       </div>
 
       <div className="detail-section">
@@ -2143,7 +2143,7 @@ function InitiativeDetail({ initiative, ownerName, contributorCount, onBack, onU
 }
 
 
-function InitiativesScreen() {
+function InitiativesScreen({currentUser}) {
   const [initiatives, setInitiatives] = useStateI([]);
   const [members, setMembers] = useStateI([]);
   const [loading, setLoading] = useStateI(true);
@@ -2209,7 +2209,8 @@ function InitiativesScreen() {
     var init = initiatives.find(function(i) { return i.id === selectedInitiative; });
     if (!init) { setSelectedInitiative(null); return null; }
     return <InitiativeDetail
-      initiative={init}
+      currentUser={currentUser}
+                  initiative={init}
       ownerName={getOwnerName(init.id)}
       contributorCount={getContributorCount(init.id)}
       onBack={function() { setSelectedInitiative(null); }}
@@ -2273,7 +2274,7 @@ function InitiativesScreen() {
         </div>
       )}
 
-      {showModal && <InitiativeModal initiative={editInitiative} onClose={function() { setShowModal(false); setEditInitiative(null); }} onSave={function() { setShowModal(false); setEditInitiative(null); loadData(); }} />}
+      {showModal && <InitiativeModal currentUser={currentUser} initiative={editInitiative} onClose={function() { setShowModal(false); setEditInitiative(null); }} onSave={function() { setShowModal(false); setEditInitiative(null); loadData(); }} />}
     </div>
   );
 }
@@ -2557,7 +2558,7 @@ function App() {
 
   // Check admin screen access
   
-      if (page === 'initiatives') { return (<InitiativesScreen />); }
+      if (page === 'initiatives') { return (<InitiativesScreen currentUser={user} />); }
       if (page === 'admin') {
     if (!canAccessScreen('admin')) {
       return (
