@@ -597,6 +597,177 @@
   .deal-edit-footer { padding:16px 24px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:8px; position:sticky; bottom:0; background:var(--bg-panel); }
   .share-copied { position:fixed; top:20px; left:50%; transform:translateX(-50%); padding:8px 20px; background:var(--accent); color:white; border-radius:20px; font-size:12px; font-weight:600; z-index:400; animation:fadeIn 0.2s ease; box-shadow:0 4px 16px rgba(55,165,132,0.3); }
 
+
+
+/* ===== INITIATIVES FEATURE STYLES ===== */
+.initiatives-screen { display:flex; flex-direction:column; height:100%; gap:1.5rem; padding:2rem; background-color:var(--bg); color:var(--text); overflow-y:auto; }
+.initiatives-header { display:flex; justify-content:space-between; align-items:center; gap:1rem; }
+.initiatives-header h1 { font-size:2rem; font-weight:700; margin:0; color:var(--text); }
+.initiatives-header-actions { display:flex; gap:0.75rem; align-items:center; }
+.btn-new-initiative { padding:0.75rem 1.5rem; background-color:var(--accent); color:white; border:none; border-radius:var(--radius); font-weight:600; font-size:0.95rem; cursor:pointer; transition:background-color 0.2s ease; }
+.btn-new-initiative:hover { background-color:var(--accent-hover); }
+.btn-new-initiative:active { transform:scale(0.98); }
+.initiatives-filters { display:flex; gap:1.5rem; flex-wrap:wrap; align-items:center; padding:1.25rem; background-color:var(--bg-card); border-radius:var(--radius); border:1px solid var(--border); }
+.filter-group { display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap; }
+.filter-label { font-size:0.85rem; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-dim); }
+.filter-pills { display:flex; gap:0.5rem; flex-wrap:wrap; }
+.filter-pill { padding:0.5rem 1rem; background-color:var(--bg); color:var(--text-dim); border:1px solid var(--border); border-radius:var(--radius); cursor:pointer; transition:all 0.2s ease; font-size:0.9rem; font-weight:500; user-select:none; }
+.filter-pill:hover { border-color:var(--accent); color:var(--accent); }
+.filter-pill.active { background-color:var(--accent); color:white; border-color:var(--accent); }
+.priority-filter { display:flex; gap:0.5rem; align-items:center; }
+.priority-dot { width:0.75rem; height:0.75rem; border-radius:50%; }
+.priority-dot.low { background-color:#6b7280; }
+.priority-dot.medium { background-color:var(--warning); }
+.priority-dot.high { background-color:var(--danger); }
+.initiatives-search { flex:1; min-width:200px; padding:0.75rem 1rem; background-color:var(--bg); border:1px solid var(--border); border-radius:var(--radius); color:var(--text); font-size:0.95rem; transition:all 0.2s ease; }
+.initiatives-search:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(20,184,166,0.1); }
+.initiatives-search::placeholder { color:var(--text-muted); }
+.initiatives-stats { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:1rem; }
+.stat-card { padding:1.25rem; background-color:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); text-align:center; transition:all 0.2s ease; }
+.stat-card:hover { background-color:var(--bg-card-hover); border-color:var(--accent); }
+.stat-label { font-size:0.8rem; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-dim); margin-bottom:0.5rem; }
+.stat-value { font-size:2rem; font-weight:700; color:var(--accent); }
+.stat-card.muted .stat-value { color:var(--text-dim); }
+.initiatives-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:1.5rem; }
+.initiative-card { padding:1.5rem; background-color:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); cursor:pointer; transition:all 0.3s ease; display:flex; flex-direction:column; gap:1rem; height:100%; }
+.initiative-card:hover { background-color:var(--bg-card-hover); border-color:var(--accent); transform:translateY(-4px); box-shadow:0 8px 24px rgba(0,0,0,0.3); }
+.card-header { display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; }
+.card-title { font-size:1.1rem; font-weight:700; margin:0; color:var(--text); flex:1; line-height:1.3; }
+
+.card-badge { display:inline-block; padding:0.4rem 0.8rem; font-size:0.75rem; font-weight:600; text-transform:uppercase; border-radius:var(--radius); white-space:nowrap; }
+.card-badge.not_started { background-color:rgba(107,114,128,0.15); color:#9ca3af; }
+.card-badge.in_progress { background-color:rgba(20,184,166,0.15); color:var(--accent); }
+.card-badge.on_hold { background-color:rgba(245,158,11,0.15); color:var(--warning); }
+.card-badge.done { background-color:rgba(16,185,129,0.15); color:#10b981; }
+.card-description { font-size:0.9rem; color:var(--text-dim); line-height:1.5; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; text-overflow:ellipsis; }
+.card-meta { display:flex; justify-content:space-between; align-items:center; font-size:0.85rem; color:var(--text-dim); padding:0.75rem 0; border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+.card-priority { display:flex; align-items:center; gap:0.4rem; }
+.card-contributors { display:flex; align-items:center; gap:0.4rem; }
+.contributor-count { font-size:0.8rem; color:var(--text-muted); }
+.card-footer { display:flex; justify-content:space-between; align-items:flex-end; gap:1rem; flex-wrap:wrap; }
+.card-owner { font-size:0.85rem; color:var(--text-dim); }
+.card-owner strong { color:var(--text); font-weight:600; }
+.card-target-date { font-size:0.85rem; color:var(--text-muted); white-space:nowrap; }
+.card-tags { display:flex; gap:0.5rem; flex-wrap:wrap; }
+.tag-pill { display:inline-block; padding:0.35rem 0.7rem; background-color:rgba(20,184,166,0.1); color:var(--accent); border-radius:calc(var(--radius)*0.5); font-size:0.75rem; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
+.initiatives-empty { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:4rem 2rem; text-align:center; color:var(--text-dim); }
+.initiatives-empty h3 { font-size:1.3rem; font-weight:600; margin:1rem 0 0.5rem; color:var(--text); }
+.initiatives-empty p { font-size:0.95rem; margin:0 0 1.5rem; max-width:400px; }
+.initiative-detail { display:flex; flex-direction:column; gap:2rem; padding:2rem; background-color:var(--bg); color:var(--text); max-width:1200px; margin:0 auto; width:100%; }
+.detail-header { display:flex; align-items:flex-start; gap:1.5rem; }
+.detail-back-button { padding:0.5rem 1rem; background-color:var(--bg-card); border:1px solid var(--border); color:var(--text); border-radius:var(--radius); cursor:pointer; transition:all 0.2s ease; font-weight:500; white-space:nowrap; }
+.detail-back-button:hover { background-color:var(--bg-card-hover); border-color:var(--accent); color:var(--accent); }
+.detail-title-section { flex:1; }
+.detail-title { font-size:2rem; font-weight:700; margin:0 0 0.75rem; color:var(--text); word-break:break-word; }
+.detail-meta { display:flex; gap:1.5rem; flex-wrap:wrap; align-items:center; }
+.detail-badge { padding:0.5rem 1rem; font-size:0.85rem; font-weight:600; text-transform:uppercase; border-radius:var(--radius); }
+.detail-badge.not_started { background-color:rgba(107,114,128,0.15); color:#9ca3af; }
+.detail-badge.in_progress { background-color:rgba(20,184,166,0.15); color:var(--accent); }
+.detail-badge.on_hold { background-color:rgba(245,158,11,0.15); color:var(--warning); }
+.detail-badge.done { background-color:rgba(16,185,129,0.15); color:#10b981; }
+.detail-actions { display:flex; gap:0.75rem; }
+.btn-edit { padding:0.6rem 1.2rem; background-color:var(--accent); color:white; border:none; border-radius:var(--radius); font-weight:600; cursor:pointer; transition:background-color 0.2s ease; }
+.btn-edit:hover { background-color:var(--accent-hover); }
+.detail-section { padding:1.5rem; background-color:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); }
+.section-title { font-size:1.1rem; font-weight:700; margin:0 0 1.25rem; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-dim); }
+.detail-description { font-size:0.95rem; line-height:1.6; color:var(--text-dim); white-space:pre-wrap; word-break:break-word; }
+.detail-empty { font-size:0.9rem; color:var(--text-muted); font-style:italic; }
+
+.members-list { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:1rem; }
+.member-item { padding:1rem; background-color:var(--bg); border:1px solid var(--border); border-radius:var(--radius); display:flex; flex-direction:column; gap:0.5rem; }
+.member-role { font-size:0.75rem; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; color:var(--accent); }
+.member-name { font-weight:600; color:var(--text); font-size:0.95rem; }
+.member-email { font-size:0.8rem; color:var(--text-muted); }
+.initiative-activity { display:flex; flex-direction:column; gap:1.5rem; }
+.activity-item { display:flex; gap:1rem; padding:1rem; background-color:var(--bg); border:1px solid var(--border); border-radius:var(--radius); }
+.activity-avatar { width:2.5rem; height:2.5rem; border-radius:50%; background-color:var(--accent); color:white; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.9rem; flex-shrink:0; }
+.activity-content { flex:1; display:flex; flex-direction:column; gap:0.5rem; }
+.activity-author { font-weight:600; color:var(--text); font-size:0.95rem; }
+.activity-time { font-size:0.8rem; color:var(--text-muted); }
+.activity-message { font-size:0.9rem; color:var(--text-dim); line-height:1.5; white-space:pre-wrap; word-break:break-word; }
+.activity-input-area { display:flex; flex-direction:column; gap:0.75rem; padding:1rem; background-color:var(--bg); border:1px solid var(--border); border-radius:var(--radius); margin-top:0.5rem; }
+.activity-textarea { width:100%; padding:0.75rem; background-color:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); color:var(--text); font-family:inherit; font-size:0.95rem; min-height:80px; resize:vertical; transition:all 0.2s ease; }
+.activity-textarea:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(20,184,166,0.1); }
+.activity-textarea::placeholder { color:var(--text-muted); }
+.activity-button-group { display:flex; gap:0.5rem; justify-content:flex-end; }
+.btn-submit-activity { padding:0.6rem 1.2rem; background-color:var(--accent); color:white; border:none; border-radius:var(--radius); font-weight:600; cursor:pointer; transition:background-color 0.2s ease; font-size:0.9rem; }
+.btn-submit-activity:hover { background-color:var(--accent-hover); }
+.btn-submit-activity:disabled { background-color:var(--text-muted); cursor:not-allowed; }
+.linked-deals-list { display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:1rem; }
+.linked-deal-item { padding:1rem; background-color:var(--bg); border:1px solid var(--border); border-radius:var(--radius); display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; }
+.deal-info { flex:1; }
+.deal-name { font-weight:600; color:var(--text); margin-bottom:0.3rem; font-size:0.95rem; }
+.deal-note { font-size:0.85rem; color:var(--text-dim); margin-bottom:0.3rem; }
+.deal-date { font-size:0.8rem; color:var(--text-muted); }
+.btn-unlink { padding:0.4rem 0.8rem; background-color:rgba(239,68,68,0.1); color:var(--danger); border:none; border-radius:var(--radius); font-size:0.8rem; cursor:pointer; transition:all 0.2s ease; white-space:nowrap; }
+.btn-unlink:hover { background-color:rgba(239,68,68,0.2); }
+.btn-link-deals { padding:0.75rem 1.5rem; background-color:var(--bg-card); border:1px solid var(--border); color:var(--text); border-radius:var(--radius); cursor:pointer; transition:all 0.2s ease; font-weight:600; font-size:0.9rem; }
+.btn-link-deals:hover { background-color:var(--bg-card-hover); border-color:var(--accent); color:var(--accent); }
+.modal-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background-color:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:1000; padding:1rem; animation:fadeIn 0.2s ease; }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+.modal { background-color:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:2rem; max-width:600px; width:100%; max-height:90vh; overflow-y:auto; animation:slideUp 0.3s ease; box-shadow:0 20px 60px rgba(0,0,0,0.5); }
+@keyframes slideUp { from { transform:translateY(20px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+.modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; padding-bottom:1rem; border-bottom:1px solid var(--border); }
+.modal-title { font-size:1.5rem; font-weight:700; margin:0; color:var(--text); }
+.btn-close-modal { background:none; border:none; color:var(--text-dim); font-size:1.5rem; cursor:pointer; transition:color 0.2s ease; padding:0; width:2rem; height:2rem; display:flex; align-items:center; justify-content:center; }
+.btn-close-modal:hover { color:var(--text); }
+
+.form-group { display:flex; flex-direction:column; gap:0.5rem; margin-bottom:1.25rem; }
+.form-label { font-weight:600; color:var(--text); font-size:0.9rem; }
+.form-input, .form-textarea, .form-select { padding:0.75rem; background-color:var(--bg); border:1px solid var(--border); border-radius:var(--radius); color:var(--text); font-family:inherit; font-size:0.95rem; transition:all 0.2s ease; }
+.form-input:focus, .form-textarea:focus, .form-select:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(20,184,166,0.1); }
+.form-input::placeholder, .form-textarea::placeholder { color:var(--text-muted); }
+.form-textarea { resize:vertical; min-height:100px; }
+.form-select { cursor:pointer; }
+.form-checkbox-group { display:flex; flex-direction:column; gap:0.5rem; }
+.form-checkbox { display:flex; align-items:center; gap:0.6rem; cursor:pointer; user-select:none; }
+.form-checkbox input[type="checkbox"] { cursor:pointer; accent-color:var(--accent); width:1.1rem; height:1.1rem; }
+.form-checkbox label { cursor:pointer; color:var(--text-dim); font-size:0.95rem; }
+.form-checkbox input[type="checkbox"]:checked + label { color:var(--text); font-weight:500; }
+.tags-input-container { display:flex; flex-direction:column; gap:0.5rem; }
+.tags-display { display:flex; gap:0.5rem; flex-wrap:wrap; min-height:1.8rem; align-items:center; }
+.tag-display { padding:0.4rem 0.8rem; background-color:rgba(20,184,166,0.15); color:var(--accent); border-radius:calc(var(--radius)*0.5); font-size:0.85rem; font-weight:500; display:inline-flex; align-items:center; gap:0.4rem; }
+.tag-remove { cursor:pointer; font-weight:700; transition:transform 0.2s ease; }
+.tag-remove:hover { transform:scale(1.2); }
+.modal-buttons { display:flex; gap:0.75rem; justify-content:flex-end; margin-top:2rem; padding-top:1rem; border-top:1px solid var(--border); }
+.btn-primary, .btn-secondary { padding:0.75rem 1.5rem; border:none; border-radius:var(--radius); font-weight:600; font-size:0.95rem; cursor:pointer; transition:all 0.2s ease; }
+.btn-primary { background-color:var(--accent); color:white; }
+.btn-primary:hover { background-color:var(--accent-hover); }
+.btn-primary:disabled { background-color:var(--text-muted); cursor:not-allowed; opacity:0.6; }
+.btn-secondary { background-color:var(--bg); color:var(--text); border:1px solid var(--border); }
+.btn-secondary:hover { background-color:var(--bg-card-hover); border-color:var(--accent); color:var(--accent); }
+.link-deal-modal { max-width:500px; }
+.deal-search-input { padding:0.75rem; background-color:var(--bg); border:1px solid var(--border); border-radius:var(--radius); color:var(--text); font-size:0.95rem; margin-bottom:1rem; width:100%; transition:all 0.2s ease; }
+.deal-search-input:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(20,184,166,0.1); }
+.deal-search-input::placeholder { color:var(--text-muted); }
+.deals-list { display:flex; flex-direction:column; gap:0.5rem; max-height:400px; overflow-y:auto; }
+.deal-option { padding:0.75rem; background-color:var(--bg); border:1px solid var(--border); border-radius:var(--radius); cursor:pointer; transition:all 0.2s ease; text-align:left; }
+.deal-option:hover { background-color:var(--bg-card-hover); border-color:var(--accent); }
+.deal-option-name { font-weight:600; color:var(--text); margin-bottom:0.25rem; font-size:0.95rem; }
+.deal-option-meta { font-size:0.8rem; color:var(--text-muted); }
+.deal-note-input { padding:0.75rem; background-color:var(--bg); border:1px solid var(--border); border-radius:var(--radius); color:var(--text); font-size:0.9rem; margin-top:1rem; width:100%; transition:all 0.2s ease; }
+.deal-note-input:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(20,184,166,0.1); }
+.deal-note-input::placeholder { color:var(--text-muted); }
+.deals-empty { padding:2rem 1rem; text-align:center; color:var(--text-muted); font-size:0.9rem; }
+.loading { display:flex; align-items:center; justify-content:center; gap:0.75rem; color:var(--text-dim); font-weight:500; }
+.spinner { display:inline-block; width:1rem; height:1rem; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.error-message { padding:1rem; background-color:rgba(239,68,68,0.15); color:var(--danger); border:1px solid rgba(239,68,68,0.3); border-radius:var(--radius); font-size:0.9rem; margin-bottom:1rem; }
+@media (max-width:768px) {
+  .initiatives-screen { padding:1rem; gap:1rem; }
+  .initiatives-header { flex-direction:column; align-items:flex-start; }
+  .initiatives-filters { flex-direction:column; align-items:flex-start; gap:1rem; }
+  .filter-group { width:100%; }
+  .initiatives-search { width:100%; }
+  .initiatives-grid { grid-template-columns:1fr; }
+  .detail-meta { flex-direction:column; align-items:flex-start; }
+  .modal { max-width:95vw; padding:1.5rem; }
+  .members-list { grid-template-columns:1fr; }
+  .linked-deals-list { grid-template-columns:1fr; }
+  .modal-buttons { flex-direction:column-reverse; }
+  .btn-primary, .btn-secondary { width:100%; }
+}
+
 </style>
 </head>
 <body>
@@ -1591,6 +1762,522 @@ function RevenueView({ deals, teamMembers, onDealClick }) {
   );
 }
 
+
+// ===== INITIATIVES FEATURE - REACT COMPONENTS =====
+const { useState: useStateI, useEffect: useEffectI, useCallback: useCallbackI, useMemo: useMemoI } = React;
+
+function InitiativeCard({ initiative, ownerName, contributorCount, onClick }) {
+  const statusLabels = { not_started: 'Not Started', in_progress: 'In Progress', on_hold: 'On Hold', done: 'Done' };
+  return (
+    <div className="initiative-card" onClick={onClick}>
+      <div className="card-header">
+        <h3 className="card-title">{initiative.title}</h3>
+        <span className={'card-badge ' + initiative.status}>{statusLabels[initiative.status] || initiative.status}</span>
+      </div>
+      {initiative.description && <p className="card-description">{initiative.description}</p>}
+      <div className="card-meta">
+        <div className="card-priority">
+          <span className={'priority-dot ' + initiative.priority}></span>
+          <span>{initiative.priority}</span>
+        </div>
+        <div className="card-contributors">
+          <span className="contributor-count">{contributorCount} member{contributorCount !== 1 ? 's' : ''}</span>
+        </div>
+      </div>
+      {initiative.tags && initiative.tags.length > 0 && (
+        <div className="card-tags">
+          {initiative.tags.slice(0, 3).map(function(tag, i) { return <span key={i} className="tag-pill">{tag}</span>; })}
+          {initiative.tags.length > 3 && <span className="tag-pill">+{initiative.tags.length - 3}</span>}
+        </div>
+      )}
+      <div className="card-footer">
+        <span className="card-owner">Owner: <strong>{ownerName}</strong></span>
+        {initiative.target_date && <span className="card-target-date">{new Date(initiative.target_date).toLocaleDateString()}</span>}
+      </div>
+    </div>
+  );
+}
+
+function LinkDealModal({ initiativeId, onClose, onLinked }) {
+  const [search, setSearch] = useStateI('');
+  const [deals, setDeals] = useStateI([]);
+  const [loading, setLoading] = useStateI(true);
+  const [selectedDeal, setSelectedDeal] = useStateI(null);
+  const [note, setNote] = useStateI('');
+  const [saving, setSaving] = useStateI(false);
+
+  useEffectI(function() {
+    supabase.from('deals').select('id, account_name, project_name, created_at').order('created_at', { ascending: false }).limit(50)
+      .then(function(res) { setDeals(res.data || []); setLoading(false); });
+  }, []);
+
+  var filtered = deals.filter(function(d) {
+    var name = (d.account_name || '') + ' ' + (d.project_name || '');
+    return name.toLowerCase().includes(search.toLowerCase());
+  });
+
+  function handleLink() {
+    if (!selectedDeal) return;
+    setSaving(true);
+    supabase.from('initiative_deal_links').insert([{ initiative_id: initiativeId, deal_id: selectedDeal.id, note: note || null, linked_by: currentUser.id }])
+      .then(function(res) {
+        if (res.error) { alert('Error linking deal: ' + res.error.message); setSaving(false); return; }
+        onLinked();
+      });
+  }
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal link-deal-modal" onClick={function(e) { e.stopPropagation(); }}>
+        <div className="modal-header">
+          <h2 className="modal-title">Link Deal</h2>
+          <button className="btn-close-modal" onClick={onClose}>x</button>
+        </div>
+        <input className="deal-search-input" placeholder="Search deals..." value={search} onChange={function(e) { setSearch(e.target.value); }} />
+        {loading ? <div className="loading"><span className="spinner"></span> Loading deals...</div> : (
+          selectedDeal ? (
+            <div>
+              <div className="deal-option" style={{borderColor:'var(--accent)'}}>
+                <div className="deal-option-name">{selectedDeal.account_name} — {selectedDeal.project_name}</div>
+              </div>
+              <input className="deal-note-input" placeholder="Add a note (optional)" value={note} onChange={function(e) { setNote(e.target.value); }} />
+              <div className="modal-buttons">
+                <button className="btn-secondary" onClick={function() { setSelectedDeal(null); }}>Back</button>
+                <button className="btn-primary" onClick={handleLink} disabled={saving}>{saving ? 'Linking...' : 'Link Deal'}</button>
+              </div>
+            </div>
+          ) : (
+            <div className="deals-list">
+              {filtered.length === 0 ? <div className="deals-empty">No deals found</div> : filtered.map(function(d) {
+                return <button key={d.id} className="deal-option" onClick={function() { setSelectedDeal(d); }}>
+                  <div className="deal-option-name">{d.account_name} — {d.project_name}</div>
+                  <div className="deal-option-meta">Created {new Date(d.created_at).toLocaleDateString()}</div>
+                </button>;
+              })}
+            </div>
+          )
+        )}
+      </div>
+    </div>
+  );
+}
+
+
+function InitiativeModal({ initiative, onClose, onSave }) {
+  var isEdit = !!initiative;
+  const [title, setTitle] = useStateI(initiative ? initiative.title : '');
+  const [description, setDescription] = useStateI(initiative ? (initiative.description || '') : '');
+  const [status, setStatus] = useStateI(initiative ? initiative.status : 'not_started');
+  const [priority, setPriority] = useStateI(initiative ? initiative.priority : 'medium');
+  const [targetDate, setTargetDate] = useStateI(initiative ? (initiative.target_date || '') : '');
+  const [tagInput, setTagInput] = useStateI('');
+  const [tags, setTags] = useStateI(initiative ? (initiative.tags || []) : []);
+  const [owner, setOwner] = useStateI(initiative ? (initiative._owner || currentUser.id) : currentUser.id);
+  const [contributors, setContributors] = useStateI(initiative ? (initiative._contributors || []) : []);
+  const [watchers, setWatchers] = useStateI(initiative ? (initiative._watchers || []) : []);
+  const [saving, setSaving] = useStateI(false);
+
+  function addTag() {
+    var t = tagInput.trim();
+    if (t && !tags.includes(t)) { setTags(tags.concat([t])); }
+    setTagInput('');
+  }
+
+  function handleTagKeyDown(e) {
+    if (e.key === 'Enter') { e.preventDefault(); addTag(); }
+  }
+
+  function toggleMember(list, setList, id) {
+    if (list.includes(id)) { setList(list.filter(function(x) { return x !== id; })); }
+    else { setList(list.concat([id])); }
+  }
+
+  function handleSave() {
+    if (!title.trim()) return;
+    setSaving(true);
+    var data = { title: title.trim(), description: description.trim() || null, status: status, priority: priority, tags: tags.length > 0 ? tags : null, target_date: targetDate || null };
+
+    var promise;
+    if (isEdit) {
+      data.updated_at = new Date().toISOString();
+      promise = supabase.from('initiatives').update(data).eq('id', initiative.id);
+    } else {
+      data.created_by = currentUser.id;
+      promise = supabase.from('initiatives').insert([data]).select();
+    }
+
+    promise.then(function(res) {
+      if (res.error) { alert('Error: ' + res.error.message); setSaving(false); return; }
+      var initId = isEdit ? initiative.id : res.data[0].id;
+      var memberOps = [];
+      if (!isEdit) {
+        memberOps.push(supabase.from('initiative_members').upsert([{ initiative_id: initId, user_id: owner, role: 'owner' }], { onConflict: 'initiative_id,user_id' }));
+      } else {
+        memberOps.push(supabase.from('initiative_members').delete().eq('initiative_id', initId));
+        memberOps.push(Promise.resolve().then(function() {
+          var members = [{ initiative_id: initId, user_id: owner, role: 'owner' }];
+          contributors.forEach(function(uid) { if (uid !== owner) members.push({ initiative_id: initId, user_id: uid, role: 'contributor' }); });
+          watchers.forEach(function(uid) { if (uid !== owner && !contributors.includes(uid)) members.push({ initiative_id: initId, user_id: uid, role: 'watcher' }); });
+          return supabase.from('initiative_members').insert(members);
+        }));
+      }
+      if (!isEdit) {
+        var members = [];
+        contributors.forEach(function(uid) { if (uid !== owner) members.push({ initiative_id: initId, user_id: uid, role: 'contributor' }); });
+        watchers.forEach(function(uid) { if (uid !== owner && !contributors.includes(uid)) members.push({ initiative_id: initId, user_id: uid, role: 'watcher' }); });
+        if (members.length > 0) memberOps.push(supabase.from('initiative_members').insert(members));
+      }
+      Promise.all(memberOps).then(function() { onSave(); });
+    });
+  }
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal" onClick={function(e) { e.stopPropagation(); }}>
+        <div className="modal-header">
+          <h2 className="modal-title">{isEdit ? 'Edit Initiative' : 'New Initiative'}</h2>
+          <button className="btn-close-modal" onClick={onClose}>x</button>
+        </div>
+        <div className="form-group">
+          <label className="form-label">Title *</label>
+          <input className="form-input" placeholder="Initiative title" value={title} onChange={function(e) { setTitle(e.target.value); }} />
+        </div>
+        <div className="form-group">
+          <label className="form-label">Description</label>
+          <textarea className="form-textarea" placeholder="Describe this initiative..." value={description} onChange={function(e) { setDescription(e.target.value); }} />
+        </div>
+        <div style={{display:'flex', gap:'1rem', flexWrap:'wrap'}}>
+          <div className="form-group" style={{flex:1, minWidth:'150px'}}>
+            <label className="form-label">Status</label>
+            <select className="form-select" value={status} onChange={function(e) { setStatus(e.target.value); }}>
+              <option value="not_started">Not Started</option>
+              <option value="in_progress">In Progress</option>
+              <option value="on_hold">On Hold</option>
+              <option value="done">Done</option>
+            </select>
+          </div>
+          <div className="form-group" style={{flex:1, minWidth:'150px'}}>
+            <label className="form-label">Priority</label>
+            <select className="form-select" value={priority} onChange={function(e) { setPriority(e.target.value); }}>
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+        </div>
+        <div className="form-group">
+          <label className="form-label">Target Date</label>
+          <input className="form-input" type="date" value={targetDate} onChange={function(e) { setTargetDate(e.target.value); }} />
+        </div>
+        <div className="form-group">
+          <label className="form-label">Tags</label>
+          <div className="tags-input-container">
+            <div className="tags-display">
+              {tags.map(function(tag, i) { return <span key={i} className="tag-display">{tag} <span className="tag-remove" onClick={function() { setTags(tags.filter(function(t) { return t !== tag; })); }}>x</span></span>; })}
+            </div>
+            <input className="form-input" placeholder="Type a tag and press Enter" value={tagInput} onChange={function(e) { setTagInput(e.target.value); }} onKeyDown={handleTagKeyDown} />
+          </div>
+        </div>
+        <div className="form-group">
+          <label className="form-label">Owner</label>
+          <select className="form-select" value={owner} onChange={function(e) { setOwner(e.target.value); }}>
+            {teamMembers.map(function(m) { return <option key={m.id} value={m.id}>{m.display_name}</option>; })}
+          </select>
+        </div>
+        <div className="form-group">
+          <label className="form-label">Contributors</label>
+          <div className="form-checkbox-group">
+            {teamMembers.filter(function(m) { return m.id !== owner; }).map(function(m) {
+              return <div key={m.id} className="form-checkbox">
+                <input type="checkbox" id={'contrib-'+m.id} checked={contributors.includes(m.id)} onChange={function() { toggleMember(contributors, setContributors, m.id); }} />
+                <label htmlFor={'contrib-'+m.id}>{m.display_name}</label>
+              </div>;
+            })}
+          </div>
+        </div>
+        <div className="modal-buttons">
+          <button className="btn-secondary" onClick={onClose}>Cancel</button>
+          <button className="btn-primary" onClick={handleSave} disabled={!title.trim() || saving}>{saving ? 'Saving...' : (isEdit ? 'Save Changes' : 'Create Initiative')}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+function InitiativeDetail({ initiative, ownerName, contributorCount, onBack, onUpdate, onEdit }) {
+  const [updates, setUpdates] = useStateI([]);
+  const [members, setMembers] = useStateI([]);
+  const [linkedDeals, setLinkedDeals] = useStateI([]);
+  const [newUpdate, setNewUpdate] = useStateI('');
+  const [submitting, setSubmitting] = useStateI(false);
+  const [showLinkDeal, setShowLinkDeal] = useStateI(false);
+  const statusLabels = { not_started: 'Not Started', in_progress: 'In Progress', on_hold: 'On Hold', done: 'Done' };
+
+  useEffectI(function() {
+    supabase.from('initiative_updates').select('*').eq('initiative_id', initiative.id).order('created_at', { ascending: false })
+      .then(function(res) { setUpdates(res.data || []); });
+    supabase.from('initiative_members').select('*').eq('initiative_id', initiative.id)
+      .then(function(res) { setMembers(res.data || []); });
+    supabase.from('initiative_deal_links').select('*, deals(id, account_name, project_name)').eq('initiative_id', initiative.id).order('linked_at', { ascending: false })
+      .then(function(res) { setLinkedDeals(res.data || []); });
+  }, [initiative.id]);
+
+  function submitUpdate() {
+    if (!newUpdate.trim()) return;
+    setSubmitting(true);
+    supabase.from('initiative_updates').insert([{ initiative_id: initiative.id, author_id: currentUser.id, content: newUpdate.trim() }]).select()
+      .then(function(res) {
+        if (res.error) { alert('Error: ' + res.error.message); setSubmitting(false); return; }
+        setUpdates([res.data[0]].concat(updates));
+        setNewUpdate('');
+        setSubmitting(false);
+      });
+  }
+
+  function unlinkDeal(linkId) {
+    if (!confirm('Unlink this deal?')) return;
+    supabase.from('initiative_deal_links').delete().eq('id', linkId)
+      .then(function() { setLinkedDeals(linkedDeals.filter(function(d) { return d.id !== linkId; })); });
+  }
+
+  function getMemberName(userId) {
+    var m = teamMembers.find(function(t) { return t.id === userId; });
+    return m ? m.display_name : 'Unknown';
+  }
+
+  function getInitials(userId) {
+    var name = getMemberName(userId);
+    return name.split(' ').map(function(n) { return n[0]; }).join('').substring(0, 2).toUpperCase();
+  }
+
+  return (
+    <div className="initiative-detail">
+      <div className="detail-header">
+        <button className="detail-back-button" onClick={onBack}>Back</button>
+        <div className="detail-title-section">
+          <h1 className="detail-title">{initiative.title}</h1>
+          <div className="detail-meta">
+            <span className={'detail-badge ' + initiative.status}>{statusLabels[initiative.status]}</span>
+            <div className="card-priority"><span className={'priority-dot ' + initiative.priority}></span><span>{initiative.priority} priority</span></div>
+            {initiative.target_date && <span className="card-target-date">Target: {new Date(initiative.target_date).toLocaleDateString()}</span>}
+          </div>
+        </div>
+        <div className="detail-actions">
+          <button className="btn-edit" onClick={onEdit}>Edit</button>
+        </div>
+      </div>
+
+      <div className="detail-section">
+        <h3 className="section-title">Description</h3>
+        {initiative.description ? <p className="detail-description">{initiative.description}</p> : <p className="detail-empty">No description provided</p>}
+      </div>
+
+      {initiative.tags && initiative.tags.length > 0 && (
+        <div className="detail-section">
+          <h3 className="section-title">Tags</h3>
+          <div className="card-tags">{initiative.tags.map(function(tag, i) { return <span key={i} className="tag-pill">{tag}</span>; })}</div>
+        </div>
+      )}
+
+      <div className="detail-section">
+        <h3 className="section-title">Team ({members.length})</h3>
+        {members.length > 0 ? (
+          <div className="members-list">
+            {members.map(function(m) {
+              return <div key={m.id} className="member-item">
+                <span className="member-role">{m.role}</span>
+                <span className="member-name">{getMemberName(m.user_id)}</span>
+              </div>;
+            })}
+          </div>
+        ) : <p className="detail-empty">No team members assigned</p>}
+      </div>
+
+      <div className="detail-section">
+        <h3 className="section-title">Linked Deals ({linkedDeals.length})</h3>
+        {linkedDeals.length > 0 && (
+          <div className="linked-deals-list">
+            {linkedDeals.map(function(link) {
+              var dealName = link.deals ? (link.deals.account_name + ' — ' + link.deals.project_name) : 'Unknown Deal';
+              return <div key={link.id} className="linked-deal-item">
+                <div className="deal-info">
+                  <div className="deal-name">{dealName}</div>
+                  {link.note && <div className="deal-note">{link.note}</div>}
+                  <div className="deal-date">Linked {new Date(link.linked_at).toLocaleDateString()}</div>
+                </div>
+                <button className="btn-unlink" onClick={function() { unlinkDeal(link.id); }}>Unlink</button>
+              </div>;
+            })}
+          </div>
+        )}
+        <button className="btn-link-deals" onClick={function() { setShowLinkDeal(true); }} style={{marginTop:'1rem'}}>+ Link a Deal</button>
+        {showLinkDeal && <LinkDealModal initiativeId={initiative.id} onClose={function() { setShowLinkDeal(false); }} onLinked={function() { setShowLinkDeal(false); supabase.from('initiative_deal_links').select('*, deals(id, account_name, project_name)').eq('initiative_id', initiative.id).order('linked_at', {ascending:false}).then(function(r) { setLinkedDeals(r.data||[]); }); }} />}
+      </div>
+
+      <div className="detail-section">
+        <h3 className="section-title">Activity ({updates.length})</h3>
+        <div className="activity-input-area">
+          <textarea className="activity-textarea" placeholder="Post an update..." value={newUpdate} onChange={function(e) { setNewUpdate(e.target.value); }} />
+          <div className="activity-button-group">
+            <button className="btn-submit-activity" onClick={submitUpdate} disabled={!newUpdate.trim() || submitting}>{submitting ? 'Posting...' : 'Post Update'}</button>
+          </div>
+        </div>
+        {updates.length > 0 && (
+          <div className="initiative-activity" style={{marginTop:'1rem'}}>
+            {updates.map(function(u) {
+              return <div key={u.id} className="activity-item">
+                <div className="activity-avatar">{getInitials(u.author_id)}</div>
+                <div className="activity-content">
+                  <span className="activity-author">{getMemberName(u.author_id)}</span>
+                  <span className="activity-time">{new Date(u.created_at).toLocaleString()}</span>
+                  <p className="activity-message">{u.content}</p>
+                </div>
+              </div>;
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+
+function InitiativesScreen() {
+  const [initiatives, setInitiatives] = useStateI([]);
+  const [members, setMembers] = useStateI([]);
+  const [loading, setLoading] = useStateI(true);
+  const [error, setError] = useStateI(null);
+  const [statusFilter, setStatusFilter] = useStateI('all');
+  const [priorityFilter, setPriorityFilter] = useStateI('all');
+  const [searchQuery, setSearchQuery] = useStateI('');
+  const [selectedInitiative, setSelectedInitiative] = useStateI(null);
+  const [showModal, setShowModal] = useStateI(false);
+  const [editInitiative, setEditInitiative] = useStateI(null);
+
+  var loadData = useCallbackI(function() {
+    setLoading(true);
+    Promise.all([
+      supabase.from('initiatives').select('*').order('created_at', { ascending: false }),
+      supabase.from('initiative_members').select('*')
+    ]).then(function(results) {
+      if (results[0].error) { setError(results[0].error.message); setLoading(false); return; }
+      setInitiatives(results[0].data || []);
+      setMembers(results[1].data || []);
+      setLoading(false);
+    });
+  }, []);
+
+  useEffectI(function() { loadData(); }, [loadData]);
+
+  function getOwnerName(initiativeId) {
+    var ownerMember = members.find(function(m) { return m.initiative_id === initiativeId && m.role === 'owner'; });
+    if (!ownerMember) return 'Unassigned';
+    var tm = teamMembers.find(function(t) { return t.id === ownerMember.user_id; });
+    return tm ? tm.display_name : 'Unknown';
+  }
+
+  function getContributorCount(initiativeId) {
+    return members.filter(function(m) { return m.initiative_id === initiativeId; }).length;
+  }
+
+  var filtered = useMemoI(function() {
+    return initiatives.filter(function(i) {
+      if (statusFilter !== 'all' && i.status !== statusFilter) return false;
+      if (priorityFilter !== 'all' && i.priority !== priorityFilter) return false;
+      if (searchQuery) {
+        var q = searchQuery.toLowerCase();
+        var match = (i.title || '').toLowerCase().includes(q) || (i.description || '').toLowerCase().includes(q);
+        if (!match && i.tags) match = i.tags.some(function(t) { return t.toLowerCase().includes(q); });
+        if (!match) return false;
+      }
+      return true;
+    });
+  }, [initiatives, statusFilter, priorityFilter, searchQuery]);
+
+  var stats = useMemoI(function() {
+    return {
+      total: initiatives.length,
+      in_progress: initiatives.filter(function(i) { return i.status === 'in_progress'; }).length,
+      on_hold: initiatives.filter(function(i) { return i.status === 'on_hold'; }).length,
+      done: initiatives.filter(function(i) { return i.status === 'done'; }).length,
+      not_started: initiatives.filter(function(i) { return i.status === 'not_started'; }).length
+    };
+  }, [initiatives]);
+
+  if (selectedInitiative) {
+    var init = initiatives.find(function(i) { return i.id === selectedInitiative; });
+    if (!init) { setSelectedInitiative(null); return null; }
+    return <InitiativeDetail
+      initiative={init}
+      ownerName={getOwnerName(init.id)}
+      contributorCount={getContributorCount(init.id)}
+      onBack={function() { setSelectedInitiative(null); }}
+      onUpdate={loadData}
+      onEdit={function() { setEditInitiative(init); setShowModal(true); setSelectedInitiative(null); }}
+    />;
+  }
+
+  return (
+    <div className="initiatives-screen">
+      <div className="initiatives-header">
+        <h1>Initiatives</h1>
+        <div className="initiatives-header-actions">
+          <button className="btn-new-initiative" onClick={function() { setEditInitiative(null); setShowModal(true); }}>+ New Initiative</button>
+        </div>
+      </div>
+
+      <div className="initiatives-filters">
+        <div className="filter-group">
+          <span className="filter-label">Status</span>
+          <div className="filter-pills">
+            {['all','not_started','in_progress','on_hold','done'].map(function(s) {
+              var label = s === 'all' ? 'All' : s === 'not_started' ? 'Not Started' : s === 'in_progress' ? 'In Progress' : s === 'on_hold' ? 'On Hold' : 'Done';
+              return <button key={s} className={'filter-pill' + (statusFilter === s ? ' active' : '')} onClick={function() { setStatusFilter(s); }}>{label}</button>;
+            })}
+          </div>
+        </div>
+        <div className="filter-group">
+          <span className="filter-label">Priority</span>
+          <div className="filter-pills priority-filter">
+            {['all','low','medium','high'].map(function(p) {
+              return <button key={p} className={'filter-pill' + (priorityFilter === p ? ' active' : '')} onClick={function() { setPriorityFilter(p); }}>
+                {p !== 'all' && <span className={'priority-dot ' + p}></span>}
+                {p === 'all' ? 'All' : p.charAt(0).toUpperCase() + p.slice(1)}
+              </button>;
+            })}
+          </div>
+        </div>
+        <input className="initiatives-search" placeholder="Search initiatives..." value={searchQuery} onChange={function(e) { setSearchQuery(e.target.value); }} />
+      </div>
+
+      <div className="initiatives-stats">
+        <div className="stat-card"><div className="stat-label">Total</div><div className="stat-value">{stats.total}</div></div>
+        <div className="stat-card"><div className="stat-label">In Progress</div><div className="stat-value">{stats.in_progress}</div></div>
+        <div className="stat-card"><div className="stat-label">On Hold</div><div className="stat-value">{stats.on_hold}</div></div>
+        <div className="stat-card"><div className="stat-label">Done</div><div className="stat-value">{stats.done}</div></div>
+        <div className="stat-card muted"><div className="stat-label">Not Started</div><div className="stat-value">{stats.not_started}</div></div>
+      </div>
+
+      {loading ? <div className="loading"><span className="spinner"></span> Loading initiatives...</div> : error ? <div className="error-message">{error}</div> : filtered.length === 0 ? (
+        <div className="initiatives-empty">
+          <h3>{initiatives.length === 0 ? 'No initiatives yet' : 'No matching initiatives'}</h3>
+          <p>{initiatives.length === 0 ? 'Create your first initiative to start tracking strategic projects.' : 'Try adjusting your filters or search query.'}</p>
+          {initiatives.length === 0 && <button className="btn-new-initiative" onClick={function() { setEditInitiative(null); setShowModal(true); }}>+ Create Initiative</button>}
+        </div>
+      ) : (
+        <div className="initiatives-grid">
+          {filtered.map(function(init) {
+            return <InitiativeCard key={init.id} initiative={init} ownerName={getOwnerName(init.id)} contributorCount={getContributorCount(init.id)} onClick={function() { setSelectedInitiative(init.id); }} />;
+          })}
+        </div>
+      )}
+
+      {showModal && <InitiativeModal initiative={editInitiative} onClose={function() { setShowModal(false); setEditInitiative(null); }} onSave={function() { setShowModal(false); setEditInitiative(null); loadData(); }} />}
+    </div>
+  );
+}
+
 function App() {
   // Auth & User Management
   const [user, setUser] = useState(null);
@@ -1851,6 +2538,7 @@ function App() {
               {canAccessScreen('revenue') && <button className={`view-btn ${page==='revenue'?'active':''}`} onClick={()=>setPage('revenue')} style={page==='revenue'?{background:'var(--stage-procurement)',color:'white'}:{}}>Revenue</button>}
               {canAccessScreen('audit') && <button className={`view-btn ${page==='audit'?'active':''}`} onClick={()=>setPage('audit')} style={page==='audit'?{background:'var(--accent)',color:'white'}:{}}>Audit</button>}
               {canAccessScreen('admin') && <button className={`view-btn ${page==='admin'?'active':''}`} onClick={()=>setPage('admin')} style={page==='admin'?{background:'var(--accent)',color:'white'}:{}}>Admin</button>}
+              {<button className={`view-btn ${page==='initiatives'?'active':''}`} onClick={()=>setPage('initiatives')} style={page==='initiatives'?{background:'var(--accent)',color:'white'}:{}}>Initiatives</button>}
             </div>
             <button className="refresh-btn" onClick={load}>↻ Refresh</button>
             <span className="timestamp">{ts.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span>
@@ -1868,7 +2556,9 @@ function App() {
   }
 
   // Check admin screen access
-  if (page === 'admin') {
+  
+      if (page === 'initiatives') { return (<InitiativesScreen />); }
+      if (page === 'admin') {
     if (!canAccessScreen('admin')) {
       return (
         <div>
@@ -1905,6 +2595,7 @@ function App() {
               {canAccessScreen('revenue') && <button className={`view-btn ${page==='revenue'?'active':''}`} onClick={()=>setPage('revenue')} style={page==='revenue'?{background:'var(--stage-procurement)',color:'white'}:{}}>Revenue</button>}
               {canAccessScreen('audit') && <button className={`view-btn ${page==='audit'?'active':''}`} onClick={()=>setPage('audit')} style={page==='audit'?{background:'var(--accent)',color:'white'}:{}}>Audit</button>}
               {canAccessScreen('admin') && <button className={`view-btn ${page==='admin'?'active':''}`} onClick={()=>setPage('admin')} style={page==='admin'?{background:'var(--accent)',color:'white'}:{}}>Admin</button>}
+              {<button className={`view-btn ${page==='initiatives'?'active':''}`} onClick={()=>setPage('initiatives')} style={page==='initiatives'?{background:'var(--accent)',color:'white'}:{}}>Initiatives</button>}
             </div>
             <button className="refresh-btn" onClick={load}>↻ Refresh</button>
             <span className="timestamp">{ts.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span>
