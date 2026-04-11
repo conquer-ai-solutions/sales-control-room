@@ -524,7 +524,7 @@
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const { useState, useEffect, useMemo, useCallback } = React;
+const { useState, useEffect, useMemo, useCallback, useRef } = React;
 
 const SUPABASE_URL = 'https://wrhzavqvbfeqhldpqcgl.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndyaHphdnF2YmZlcWhsZHBxY2dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3NzYzNTEsImV4cCI6MjA5MDM1MjM1MX0.eIduMPLm8_6lbY_GzGRBEPJ-hifuXjWjp6Kvva6EAHU';
@@ -1696,6 +1696,51 @@ function App() {
   const [toast, setToast] = useState(null);
   const [ts, setTs] = useState(new Date());
 
+  // ── Hash-based routing for shareable URLs ──
+  const buildHash = useCallback((p, v, dealId) => {
+    if (p === 'account' && dealId) return '#deal/' + dealId;
+    if (p === 'board' && v === 'table') return '#board/table';
+    if (p === 'board') return '#board';
+    if (['revenue','audit','admin'].includes(p)) return '#' + p;
+    return '#board';
+  }, []);
+
+  const parseHash = useCallback(() => {
+    const h = window.location.hash.replace(/^#\/?/, '');
+    if (!h) return { page: 'board', view: 'kanban', dealId: null };
+    if (h.startsWith('deal/')) {
+      const id = h.slice(5);
+      return { page: 'account', view: 'kanban', dealId: id || null };
+    }
+    if (h === 'board/table') return { page: 'board', view: 'table', dealId: null };
+    if (h === 'board') return { page: 'board', view: 'kanban', dealId: null };
+    if (['revenue','audit','admin'].includes(h)) return { page: h, view: 'kanban', dealId: null };
+    return { page: 'board', view: 'kanban', dealId: null };
+  }, []);
+
+  // Sync state → hash (skip during initial mount to let hash → state run first)
+  const initialMount = useRef(true);
+  useEffect(() => {
+    if (initialMount.current) return;
+    const newHash = buildHash(page, view, selId);
+    if (window.location.hash !== newHash) {
+      window.history.pushState(null, '', newHash);
+    }
+  }, [page, view, selId, buildHash]);
+
+  // Listen for hash changes (browser back/forward & direct URL entry)
+  useEffect(() => {
+    const onHashChange = () => {
+      const parsed = parseHash();
+      setPage(parsed.page);
+      setView(parsed.view);
+      if (parsed.dealId) setSelId(parsed.dealId);
+      else setSelId(null);
+    };
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, [parseHash]);
+
   // Check for existing session on mount
   useEffect(() => {
     const saved = localStorage.getItem('controlroom_session');
@@ -1708,6 +1753,16 @@ function App() {
       }
     }
     setSessionLoading(false);
+
+    // Apply initial hash route after session loads
+    const parsed = parseHash();
+    if (window.location.hash) {
+      setPage(parsed.page);
+      setView(parsed.view);
+      if (parsed.dealId) setSelId(parsed.dealId);
+    }
+    // Mark initial mount complete so state->hash sync can start
+    setTimeout(() => { initialMount.current = false; }, 100);
   }, []);
 
   // Handle login
