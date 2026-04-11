@@ -1696,7 +1696,7 @@ function App() {
   const [toast, setToast] = useState(null);
   const [ts, setTs] = useState(new Date());
 
-  // ── Hash-based routing for shareable URLs ──
+  // Hash-based routing for shareable URLs
   const buildHash = useCallback((p, v, dealId) => {
     if (p === 'account' && dealId) return '#deal/' + dealId;
     if (p === 'board' && v === 'table') return '#board/table';
@@ -1718,7 +1718,6 @@ function App() {
     return { page: 'board', view: 'kanban', dealId: null };
   }, []);
 
-  // Sync state → hash (skip during initial mount to let hash → state run first)
   const initialMount = useRef(true);
   useEffect(() => {
     if (initialMount.current) return;
@@ -1728,7 +1727,6 @@ function App() {
     }
   }, [page, view, selId, buildHash]);
 
-  // Listen for hash changes (browser back/forward & direct URL entry)
   useEffect(() => {
     const onHashChange = () => {
       const parsed = parseHash();
@@ -1754,14 +1752,12 @@ function App() {
     }
     setSessionLoading(false);
 
-    // Apply initial hash route after session loads
     const parsed = parseHash();
     if (window.location.hash) {
       setPage(parsed.page);
       setView(parsed.view);
       if (parsed.dealId) setSelId(parsed.dealId);
     }
-    // Mark initial mount complete so state->hash sync can start
     setTimeout(() => { initialMount.current = false; }, 100);
   }, []);
 
