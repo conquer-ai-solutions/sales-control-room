@@ -2012,6 +2012,11 @@ function InitiativeDetail({ initiative, ownerName, contributorCount, onBack, onU
   const [newUpdate, setNewUpdate] = useStateI('');
   const [submitting, setSubmitting] = useStateI(false);
   const [showLinkDeal, setShowLinkDeal] = useStateI(false);
+  var [showCopiedI, setShowCopiedI] = useStateI(false);
+  var copyInitiativeLink = function() {
+    var url = window.location.origin + window.location.pathname + '#initiative/' + initiative.id;
+    navigator.clipboard.writeText(url).then(function() { setShowCopiedI(true); setTimeout(function() { setShowCopiedI(false); }, 2000); });
+  };
   const statusLabels = { not_started: 'Not Started', in_progress: 'In Progress', on_hold: 'On Hold', done: 'Done' };
 
   useEffectI(function() {
@@ -2065,7 +2070,11 @@ function InitiativeDetail({ initiative, ownerName, contributorCount, onBack, onU
         </div>
         <div className="detail-actions">
           <button className="btn-edit" onClick={onEdit}>Edit</button>
+          <button className="btn-edit" onClick={copyInitiativeLink} style={{marginLeft:"0.5rem"}}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg> Share
+          </button>
         </div>
+        {showCopiedI && <div className="share-copied" style={{position:"absolute",top:"1rem",right:"2rem",background:"var(--accent)",color:"white",padding:"0.5rem 1rem",borderRadius:"8px",fontSize:"0.85rem",zIndex:10}}>Link copied to clipboard</div>}
       </div>
 
       <div className="detail-section">
@@ -2143,7 +2152,7 @@ function InitiativeDetail({ initiative, ownerName, contributorCount, onBack, onU
 }
 
 
-function InitiativesScreen({currentUser}) {
+function InitiativesScreen({currentUser, initialInitiativeId, onClearSelId}) {
     var [teamMembers, setTeamMembers] = useStateI([]);
     useEffectI(function() { supabase.from('team_members').select('*').then(function(res) { if (res.data) setTeamMembers(res.data); }); }, []);
 
@@ -2154,7 +2163,14 @@ function InitiativesScreen({currentUser}) {
   const [statusFilter, setStatusFilter] = useStateI('all');
   const [priorityFilter, setPriorityFilter] = useStateI('all');
   const [searchQuery, setSearchQuery] = useStateI('');
-  const [selectedInitiative, setSelectedInitiative] = useStateI(null);
+  const [selectedInitiative, setSelectedInitiative] = useStateI(initialInitiativeId || null);
+  useEffectI(function() {
+    if (selectedInitiative) {
+      window.history.pushState(null, '', '#initiative/' + selectedInitiative);
+    } else if (!initialInitiativeId) {
+      window.history.pushState(null, '', '#initiatives');
+    }
+  }, [selectedInitiative]);
   const [showModal, setShowModal] = useStateI(false);
   const [editInitiative, setEditInitiative] = useStateI(null);
 
@@ -2312,7 +2328,8 @@ function App() {
     if (p === 'account' && dealId) return '#deal/' + dealId;
     if (p === 'board' && v === 'table') return '#board/table';
     if (p === 'board') return '#board';
-    if (['revenue','audit','admin'].includes(p)) return '#' + p;
+    if (p === 'initiatives' && dealId) return '#initiative/' + dealId;
+    if (['revenue','audit','admin','initiatives'].includes(p)) return '#' + p;
     return '#board';
   }, []);
 
@@ -2323,6 +2340,11 @@ function App() {
       const id = h.slice(5);
       return { page: 'account', view: 'kanban', dealId: id || null };
     }
+    if (h.startsWith('initiative/')) {
+      const id = h.slice(11);
+      return { page: 'initiatives', view: 'kanban', dealId: id || null };
+    }
+    if (h === 'initiatives') return { page: 'initiatives', view: 'kanban', dealId: null };
     if (h === 'board/table') return { page: 'board', view: 'table', dealId: null };
     if (h === 'board') return { page: 'board', view: 'kanban', dealId: null };
     if (['revenue','audit','admin'].includes(h)) return { page: h, view: 'kanban', dealId: null };
@@ -2563,7 +2585,7 @@ function App() {
 
   // Check admin screen access
   
-      if (page === 'initiatives') { return (<InitiativesScreen currentUser={user} />); }
+      if (page === 'initiatives') { return (<InitiativesScreen currentUser={user} initialInitiativeId={selId} onClearSelId={function() { setSelId(null); }} />); }
       if (page === 'admin') {
     if (!canAccessScreen('admin')) {
       return (
