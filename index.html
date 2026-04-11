@@ -2157,7 +2157,11 @@ function InitiativeDetail({ initiative, ownerName, contributorCount, onBack, onU
 
 function InitiativesScreen({currentUser, initialInitiativeId, onClearSelId}) {
     var [teamMembers, setTeamMembers] = useStateI([]);
-    useEffectI(function() { supabase.from('team_members').select('*').then(function(res) { if (res.data) setTeamMembers(res.data); }); }, []);
+    var [appUsers, setAppUsers] = useStateI([]);
+    useEffectI(function() {
+      supabase.from('team_members').select('*').then(function(res) { if (res.data) setTeamMembers(res.data); });
+      supabase.from('app_users').select('id,display_name').then(function(res) { if (res.data) setAppUsers(res.data); });
+    }, []);
 
   const [initiatives, setInitiatives] = useStateI([]);
   const [members, setMembers] = useStateI([]);
@@ -2196,7 +2200,9 @@ function InitiativesScreen({currentUser, initialInitiativeId, onClearSelId}) {
     var ownerMember = members.find(function(m) { return m.initiative_id === initiativeId && m.role === 'owner'; });
     if (!ownerMember) return 'Unassigned';
     var tm = teamMembers.find(function(t) { return t.id === ownerMember.user_id; });
-    return tm ? tm.display_name : 'Unknown';
+    if (tm) return tm.display_name;
+    var au = appUsers.find(function(u) { return u.id === ownerMember.user_id; });
+    return au ? au.display_name : 'Unknown';
   }
 
   function getContributorCount(initiativeId) {
