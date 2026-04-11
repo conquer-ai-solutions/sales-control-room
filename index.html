@@ -2226,7 +2226,8 @@ function InitiativesScreen({currentUser, initialInitiativeId, onClearSelId}) {
 
   if (selectedInitiative) {
     var init = initiatives.find(function(i) { return i.id === selectedInitiative; });
-    if (!init) { setSelectedInitiative(null); return null; }
+    if (!init && initiatives.length > 0) { setSelectedInitiative(null); return null; }
+    if (!init) return React.createElement("div", {style:{padding:"2rem",color:"var(--text-muted)",textAlign:"center"}}, "Loading initiative...");
     return <InitiativeDetail
       currentUser={currentUser}
     teamMembers={teamMembers}
