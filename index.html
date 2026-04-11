@@ -656,7 +656,9 @@
 .initiatives-empty { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:4rem 2rem; text-align:center; color:var(--text-dim); }
 .initiatives-empty h3 { font-size:1.3rem; font-weight:600; margin:1rem 0 0.5rem; color:var(--text); }
 .initiatives-empty p { font-size:0.95rem; margin:0 0 1.5rem; max-width:400px; }
-.initiative-detail { display:flex; flex-direction:column; gap:2rem; padding:2rem; background-color:var(--bg); color:var(--text); max-width:1200px; margin:0 auto; width:100%; }
+.initiative-detail { display:flex; flex-direction:column; gap:2rem; padding:2rem; background-color:var(--bg); color:var(--text); max-width:1200px; margin:0 auto; width:100%; overflow-y:auto; }
+  .deal-info-people-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; align-items:start; }
+  @media (max-width:900px) { .deal-info-people-grid { grid-template-columns:1fr; } }
 .detail-header { display:flex; align-items:flex-start; gap:1.5rem; }
 .detail-back-button { padding:0.5rem 1rem; background-color:var(--bg-card); border:1px solid var(--border); color:var(--text); border-radius:var(--radius); cursor:pointer; transition:all 0.2s ease; font-weight:500; white-space:nowrap; }
 .detail-back-button:hover { background-color:var(--bg-card-hover); border-color:var(--accent); color:var(--accent); }
@@ -1322,7 +1324,7 @@ function AccountView({ dealId, deals, teamMembers, onBack, canEdit, user }) {
       )}
 
       {/* DEAL INFO + PEOPLE — two-column grid using detail-section cards */}
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1.5rem'}}>
+      <div className="deal-info-people-grid">
         <div className="detail-section">
           <h3 className="section-title">Deal Information</h3>
           <div style={{display:'flex',flexDirection:'column',gap:'0.75rem'}}>
