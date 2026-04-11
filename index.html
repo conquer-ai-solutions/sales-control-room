@@ -241,33 +241,6 @@
   .activity-content { flex:1; }
   .activity-text { font-size:13px; color:var(--text); margin-bottom:2px; }
   .activity-time { font-size:11px; color:var(--text-muted); }
-
-  /* TASKS */
-  .tasks-list { display:flex; flex-direction:column; gap:12px; }
-  .task-item {
-    background:var(--bg-card);
-    border:1px solid var(--border);
-    border-radius:var(--radius);
-    padding:12px 14px;
-    display:flex; gap:12px;
-  }
-  .task-checkbox { width:18px; height:18px; min-width:18px; accent-color:var(--accent); cursor:pointer; }
-  .task-details { flex:1; }
-  .task-title { font-size:13px; font-weight:500; color:var(--text); margin-bottom:4px; }
-  .task-title.completed { text-decoration:line-through; color:var(--text-muted); }
-  .task-description { font-size:12px; color:var(--text-dim); margin-bottom:6px; }
-  .task-meta { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
-  .task-badge { font-size:10px; padding:2px 7px; border-radius:4px; font-weight:600; text-transform:uppercase; }
-  .badge-low { background:var(--blue-bg); color:var(--blue); }
-  .badge-medium { background:var(--orange-bg); color:var(--orange); }
-  .badge-high { background:var(--red-bg); color:var(--red); }
-  .badge-critical { background:var(--red-bg); color:var(--red); font-weight:700; }
-  .badge-intel { background:var(--teal-bg); color:var(--teal); }
-  .badge-manual { background:var(--blue-bg); color:var(--blue); }
-  .task-overdue { color:var(--orange); font-weight:600; }
-
-  /* GAMEPLAN */
-  .gameplan-container { display:flex; flex-direction:column; gap:24px; }
   .stage-section { margin-bottom:20px; }
   .stage-section-header {
     display:flex; align-items:center; justify-content:space-between;
@@ -1268,18 +1241,14 @@ function AccountView({ dealId, deals, teamMembers, onBack, canEdit, user }) {
           {/* Tabs */}
           <div className="deal-tab-bar">
             <button className={`deal-tab ${activeTab==='overview'?'active':''}`} onClick={() => setActiveTab('overview')}>Overview</button>
-            <button className={`deal-tab ${activeTab==='tasks'?'active':''}`} onClick={() => setActiveTab('tasks')}>Tasks{taskCount > 0 && <span className="deal-tab-count">{taskCount}</span>}</button>
-            <button className={`deal-tab ${activeTab==='gameplan'?'active':''}`} onClick={() => setActiveTab('gameplan')}>Gameplan</button>
-            <button className={`deal-tab ${activeTab==='route'?'active':''}`} onClick={() => setActiveTab('route')}>Route to Cash</button>
+            
           </div>
         </div>
       </div>
 
       {/* Tab content */}
       {activeTab === 'overview' && <OverviewTab deal={deal} teamMembers={teamMembers} onEditDeal={handleEditDeal} canEdit={canEdit} />}
-      {activeTab === 'tasks' && <div style={{padding:'24px 32px'}}><TasksTab deal={deal} teamMembers={teamMembers} canEdit={canEdit} user={user} /></div>}
-      {activeTab === 'gameplan' && <div style={{padding:'24px 32px'}}><GameplanTab deal={deal} /></div>}
-      {activeTab === 'route' && <div style={{padding:'24px 32px'}}><RouteToCashTab deal={deal} /></div>}
+      
 
       {/* Edit Modal */}
       {editing && (
