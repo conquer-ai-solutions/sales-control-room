@@ -1155,32 +1155,141 @@ function AdminPanel({ users, onUserUpdate, userRole }) {
   );
 }
 
-function OverviewTab({ deal, teamMembers, onEditDeal, canEdit }) {
+function AccountView({ dealId, deals, teamMembers, onBack, canEdit, user }) {
+  const deal = deals.find(d => d.id === dealId);
+  const [editing, setEditing] = useState(false);
+  const [form, setForm] = useState({});
+  const [showCopied, setShowCopied] = useState(false);
   const [activities, setActivities] = useState([]);
-  const tmMap = useMemo(() => Object.fromEntries(teamMembers.map(t => [t.id, t])), [teamMembers]);
+  const [linkedInitiatives, setLinkedInitiatives] = useState([]);
 
+  useEffect(() => { if (deal) setForm(deal); }, [deal]);
   useEffect(() => {
-    const fetchActivities = async () => {
-      const { data } = await supabase.from('deal_activity_log').select('*').eq('deal_id', deal.id).order('logged_at', { ascending: false });
-      if (data) setActivities(data);
+    if (!deal) return;
+    const fetchData = async () => {
+      const { data: actData } = await supabase.from('deal_activity_log').select('*').eq('deal_id', deal.id).order('logged_at', { ascending: false });
+      if (actData) setActivities(actData);
+      const { data: linkData } = await supabase.from('initiative_deal_links').select('*, initiatives(id, title, status, priority)').eq('deal_id', deal.id);
+      if (linkData) setLinkedInitiatives(linkData);
     };
-    fetchActivities();
-  }, [deal.id]);
+    fetchData();
+  }, [deal?.id]);
 
-  const dealOwner = tmMap[deal.deal_owner_id];
-  const nextActionOwner = tmMap[deal.next_action_owner_id];
+  if (!deal) return <div className="loading-screen"><div className="loading-spinner"></div></div>;
+
+  const tmMap = Object.fromEntries(teamMembers.map(t => [t.id, t]));
+  const stageInfo = STAGE_MAP[deal.stage];
+  const stageIdx = STAGES.findIndex(s => s.key === deal.stage);
+  const daysInStage = deal.stage_entered_at ? Math.floor((Date.now() - new Date(deal.stage_entered_at)) / 86400000) : 0;
   const isOverdue = deal.next_action_due && daysUntil(deal.next_action_due) < 0;
   const daysLeft = deal.next_action_due ? daysUntil(deal.next_action_due) : null;
+  const dealOwner = tmMap[deal.deal_owner_id];
+  const nextActionOwner = tmMap[deal.next_action_owner_id];
   const initials = (name) => name ? name.split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase() : '?';
 
+  const handleEditDeal = (d) => { if (!canEdit) return; setForm(d); setEditing(true); };
+  const saveDeal = async () => {
+    if (!canEdit) return;
+    const u = {};
+    ['stage','deal_owner_id','next_action','next_action_due','next_action_owner_id','champion_name','deal_value','status','stall_reason','notes','partner_id','decision_maker_name'].forEach(k => {
+      if (form[k] !== undefined) u[k] = k === 'deal_value' ? (form[k] || null) : (k === 'partner_id' ? (form[k] || null) : form[k]);
+    });
+    const { error } = await supabase.from('deals').update(u).eq('id', deal.id);
+    if (!error) { await logAudit(user, 'update_deal', 'deal', deal.id, deal.account_name, u); setEditing(false); }
+  };
+  const copyLink = () => {
+    const url = window.location.origin + window.location.pathname + '#deal/' + deal.id;
+    navigator.clipboard.writeText(url).then(() => { setShowCopied(true); setTimeout(() => setShowCopied(false), 2000); });
+  };
+
+  const statusLabels = { active: 'Active', stalled: 'Stalled' };
+
   return (
-    <div className="deal-overview-grid">
-      {/* NEXT ACTION */}
-      <div className={`deal-next-action-card ${isOverdue ? 'overdue' : 'ok'}`}>
+    <div className="initiative-detail">
+      {showCopied && <div className="share-copied">Link copied to clipboard</div>}
+
+      {/* HEADER — mirrors InitiativeDetail */}
+      <div className="detail-header">
+        <button className="detail-back-button" onClick={onBack}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight:4,verticalAlign:'middle'}}><path d="m15 18-6-6 6-6"/></svg>
+          Pipeline
+        </button>
+        <div className="detail-title-section">
+          <h1 className="detail-title">{deal.account_name}</h1>
+          <div className="detail-meta">
+            <span style={{fontSize:'0.95rem',color:'var(--text-dim)'}}>{deal.project_name}</span>
+            {deal.region && <span className="deal-hero-region">{deal.region}</span>}
+            <span className={"deal-status-pill " + deal.status}>
+              <span className="deal-status-pill-dot"></span>
+              {statusLabels[deal.status] || deal.status}
+            </span>
+            <div className="card-priority"><span className={"priority-dot " + (deal.status === 'stalled' ? 'high' : 'medium')}></span><span>{stageInfo?.label} · {daysInStage}d in stage</span></div>
+          </div>
+        </div>
+        <div className="detail-actions">
+          {canEdit && <button className="btn-edit" onClick={() => handleEditDeal(deal)}>Edit</button>}
+          <button className="btn-edit" onClick={copyLink} style={{marginLeft:'0.5rem'}}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg> Share
+          </button>
+        </div>
+      </div>
+
+      {/* STAGE PROGRESS — kept from original, it's great UX */}
+      <div className="detail-section">
+        <div className="deal-stage-progress" style={{margin:0,border:'none',padding:0,background:'transparent'}}>
+          {STAGES.map((stage, idx) => {
+            const isPast = idx < stageIdx;
+            const isCurrent = idx === stageIdx;
+            return (
+              <React.Fragment key={stage.key}>
+                <div className="deal-stage-step">
+                  <div className={"deal-stage-dot " + (isPast?'past':isCurrent?'current':'future')}>
+                    {isPast ? '\u2713' : idx + 1}
+                  </div>
+                  <span className={"deal-stage-label " + (isPast?'past':isCurrent?'current':'future')}>{stage.label}</span>
+                </div>
+                {idx < STAGES.length - 1 && <div className={"deal-stage-connector " + (idx < stageIdx ? 'past' : 'future')}></div>}
+              </React.Fragment>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* METRICS — 4 cards in a grid */}
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit, minmax(200px, 1fr))',gap:'1rem'}}>
+        <div className="deal-metric" style={{borderRadius:'var(--radius)'}}>
+          <div className="deal-metric-label">Deal Value</div>
+          <div className="deal-metric-value" style={{color:'var(--accent)'}}>{fmt(deal.deal_value, deal.deal_value_note)}</div>
+          <div className="deal-metric-sub">Weighted: {fmt((deal.deal_value||0) * (WEIGHT_MAP[deal.stage]||0))}</div>
+        </div>
+        <div className="deal-metric" style={{borderRadius:'var(--radius)'}}>
+          <div className="deal-metric-label">Stage</div>
+          <div className="deal-metric-value" style={{color:stageInfo?.color}}>{stageInfo?.label}</div>
+          <div className="deal-metric-sub">{daysInStage}d in stage</div>
+        </div>
+        <div className="deal-metric" style={{borderRadius:'var(--radius)'}}>
+          <div className="deal-metric-label">Next Action</div>
+          <div className="deal-metric-value" style={{color:isOverdue?'var(--orange)':'var(--text)',fontSize:14}}>
+            {deal.next_action_due ? (isOverdue ? Math.abs(daysUntil(deal.next_action_due)) + 'd overdue' : daysUntil(deal.next_action_due) + 'd left') : '\u2014'}
+          </div>
+          <div className="deal-metric-sub">{deal.next_action_due ? new Date(deal.next_action_due).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : 'No due date'}</div>
+        </div>
+        <div className="deal-metric" style={{borderRadius:'var(--radius)'}}>
+          <div className="deal-metric-label">Owner</div>
+          <div className="deal-metric-value" style={{fontSize:14,display:'flex',alignItems:'center',gap:6}}>
+            {dealOwner && <div style={{width:22,height:22,borderRadius:'50%',background:'var(--accent)',display:'inline-flex',alignItems:'center',justifyContent:'center',fontSize:9,fontWeight:700,color:'white'}}>{initials(dealOwner.display_name)}</div>}
+            {dealOwner?.display_name || '\u2014'}
+          </div>
+          <div className="deal-metric-sub">{deal.champion_name ? 'Champion: ' + deal.champion_name : 'No champion set'}</div>
+        </div>
+      </div>
+
+      {/* NEXT ACTION — full-width card */}
+      <div className={"deal-next-action-card " + (isOverdue ? 'overdue' : 'ok')} style={{borderRadius:'var(--radius)'}}>
         <div className="deal-next-action-header">
           <span className="deal-next-action-label">Next Action</span>
           {deal.next_action_due && (
-            <span className={`deal-next-action-due ${isOverdue ? 'overdue' : 'ok'}`}>
+            <span className={"deal-next-action-due " + (isOverdue ? 'overdue' : 'ok')}>
               {isOverdue ? Math.abs(daysLeft) + 'd overdue' : daysLeft === 0 ? 'Due today' : daysLeft + 'd remaining'}
             </span>
           )}
@@ -1203,7 +1312,7 @@ function OverviewTab({ deal, teamMembers, onEditDeal, canEdit }) {
 
       {/* STALL BANNER */}
       {deal.status === 'stalled' && deal.stall_reason && (
-        <div className="deal-stall-banner">
+        <div className="deal-stall-banner" style={{borderRadius:'var(--radius)'}}>
           <div className="deal-stall-icon">!</div>
           <div>
             <div className="deal-stall-label">Stalled</div>
@@ -1212,288 +1321,180 @@ function OverviewTab({ deal, teamMembers, onEditDeal, canEdit }) {
         </div>
       )}
 
-      {/* LEFT: Deal Info */}
-      <div className="deal-info-card">
-        <div className="deal-info-card-header">
-          <span className="deal-info-card-title">Deal Information</span>
+      {/* DEAL INFO + PEOPLE — two-column grid using detail-section cards */}
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1.5rem'}}>
+        <div className="detail-section">
+          <h3 className="section-title">Deal Information</h3>
+          <div style={{display:'flex',flexDirection:'column',gap:'0.75rem'}}>
+            <div className="deal-field"><span className="deal-field-label">Value</span><span className="deal-field-value" style={{color:'var(--accent)',fontWeight:700,fontSize:15}}>{fmt(deal.deal_value, deal.deal_value_note)}</span></div>
+            <div className="deal-field"><span className="deal-field-label">Weighted</span><span className="deal-field-value">{fmt((deal.deal_value||0) * (WEIGHT_MAP[deal.stage]||0))}</span></div>
+            <div className="deal-field"><span className="deal-field-label">Region</span><span className="deal-field-value">{deal.region || '\u2014'}</span></div>
+            <div className="deal-field"><span className="deal-field-label">Revenue Type</span><span className="deal-field-value">{deal.revenue_category === 'account_growth' ? 'Account Growth' : 'New Business'}</span></div>
+            <div className="deal-field"><span className="deal-field-label">Last Activity</span><span className="deal-field-value">{deal.last_activity_date ? new Date(deal.last_activity_date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '\u2014'}</span></div>
+            <div className="deal-field"><span className="deal-field-label">Source</span><span className="deal-field-value">{deal.last_activity_source || '\u2014'}</span></div>
+          </div>
         </div>
-        <div className="deal-info-card-body">
-          <div className="deal-field"><span className="deal-field-label">Value</span><span className="deal-field-value" style={{color:'var(--accent)',fontWeight:700,fontSize:15}}>{fmt(deal.deal_value, deal.deal_value_note)}</span></div>
-          <div className="deal-field"><span className="deal-field-label">Weighted</span><span className="deal-field-value">{fmt((deal.deal_value||0) * (WEIGHT_MAP[deal.stage]||0))}</span></div>
-          <div className="deal-field"><span className="deal-field-label">Region</span><span className="deal-field-value">{deal.region || '\u2014'}</span></div>
-          <div className="deal-field"><span className="deal-field-label">Revenue Type</span><span className="deal-field-value">{deal.revenue_category === 'account_growth' ? 'Account Growth' : 'New Business'}</span></div>
-          <div className="deal-field"><span className="deal-field-label">Last Activity</span><span className="deal-field-value">{deal.last_activity_date ? new Date(deal.last_activity_date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '\u2014'}</span></div>
-          <div className="deal-field"><span className="deal-field-label">Source</span><span className="deal-field-value">{deal.last_activity_source || '\u2014'}</span></div>
+
+        <div className="detail-section">
+          <h3 className="section-title">People</h3>
+          <div className="members-list" style={{gridTemplateColumns:'1fr'}}>
+            <div className="member-item" style={{flexDirection:'row',alignItems:'center',gap:'0.75rem'}}>
+              {dealOwner && <div className="activity-avatar" style={{width:'2rem',height:'2rem',fontSize:'0.75rem'}}>{initials(dealOwner.display_name)}</div>}
+              <div style={{flex:1}}>
+                <span className="member-role">Deal Owner</span>
+                <span className="member-name">{dealOwner?.display_name || '\u2014'}</span>
+              </div>
+            </div>
+            {deal.champion_name && (
+              <div className="member-item" style={{flexDirection:'row',alignItems:'center',gap:'0.75rem'}}>
+                <div className="activity-avatar" style={{width:'2rem',height:'2rem',fontSize:'0.75rem',background:'var(--blue)'}}>{initials(deal.champion_name)}</div>
+                <div style={{flex:1}}>
+                  <span className="member-role" style={{color:'var(--blue)'}}>Champion</span>
+                  <span className="member-name">{deal.champion_name}</span>
+                </div>
+              </div>
+            )}
+            {deal.decision_maker_name && (
+              <div className="member-item" style={{flexDirection:'row',alignItems:'center',gap:'0.75rem'}}>
+                <div className="activity-avatar" style={{width:'2rem',height:'2rem',fontSize:'0.75rem',background:'var(--orange)'}}>{initials(deal.decision_maker_name)}</div>
+                <div style={{flex:1}}>
+                  <span className="member-role" style={{color:'var(--orange)'}}>Decision Maker</span>
+                  <span className="member-name">{deal.decision_maker_name}</span>
+                </div>
+              </div>
+            )}
+            {deal.partner_id && (
+              <div className="member-item" style={{flexDirection:'row',alignItems:'center',gap:'0.75rem'}}>
+                <div style={{flex:1}}>
+                  <span className="member-role">Partner</span>
+                  <span className="member-name">{deal.partner_id}</span>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* RIGHT: People */}
-      <div className="deal-info-card">
-        <div className="deal-info-card-header">
-          <span className="deal-info-card-title">People</span>
-        </div>
-        <div className="deal-info-card-body">
-          <div className="deal-field"><span className="deal-field-label">Deal Owner</span><span className="deal-field-value" style={{display:'flex',alignItems:'center',gap:6,justifyContent:'flex-end'}}>{dealOwner && <div style={{width:20,height:20,borderRadius:'50%',background:'var(--accent)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:8,fontWeight:700,color:'white',flexShrink:0}}>{initials(dealOwner.display_name)}</div>}{dealOwner?.display_name || '\u2014'}</span></div>
-          <div className="deal-field"><span className="deal-field-label">Champion</span><span className="deal-field-value">{deal.champion_name || '\u2014'}</span></div>
-          <div className="deal-field"><span className="deal-field-label">Decision Maker</span><span className="deal-field-value">{deal.decision_maker_name || '\u2014'}</span></div>
-          {deal.partner_id && <div className="deal-field"><span className="deal-field-label">Partner</span><span className="deal-field-value">{deal.partner_id}</span></div>}
-        </div>
+      {/* NOTES — full-width section */}
+      <div className="detail-section">
+        <h3 className="section-title">Notes</h3>
+        {deal.notes ? <p className="detail-description">{deal.notes}</p> : <p className="detail-empty">No notes yet</p>}
       </div>
 
-      {/* NOTES */}
-      <div className="deal-notes-card" style={{gridColumn:'1 / -1'}}>
-        <div className="deal-info-card-header"><span className="deal-info-card-title">Notes</span></div>
-        {deal.notes ? <div className="deal-notes-body">{deal.notes}</div> : <div className="deal-notes-empty">No notes yet</div>}
-      </div>
-
-      {/* EDIT BUTTON */}
-      {canEdit && (
-        <div style={{gridColumn:'1 / -1'}}>
-          <button className="deal-hero-action-btn primary" onClick={() => onEditDeal(deal)} style={{width:'100%',justifyContent:'center',padding:'10px 0',fontSize:13,fontWeight:600}}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
-            Edit Deal
-          </button>
+      {/* LINKED INITIATIVES */}
+      {linkedInitiatives.length > 0 && (
+        <div className="detail-section">
+          <h3 className="section-title">Linked Initiatives ({linkedInitiatives.length})</h3>
+          <div className="linked-deals-list">
+            {linkedInitiatives.map(function(link) {
+              var initName = link.initiatives ? link.initiatives.title : 'Unknown Initiative';
+              var initStatus = link.initiatives ? link.initiatives.status : '';
+              return <div key={link.id} className="linked-deal-item" onClick={function(){ if(link.initiatives) window.location.hash='initiative/'+link.initiatives.id; }} style={{cursor:'pointer'}}>
+                <div className="deal-info">
+                  <div className="deal-name">{initName}</div>
+                  {initStatus && <div className="deal-note" style={{textTransform:'capitalize'}}>{initStatus.replace('_',' ')}</div>}
+                  {link.note && <div className="deal-note">{link.note}</div>}
+                </div>
+              </div>;
+            })}
+          </div>
         </div>
       )}
 
-      {/* ACTIVITY */}
-      <div className="deal-activity-section">
-        <div className="deal-info-card">
-          <div className="deal-info-card-header">
-            <span className="deal-info-card-title">Recent Activity</span>
-            <span style={{fontSize:10,color:'var(--text-muted)'}}>{activities.length} events</span>
-          </div>
-          <div style={{padding:'8px 16px'}}>
-            {activities.length === 0 ? (
-              <div style={{fontSize:12,color:'var(--text-muted)',padding:'12px 0'}}>No activity logged</div>
-            ) : (
-              <div className="deal-activity-list">
-                {activities.slice(0, 10).map((act, i) => (
-                  <div key={act.id} className="deal-activity-item">
-                    <div className="deal-activity-dot-wrap">
-                      <div className="deal-activity-dot"></div>
-                      {i < Math.min(activities.length, 10) - 1 && <div className="deal-activity-line"></div>}
-                    </div>
-                    <div>
-                      <div className="deal-activity-text">{act.activity_text}</div>
-                      <div className="deal-activity-time">{new Date(act.logged_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'})} at {new Date(act.logged_at).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</div>
-                    </div>
-                  </div>
-                ))}
+      {/* ACTIVITY — avatar-based feed like InitiativeDetail */}
+      <div className="detail-section">
+        <h3 className="section-title">Activity ({activities.length})</h3>
+        {activities.length === 0 ? (
+          <p className="detail-empty">No activity logged</p>
+        ) : (
+          <div className="initiative-activity">
+            {activities.slice(0, 15).map((act) => (
+              <div key={act.id} className="activity-item">
+                <div className="activity-avatar" style={{background:'var(--bg-surface)',color:'var(--accent)',border:'1px solid var(--border)'}}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+                <div className="activity-content">
+                  <p className="activity-message">{act.activity_text}</p>
+                  <span className="activity-time">{new Date(act.logged_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'})} at {new Date(act.logged_at).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span>
+                </div>
               </div>
-            )}
+            ))}
           </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function AccountView({ dealId, deals, teamMembers, onBack, canEdit, user }) {
-  const deal = deals.find(d => d.id === dealId);
-  const [activeTab, setActiveTab] = useState('overview');
-  const [editing, setEditing] = useState(false);
-  const [form, setForm] = useState({});
-  const [showCopied, setShowCopied] = useState(false);
-  const [taskCount, setTaskCount] = useState(0);
-
-  useEffect(() => { if (deal) setForm(deal); }, [deal]);
-  useEffect(() => {
-    if (!deal) return;
-    supabase.from('deal_actions').select('id', {count:'exact', head:true}).eq('deal_id', deal.id).eq('status','pending').then(r => { if (r.count != null) setTaskCount(r.count); });
-  }, [deal?.id]);
-
-  if (!deal) return <div className="loading-screen"><div className="loading-spinner"></div></div>;
-
-  const stageInfo = STAGE_MAP[deal.stage];
-  const stageIdx = STAGES.findIndex(s => s.key === deal.stage);
-  const daysInStage = deal.stage_entered_at ? Math.floor((Date.now() - new Date(deal.stage_entered_at)) / 86400000) : 0;
-  const isOverdue = deal.next_action_due && daysUntil(deal.next_action_due) < 0;
-  const dealOwner = Object.fromEntries(teamMembers.map(t => [t.id, t]))[deal.deal_owner_id];
-  const initials = (name) => name ? name.split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase() : '?';
-
-  const handleEditDeal = (d) => { if (!canEdit) return; setForm(d); setEditing(true); };
-  const saveDeal = async () => {
-    if (!canEdit) return;
-    const u = {};
-    ['stage','deal_owner_id','next_action','next_action_due','next_action_owner_id','champion_name','deal_value','status','stall_reason','notes','partner_id'].forEach(k => {
-      if (form[k] !== undefined) u[k] = k === 'deal_value' ? (form[k] || null) : (k === 'partner_id' ? (form[k] || null) : form[k]);
-    });
-    const { error } = await supabase.from('deals').update(u).eq('id', deal.id);
-    if (!error) { await logAudit(user, 'update_deal', 'deal', deal.id, deal.account_name, u); setEditing(false); }
-  };
-  const copyLink = () => {
-    const url = window.location.origin + window.location.pathname + '#deal/' + deal.id;
-    navigator.clipboard.writeText(url).then(() => { setShowCopied(true); setTimeout(() => setShowCopied(false), 2000); });
-  };
-
-  return (
-    <div className="deal-detail-wrapper">
-      {showCopied && <div className="share-copied">Link copied to clipboard</div>}
-      <div className="deal-hero">
-        <div className="deal-hero-top">
-          <button className="deal-hero-back" onClick={onBack}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-            Pipeline
-          </button>
-          <div className="deal-hero-actions">
-            <button className="deal-hero-action-btn" onClick={copyLink}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-              Share
-            </button>
-            {canEdit && (
-              <button className="deal-hero-action-btn primary" onClick={() => handleEditDeal(deal)}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
-                Edit
-              </button>
-            )}
-          </div>
-        </div>
-        <div className="deal-hero-body">
-          <div className="deal-hero-title-row">
-            <div className="deal-hero-title-block">
-              <div className="deal-hero-account">{deal.account_name}</div>
-              <div className="deal-hero-project">
-                <span>{deal.project_name}</span>
-                {deal.region && <span className="deal-hero-region">{deal.region}</span>}
-                <span className={`deal-status-pill ${deal.status}`}>
-                  <span className="deal-status-pill-dot"></span>
-                  {deal.status}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Metrics */}
-          <div className="deal-hero-metrics">
-            <div className="deal-metric">
-              <div className="deal-metric-label">Deal Value</div>
-              <div className="deal-metric-value" style={{color:'var(--accent)'}}>{fmt(deal.deal_value, deal.deal_value_note)}</div>
-              <div className="deal-metric-sub">Weighted: {fmt((deal.deal_value||0) * (WEIGHT_MAP[deal.stage]||0))}</div>
-            </div>
-            <div className="deal-metric">
-              <div className="deal-metric-label">Stage</div>
-              <div className="deal-metric-value" style={{color:stageInfo?.color}}>{stageInfo?.label}</div>
-              <div className="deal-metric-sub">{daysInStage}d in stage</div>
-            </div>
-            <div className="deal-metric">
-              <div className="deal-metric-label">Next Action</div>
-              <div className="deal-metric-value" style={{color:isOverdue?'var(--orange)':'var(--text)',fontSize:14}}>
-                {deal.next_action_due ? (isOverdue ? Math.abs(daysUntil(deal.next_action_due)) + 'd overdue' : daysUntil(deal.next_action_due) + 'd left') : '\u2014'}
-              </div>
-              <div className="deal-metric-sub">{deal.next_action_due ? new Date(deal.next_action_due).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : 'No due date'}</div>
-            </div>
-            <div className="deal-metric">
-              <div className="deal-metric-label">Owner</div>
-              <div className="deal-metric-value" style={{fontSize:14,display:'flex',alignItems:'center',gap:6}}>
-                {dealOwner && <div style={{width:22,height:22,borderRadius:'50%',background:'var(--accent)',display:'inline-flex',alignItems:'center',justifyContent:'center',fontSize:9,fontWeight:700,color:'white'}}>{initials(dealOwner.display_name)}</div>}
-                {dealOwner?.display_name || '\u2014'}
-              </div>
-              <div className="deal-metric-sub">{deal.champion_name ? 'Champion: ' + deal.champion_name : 'No champion set'}</div>
-            </div>
-          </div>
-
-          {/* Stage progress */}
-          <div className="deal-stage-progress">
-            {STAGES.map((stage, idx) => {
-              const isPast = idx < stageIdx;
-              const isCurrent = idx === stageIdx;
-              return (
-                <React.Fragment key={stage.key}>
-                  <div className="deal-stage-step">
-                    <div className={`deal-stage-dot ${isPast?'past':isCurrent?'current':'future'}`}>
-                      {isPast ? '\u2713' : idx + 1}
-                    </div>
-                    <span className={`deal-stage-label ${isPast?'past':isCurrent?'current':'future'}`}>{stage.label}</span>
-                  </div>
-                  {idx < STAGES.length - 1 && <div className={`deal-stage-connector ${idx < stageIdx ? 'past' : 'future'}`}></div>}
-                </React.Fragment>
-              );
-            })}
-          </div>
-
-          {/* Tabs */}
-          <div className="deal-tab-bar">
-            <button className={`deal-tab ${activeTab==='overview'?'active':''}`} onClick={() => setActiveTab('overview')}>Overview</button>
-            
-          </div>
-        </div>
+        )}
       </div>
 
-      {/* Tab content */}
-      {activeTab === 'overview' && <OverviewTab deal={deal} teamMembers={teamMembers} onEditDeal={handleEditDeal} canEdit={canEdit} />}
-      
-
-      {/* Edit Modal */}
+      {/* EDIT MODAL — kept from original */}
       {editing && (
-        <div className="deal-edit-overlay" onClick={(e) => { if (e.target === e.currentTarget) setEditing(false); }}>
-          <div className="deal-edit-modal">
-            <div className="deal-edit-header">
-              <span className="deal-edit-title">Edit Deal</span>
-              <button className="panel-close" onClick={() => setEditing(false)}>&times;</button>
+        <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setEditing(false); }}>
+          <div className="modal" style={{maxWidth:560}}>
+            <div className="modal-header">
+              <h2 className="modal-title">Edit Deal</h2>
+              <button className="btn-close-modal" onClick={() => setEditing(false)}>&times;</button>
             </div>
-            <div className="deal-edit-body">
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
-                <div className="deal-edit-row">
-                  <div className="deal-edit-label">Stage</div>
-                  <select className="edit-field" value={form.stage||''} onChange={e => setForm({...form,stage:e.target.value})}>
-                    {STAGES.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}
-                  </select>
-                </div>
-                <div className="deal-edit-row">
-                  <div className="deal-edit-label">Status</div>
-                  <select className="edit-field" value={form.status||''} onChange={e => setForm({...form,status:e.target.value})}>
-                    <option value="active">Active</option>
-                    <option value="stalled">Stalled</option>
-                  </select>
-                </div>
-                <div className="deal-edit-row">
-                  <div className="deal-edit-label">Deal Value</div>
-                  <input className="edit-field" type="number" value={form.deal_value||''} onChange={e => setForm({...form,deal_value:e.target.value?Number(e.target.value):null})} placeholder="e.g. 150000" />
-                </div>
-                <div className="deal-edit-row">
-                  <div className="deal-edit-label">Deal Owner</div>
-                  <select className="edit-field" value={form.deal_owner_id||''} onChange={e => setForm({...form,deal_owner_id:e.target.value})}>
-                    <option value="">Select...</option>
-                    {teamMembers.map(t => <option key={t.id} value={t.id}>{t.display_name}</option>)}
-                  </select>
-                </div>
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+              <div className="form-group">
+                <label className="form-label">Stage</label>
+                <select className="form-select" value={form.stage||''} onChange={e => setForm({...form,stage:e.target.value})}>
+                  {STAGES.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}
+                </select>
               </div>
-              <div className="deal-edit-row">
-                <div className="deal-edit-label">Champion</div>
-                <input className="edit-field" value={form.champion_name||''} onChange={e => setForm({...form,champion_name:e.target.value})} placeholder="Client champion name" />
+              <div className="form-group">
+                <label className="form-label">Status</label>
+                <select className="form-select" value={form.status||''} onChange={e => setForm({...form,status:e.target.value})}>
+                  <option value="active">Active</option>
+                  <option value="stalled">Stalled</option>
+                </select>
               </div>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
-                <div className="deal-edit-row">
-                  <div className="deal-edit-label">Next Action</div>
-                  <input className="edit-field" value={form.next_action||''} onChange={e => setForm({...form,next_action:e.target.value})} placeholder="What needs to happen next" />
-                </div>
-                <div className="deal-edit-row">
-                  <div className="deal-edit-label">Due Date</div>
-                  <input className="edit-field" type="date" value={form.next_action_due||''} onChange={e => setForm({...form,next_action_due:e.target.value})} />
-                </div>
+              <div className="form-group">
+                <label className="form-label">Deal Value</label>
+                <input className="form-input" type="number" value={form.deal_value||''} onChange={e => setForm({...form,deal_value:e.target.value?Number(e.target.value):null})} placeholder="e.g. 150000" />
               </div>
-              <div className="deal-edit-row">
-                <div className="deal-edit-label">Next Action Owner</div>
-                <select className="edit-field" value={form.next_action_owner_id||''} onChange={e => setForm({...form,next_action_owner_id:e.target.value})}>
+              <div className="form-group">
+                <label className="form-label">Deal Owner</label>
+                <select className="form-select" value={form.deal_owner_id||''} onChange={e => setForm({...form,deal_owner_id:e.target.value})}>
                   <option value="">Select...</option>
                   {teamMembers.map(t => <option key={t.id} value={t.id}>{t.display_name}</option>)}
                 </select>
               </div>
-              {form.status === 'stalled' && (
-                <div className="deal-edit-row">
-                  <div className="deal-edit-label">Stall Reason</div>
-                  <textarea className="edit-field" value={form.stall_reason||''} onChange={e => setForm({...form,stall_reason:e.target.value})} rows={2} placeholder="Why is this deal stalled?"></textarea>
-                </div>
-              )}
-              <div className="deal-edit-row">
-                <div className="deal-edit-label">Notes</div>
-                <textarea className="edit-field" value={form.notes||''} onChange={e => setForm({...form,notes:e.target.value})} rows={3} placeholder="Additional notes"></textarea>
+            </div>
+            <div className="form-group">
+              <label className="form-label">Champion</label>
+              <input className="form-input" value={form.champion_name||''} onChange={e => setForm({...form,champion_name:e.target.value})} placeholder="Client champion name" />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Decision Maker</label>
+              <input className="form-input" value={form.decision_maker_name||''} onChange={e => setForm({...form,decision_maker_name:e.target.value})} placeholder="Decision maker name" />
+            </div>
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+              <div className="form-group">
+                <label className="form-label">Next Action</label>
+                <input className="form-input" value={form.next_action||''} onChange={e => setForm({...form,next_action:e.target.value})} placeholder="What needs to happen next" />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Due Date</label>
+                <input className="form-input" type="date" value={form.next_action_due||''} onChange={e => setForm({...form,next_action_due:e.target.value})} />
               </div>
             </div>
-            <div className="deal-edit-footer">
-              <button className="btn btn-secondary" onClick={() => setEditing(false)}>Cancel</button>
-              <button className="btn btn-primary" onClick={saveDeal}>Save Changes</button>
+            <div className="form-group">
+              <label className="form-label">Next Action Owner</label>
+              <select className="form-select" value={form.next_action_owner_id||''} onChange={e => setForm({...form,next_action_owner_id:e.target.value})}>
+                <option value="">Select...</option>
+                {teamMembers.map(t => <option key={t.id} value={t.id}>{t.display_name}</option>)}
+              </select>
+            </div>
+            {form.status === 'stalled' && (
+              <div className="form-group">
+                <label className="form-label">Stall Reason</label>
+                <textarea className="form-textarea" value={form.stall_reason||''} onChange={e => setForm({...form,stall_reason:e.target.value})} rows={2} placeholder="Why is this deal stalled?"></textarea>
+              </div>
+            )}
+            <div className="form-group">
+              <label className="form-label">Notes</label>
+              <textarea className="form-textarea" value={form.notes||''} onChange={e => setForm({...form,notes:e.target.value})} rows={3} placeholder="Additional notes"></textarea>
+            </div>
+            <div className="modal-buttons">
+              <button className="btn-secondary" onClick={() => setEditing(false)}>Cancel</button>
+              <button className="btn-primary" onClick={saveDeal}>Save Changes</button>
             </div>
           </div>
         </div>
