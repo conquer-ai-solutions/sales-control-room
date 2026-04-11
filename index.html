@@ -2653,6 +2653,7 @@ function App() {
               {canAccessScreen('revenue') && <button className={`view-btn ${page==='revenue'?'active':''}`} onClick={()=>setPage('revenue')} style={page==='revenue'?{background:'var(--stage-procurement)',color:'white'}:{}}>Revenue</button>}
               {canAccessScreen('audit') && <button className={`view-btn ${page==='audit'?'active':''}`} onClick={()=>setPage('audit')} style={page==='audit'?{background:'var(--accent)',color:'white'}:{}}>Audit</button>}
               {canAccessScreen('admin') && <button className={`view-btn ${page==='admin'?'active':''}`} onClick={()=>setPage('admin')} style={page==='admin'?{background:'var(--accent)',color:'white'}:{}}>Admin</button>}
+              {<button className={`view-btn ${page==='initiatives'?'active':''}`} onClick={()=>setPage('initiatives')} style={page==='initiatives'?{background:'var(--accent)',color:'white'}:{}}>Initiatives</button>}
             </div>
             <button className="refresh-btn" onClick={load}>↻ Refresh</button>
             <span className="timestamp">{ts.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span>
@@ -2685,6 +2686,7 @@ function App() {
             {canAccessScreen('revenue') && <button className={`view-btn ${page==='revenue'?'active':''}`} onClick={()=>setPage('revenue')} style={page==='revenue'?{background:'var(--stage-procurement)',color:'white'}:{}}>Revenue</button>}
             {canAccessScreen('audit') && <button className={`view-btn ${page==='audit'?'active':''}`} onClick={()=>setPage('audit')} style={page==='audit'?{background:'var(--accent)',color:'white'}:{}}>Audit</button>}
             {canAccessScreen('admin') && <button className={`view-btn ${page==='admin'?'active':''}`} onClick={()=>setPage('admin')} style={page==='admin'?{background:'var(--accent)',color:'white'}:{}}>Admin</button>}
+              {<button className={`view-btn ${page==='initiatives'?'active':''}`} onClick={()=>setPage('initiatives')} style={page==='initiatives'?{background:'var(--accent)',color:'white'}:{}}>Initiatives</button>}
           </div>
           <button className="refresh-btn" onClick={load}>↻ Refresh</button>
           <span className="timestamp">{ts.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span>
