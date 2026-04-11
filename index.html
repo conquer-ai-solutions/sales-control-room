@@ -519,6 +519,110 @@
   .btn:disabled, .save-btn:disabled, .refresh-btn:disabled {
     opacity:0.5; cursor:not-allowed;
   }
+
+  /* DEAL DETAIL REDESIGN */
+  .deal-detail-wrapper { min-height:100vh; background:var(--bg); }
+  .deal-hero { background:var(--bg-elevated); border-bottom:1px solid var(--border); padding:0 32px; position:sticky; top:0; z-index:90; backdrop-filter:blur(16px); }
+  .deal-hero-top { display:flex; align-items:center; gap:12px; padding:16px 0 0; }
+  .deal-hero-back { background:none; border:1px solid var(--border); padding:6px 10px; border-radius:var(--radius); color:var(--text-dim); cursor:pointer; font-size:13px; font-family:var(--font); transition:all 0.15s; display:flex; align-items:center; gap:4px; }
+  .deal-hero-back:hover { border-color:var(--accent); color:var(--text); }
+  .deal-hero-actions { display:flex; gap:8px; margin-left:auto; }
+  .deal-hero-action-btn { background:none; border:1px solid var(--border); padding:6px 12px; border-radius:var(--radius); color:var(--text-dim); cursor:pointer; font-size:12px; font-family:var(--font); transition:all 0.15s; display:flex; align-items:center; gap:5px; }
+  .deal-hero-action-btn:hover { border-color:var(--accent); color:var(--accent); }
+  .deal-hero-action-btn.primary { background:var(--accent); border-color:var(--accent); color:white; }
+  .deal-hero-action-btn.primary:hover { background:var(--accent-hover); }
+  .deal-hero-body { padding:16px 0; }
+  .deal-hero-title-row { display:flex; align-items:flex-start; gap:16px; margin-bottom:16px; }
+  .deal-hero-title-block { flex:1; min-width:0; }
+  .deal-hero-account { font-size:22px; font-weight:700; color:var(--text); letter-spacing:-0.3px; line-height:1.2; margin-bottom:4px; }
+  .deal-hero-project { font-size:13px; color:var(--text-dim); line-height:1.4; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .deal-hero-region { font-size:10px; padding:2px 8px; border-radius:4px; background:var(--blue-bg); color:var(--blue); font-weight:600; text-transform:uppercase; letter-spacing:0.3px; }
+
+  .deal-hero-metrics { display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:12px; margin-bottom:16px; }
+  .deal-metric { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:12px 14px; position:relative; overflow:hidden; }
+  .deal-metric::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
+  .deal-metric:nth-child(1)::before { background:var(--accent); }
+  .deal-metric:nth-child(2)::before { background:var(--stage-procurement); }
+  .deal-metric:nth-child(3)::before { background:var(--orange); }
+  .deal-metric:nth-child(4)::before { background:var(--blue); }
+  .deal-metric-label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); margin-bottom:4px; }
+  .deal-metric-value { font-size:18px; font-weight:700; letter-spacing:-0.5px; font-variant-numeric:tabular-nums; }
+  .deal-metric-sub { font-size:10px; color:var(--text-dim); margin-top:2px; }
+  .deal-stage-progress { display:flex; align-items:center; gap:0; margin-bottom:16px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:8px 14px; overflow:hidden; }
+  .deal-stage-step { flex:1; display:flex; align-items:center; gap:6px; position:relative; padding:4px 0; }
+  .deal-stage-dot { width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:8px; font-weight:700; flex-shrink:0; transition:all 0.2s; position:relative; z-index:2; }
+  .deal-stage-dot.past { background:var(--accent); color:white; }
+  .deal-stage-dot.current { background:var(--accent); color:white; box-shadow:0 0 0 3px var(--accent-glow); }
+  .deal-stage-dot.future { background:var(--bg-surface); color:var(--text-muted); border:1.5px solid var(--border); }
+  .deal-stage-label { font-size:10px; font-weight:600; white-space:nowrap; letter-spacing:0.2px; }
+  .deal-stage-label.past { color:var(--accent); }
+  .deal-stage-label.current { color:var(--accent); }
+  .deal-stage-label.future { color:var(--text-muted); }
+  .deal-stage-connector { flex:1; height:2px; margin:0 4px; min-width:8px; }
+  .deal-stage-connector.past { background:var(--accent); }
+  .deal-stage-connector.future { background:var(--border); }
+  .deal-status-pill { display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:20px; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.3px; }
+  .deal-status-pill.active { background:rgba(55,165,132,0.12); color:var(--accent); }
+  .deal-status-pill.stalled { background:var(--red-bg); color:var(--red); }
+  .deal-status-pill-dot { width:6px; height:6px; border-radius:50%; }
+  .deal-status-pill.active .deal-status-pill-dot { background:var(--accent); }
+  .deal-status-pill.stalled .deal-status-pill-dot { background:var(--red); }
+
+  .deal-tab-bar { display:flex; gap:4px; padding:0; border-top:1px solid var(--border); margin-top:0; }
+  .deal-tab { padding:12px 18px; border:none; background:transparent; color:var(--text-muted); cursor:pointer; font-size:12px; font-weight:500; font-family:var(--font); border-bottom:2px solid transparent; transition:all 0.15s; display:flex; align-items:center; gap:6px; }
+  .deal-tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+  .deal-tab:hover:not(.active) { color:var(--text-dim); }
+  .deal-tab-count { font-size:9px; padding:1px 6px; border-radius:8px; font-weight:700; background:var(--bg-surface); color:var(--text-muted); }
+  .deal-tab.active .deal-tab-count { background:var(--accent-subtle); color:var(--accent); }
+  .deal-overview-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; padding:24px 32px; }
+  @media (max-width:900px) { .deal-overview-grid { grid-template-columns:1fr; } }
+  .deal-info-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; }
+  .deal-info-card-header { padding:12px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+  .deal-info-card-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); }
+  .deal-info-card-body { padding:4px 16px; }
+  .deal-field { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid rgba(60,60,60,0.3); }
+  .deal-field:last-child { border-bottom:none; }
+  .deal-field-label { font-size:12px; color:var(--text-dim); flex-shrink:0; }
+  .deal-field-value { font-size:13px; font-weight:500; text-align:right; max-width:65%; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .deal-next-action-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:16px 20px; grid-column:1 / -1; position:relative; overflow:hidden; }
+  .deal-next-action-card::before { content:''; position:absolute; top:0; left:0; bottom:0; width:3px; }
+  .deal-next-action-card.overdue::before { background:var(--orange); }
+  .deal-next-action-card.ok::before { background:var(--accent); }
+  .deal-next-action-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .deal-next-action-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); }
+  .deal-next-action-due { font-size:11px; font-weight:600; padding:3px 10px; border-radius:4px; }
+  .deal-next-action-due.overdue { background:var(--orange-bg); color:var(--orange); }
+  .deal-next-action-due.ok { background:rgba(55,165,132,0.1); color:var(--accent); }
+  .deal-next-action-text { font-size:15px; font-weight:600; color:var(--text); line-height:1.4; margin-bottom:8px; }
+  .deal-next-action-owner { font-size:12px; color:var(--text-dim); display:flex; align-items:center; gap:8px; }
+  .deal-next-action-avatar { width:22px; height:22px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:700; color:white; }
+
+  .deal-notes-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; }
+  .deal-notes-body { padding:12px 16px; font-size:13px; color:var(--text); line-height:1.6; white-space:pre-wrap; }
+  .deal-notes-empty { padding:16px; font-size:12px; color:var(--text-muted); font-style:italic; }
+  .deal-stall-banner { background:var(--red-bg); border:1px solid rgba(236,53,64,0.2); border-radius:var(--radius); padding:12px 16px; grid-column:1 / -1; display:flex; align-items:flex-start; gap:10px; }
+  .deal-stall-icon { width:20px; height:20px; border-radius:50%; background:var(--red); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:10px; color:white; font-weight:700; }
+  .deal-stall-text { font-size:13px; color:var(--red); line-height:1.4; }
+  .deal-stall-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--red); margin-bottom:2px; }
+  .deal-activity-section { grid-column:1 / -1; }
+  .deal-activity-list { display:flex; flex-direction:column; }
+  .deal-activity-item { display:flex; gap:12px; padding:12px 0; border-bottom:1px solid rgba(60,60,60,0.3); }
+  .deal-activity-item:last-child { border-bottom:none; }
+  .deal-activity-dot-wrap { display:flex; flex-direction:column; align-items:center; gap:0; padding-top:2px; }
+  .deal-activity-dot { width:8px; height:8px; border-radius:50%; background:var(--accent); flex-shrink:0; }
+  .deal-activity-line { width:1px; flex:1; background:var(--border); margin-top:4px; }
+  .deal-activity-text { font-size:13px; color:var(--text); line-height:1.4; }
+  .deal-activity-time { font-size:11px; color:var(--text-muted); margin-top:2px; font-variant-numeric:tabular-nums; }
+  .deal-edit-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:300; backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; }
+  .deal-edit-modal { background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius-lg); width:520px; max-width:92vw; max-height:85vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.5); }
+  .deal-edit-header { padding:20px 24px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; background:var(--bg-panel); z-index:1; }
+  .deal-edit-title { font-size:16px; font-weight:700; color:var(--text); }
+  .deal-edit-body { padding:20px 24px; }
+  .deal-edit-row { margin-bottom:16px; }
+  .deal-edit-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--text-dim); margin-bottom:6px; }
+  .deal-edit-footer { padding:16px 24px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:8px; position:sticky; bottom:0; background:var(--bg-panel); }
+  .share-copied { position:fixed; top:20px; left:50%; transform:translateX(-50%); padding:8px 20px; background:var(--accent); color:white; border-radius:20px; font-size:12px; font-weight:600; z-index:400; animation:fadeIn 0.2s ease; box-shadow:0 4px 16px rgba(55,165,132,0.3); }
+
 </style>
 </head>
 <body>
@@ -904,6 +1008,138 @@ function AdminPanel({ users, onUserUpdate, userRole }) {
 }
 
 function OverviewTab({ deal, teamMembers, onEditDeal, canEdit }) {
+  const [activities, setActivities] = useState([]);
+  const tmMap = useMemo(() => Object.fromEntries(teamMembers.map(t => [t.id, t])), [teamMembers]);
+
+  useEffect(() => {
+    const fetchActivities = async () => {
+      const { data } = await supabase.from('deal_activity_log').select('*').eq('deal_id', deal.id).order('logged_at', { ascending: false });
+      if (data) setActivities(data);
+    };
+    fetchActivities();
+  }, [deal.id]);
+
+  const dealOwner = tmMap[deal.deal_owner_id];
+  const nextActionOwner = tmMap[deal.next_action_owner_id];
+  const isOverdue = deal.next_action_due && daysUntil(deal.next_action_due) < 0;
+  const daysLeft = deal.next_action_due ? daysUntil(deal.next_action_due) : null;
+  const initials = (name) => name ? name.split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase() : '?';
+
+  return (
+    <div className="deal-overview-grid">
+      {/* NEXT ACTION */}
+      <div className={`deal-next-action-card ${isOverdue ? 'overdue' : 'ok'}`}>
+        <div className="deal-next-action-header">
+          <span className="deal-next-action-label">Next Action</span>
+          {deal.next_action_due && (
+            <span className={`deal-next-action-due ${isOverdue ? 'overdue' : 'ok'}`}>
+              {isOverdue ? Math.abs(daysLeft) + 'd overdue' : daysLeft === 0 ? 'Due today' : daysLeft + 'd remaining'}
+            </span>
+          )}
+        </div>
+        <div className="deal-next-action-text">{deal.next_action || 'No action set'}</div>
+        <div className="deal-next-action-owner">
+          {nextActionOwner && (
+            <>
+              <div className="deal-next-action-avatar">{initials(nextActionOwner.display_name)}</div>
+              <span>{nextActionOwner.display_name}</span>
+            </>
+          )}
+          {deal.next_action_due && (
+            <span style={{marginLeft:'auto',fontSize:11,color:'var(--text-muted)'}}>
+              Due {new Date(deal.next_action_due).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* STALL BANNER */}
+      {deal.status === 'stalled' && deal.stall_reason && (
+        <div className="deal-stall-banner">
+          <div className="deal-stall-icon">!</div>
+          <div>
+            <div className="deal-stall-label">Stalled</div>
+            <div className="deal-stall-text">{deal.stall_reason}</div>
+          </div>
+        </div>
+      )}
+
+      {/* LEFT: Deal Info */}
+      <div className="deal-info-card">
+        <div className="deal-info-card-header">
+          <span className="deal-info-card-title">Deal Information</span>
+        </div>
+        <div className="deal-info-card-body">
+          <div className="deal-field"><span className="deal-field-label">Value</span><span className="deal-field-value" style={{color:'var(--accent)',fontWeight:700,fontSize:15}}>{fmt(deal.deal_value, deal.deal_value_note)}</span></div>
+          <div className="deal-field"><span className="deal-field-label">Weighted</span><span className="deal-field-value">{fmt((deal.deal_value||0) * (WEIGHT_MAP[deal.stage]||0))}</span></div>
+          <div className="deal-field"><span className="deal-field-label">Region</span><span className="deal-field-value">{deal.region || '\u2014'}</span></div>
+          <div className="deal-field"><span className="deal-field-label">Revenue Type</span><span className="deal-field-value">{deal.revenue_category === 'account_growth' ? 'Account Growth' : 'New Business'}</span></div>
+          <div className="deal-field"><span className="deal-field-label">Last Activity</span><span className="deal-field-value">{deal.last_activity_date ? new Date(deal.last_activity_date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '\u2014'}</span></div>
+          <div className="deal-field"><span className="deal-field-label">Source</span><span className="deal-field-value">{deal.last_activity_source || '\u2014'}</span></div>
+        </div>
+      </div>
+
+      {/* RIGHT: People */}
+      <div className="deal-info-card">
+        <div className="deal-info-card-header">
+          <span className="deal-info-card-title">People</span>
+        </div>
+        <div className="deal-info-card-body">
+          <div className="deal-field"><span className="deal-field-label">Deal Owner</span><span className="deal-field-value" style={{display:'flex',alignItems:'center',gap:6,justifyContent:'flex-end'}}>{dealOwner && <div style={{width:20,height:20,borderRadius:'50%',background:'var(--accent)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:8,fontWeight:700,color:'white',flexShrink:0}}>{initials(dealOwner.display_name)}</div>}{dealOwner?.display_name || '\u2014'}</span></div>
+          <div className="deal-field"><span className="deal-field-label">Champion</span><span className="deal-field-value">{deal.champion_name || '\u2014'}</span></div>
+          <div className="deal-field"><span className="deal-field-label">Decision Maker</span><span className="deal-field-value">{deal.decision_maker_name || '\u2014'}</span></div>
+          {deal.partner_id && <div className="deal-field"><span className="deal-field-label">Partner</span><span className="deal-field-value">{deal.partner_id}</span></div>}
+        </div>
+      </div>
+
+      {/* NOTES */}
+      <div className="deal-notes-card" style={{gridColumn:'1 / -1'}}>
+        <div className="deal-info-card-header"><span className="deal-info-card-title">Notes</span></div>
+        {deal.notes ? <div className="deal-notes-body">{deal.notes}</div> : <div className="deal-notes-empty">No notes yet</div>}
+      </div>
+
+      {/* EDIT BUTTON */}
+      {canEdit && (
+        <div style={{gridColumn:'1 / -1'}}>
+          <button className="deal-hero-action-btn primary" onClick={() => onEditDeal(deal)} style={{width:'100%',justifyContent:'center',padding:'10px 0',fontSize:13,fontWeight:600}}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+            Edit Deal
+          </button>
+        </div>
+      )}
+
+      {/* ACTIVITY */}
+      <div className="deal-activity-section">
+        <div className="deal-info-card">
+          <div className="deal-info-card-header">
+            <span className="deal-info-card-title">Recent Activity</span>
+            <span style={{fontSize:10,color:'var(--text-muted)'}}>{activities.length} events</span>
+          </div>
+          <div style={{padding:'8px 16px'}}>
+            {activities.length === 0 ? (
+              <div style={{fontSize:12,color:'var(--text-muted)',padding:'12px 0'}}>No activity logged</div>
+            ) : (
+              <div className="deal-activity-list">
+                {activities.slice(0, 10).map((act, i) => (
+                  <div key={act.id} className="deal-activity-item">
+                    <div className="deal-activity-dot-wrap">
+                      <div className="deal-activity-dot"></div>
+                      {i < Math.min(activities.length, 10) - 1 && <div className="deal-activity-line"></div>}
+                    </div>
+                    <div>
+                      <div className="deal-activity-text">{act.activity_text}</div>
+                      <div className="deal-activity-time">{new Date(act.logged_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'})} at {new Date(act.logged_at).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}unction OverviewTab({ deal, teamMembers, onEditDeal, canEdit }) {
   const [activities, setActivities] = useState([]);
   const tmMap = useMemo(() => Object.fromEntries(teamMembers.map(t => [t.id, t])), [teamMembers]);
 
@@ -1316,6 +1552,221 @@ function RouteToCashTab({ deal }) {
 }
 
 function AccountView({ dealId, deals, teamMembers, onBack, canEdit, user }) {
+  const deal = deals.find(d => d.id === dealId);
+  const [activeTab, setActiveTab] = useState('overview');
+  const [editing, setEditing] = useState(false);
+  const [form, setForm] = useState({});
+  const [showCopied, setShowCopied] = useState(false);
+  const [taskCount, setTaskCount] = useState(0);
+
+  useEffect(() => { if (deal) setForm(deal); }, [deal]);
+  useEffect(() => {
+    if (!deal) return;
+    supabase.from('deal_actions').select('id', {count:'exact', head:true}).eq('deal_id', deal.id).eq('status','pending').then(r => { if (r.count != null) setTaskCount(r.count); });
+  }, [deal?.id]);
+
+  if (!deal) return <div className="loading-screen"><div className="loading-spinner"></div></div>;
+
+  const stageInfo = STAGE_MAP[deal.stage];
+  const stageIdx = STAGES.findIndex(s => s.key === deal.stage);
+  const daysInStage = deal.stage_entered_at ? Math.floor((Date.now() - new Date(deal.stage_entered_at)) / 86400000) : 0;
+  const isOverdue = deal.next_action_due && daysUntil(deal.next_action_due) < 0;
+  const dealOwner = Object.fromEntries(teamMembers.map(t => [t.id, t]))[deal.deal_owner_id];
+  const initials = (name) => name ? name.split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase() : '?';
+
+  const handleEditDeal = (d) => { if (!canEdit) return; setForm(d); setEditing(true); };
+  const saveDeal = async () => {
+    if (!canEdit) return;
+    const u = {};
+    ['stage','deal_owner_id','next_action','next_action_due','next_action_owner_id','champion_name','deal_value','status','stall_reason','notes','partner_id'].forEach(k => {
+      if (form[k] !== undefined) u[k] = k === 'deal_value' ? (form[k] || null) : (k === 'partner_id' ? (form[k] || null) : form[k]);
+    });
+    const { error } = await supabase.from('deals').update(u).eq('id', deal.id);
+    if (!error) { await logAudit(user, 'update_deal', 'deal', deal.id, deal.account_name, u); setEditing(false); }
+  };
+  const copyLink = () => {
+    const url = window.location.origin + window.location.pathname + '#deal/' + deal.id;
+    navigator.clipboard.writeText(url).then(() => { setShowCopied(true); setTimeout(() => setShowCopied(false), 2000); });
+  };
+
+  return (
+    <div className="deal-detail-wrapper">
+      {showCopied && <div className="share-copied">Link copied to clipboard</div>}
+      <div className="deal-hero">
+        <div className="deal-hero-top">
+          <button className="deal-hero-back" onClick={onBack}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            Pipeline
+          </button>
+          <div className="deal-hero-actions">
+            <button className="deal-hero-action-btn" onClick={copyLink}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              Share
+            </button>
+            {canEdit && (
+              <button className="deal-hero-action-btn primary" onClick={() => handleEditDeal(deal)}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+                Edit
+              </button>
+            )}
+          </div>
+        </div>
+        <div className="deal-hero-body">
+          <div className="deal-hero-title-row">
+            <div className="deal-hero-title-block">
+              <div className="deal-hero-account">{deal.account_name}</div>
+              <div className="deal-hero-project">
+                <span>{deal.project_name}</span>
+                {deal.region && <span className="deal-hero-region">{deal.region}</span>}
+                <span className={`deal-status-pill ${deal.status}`}>
+                  <span className="deal-status-pill-dot"></span>
+                  {deal.status}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Metrics */}
+          <div className="deal-hero-metrics">
+            <div className="deal-metric">
+              <div className="deal-metric-label">Deal Value</div>
+              <div className="deal-metric-value" style={{color:'var(--accent)'}}>{fmt(deal.deal_value, deal.deal_value_note)}</div>
+              <div className="deal-metric-sub">Weighted: {fmt((deal.deal_value||0) * (WEIGHT_MAP[deal.stage]||0))}</div>
+            </div>
+            <div className="deal-metric">
+              <div className="deal-metric-label">Stage</div>
+              <div className="deal-metric-value" style={{color:stageInfo?.color}}>{stageInfo?.label}</div>
+              <div className="deal-metric-sub">{daysInStage}d in stage</div>
+            </div>
+            <div className="deal-metric">
+              <div className="deal-metric-label">Next Action</div>
+              <div className="deal-metric-value" style={{color:isOverdue?'var(--orange)':'var(--text)',fontSize:14}}>
+                {deal.next_action_due ? (isOverdue ? Math.abs(daysUntil(deal.next_action_due)) + 'd overdue' : daysUntil(deal.next_action_due) + 'd left') : '\u2014'}
+              </div>
+              <div className="deal-metric-sub">{deal.next_action_due ? new Date(deal.next_action_due).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : 'No due date'}</div>
+            </div>
+            <div className="deal-metric">
+              <div className="deal-metric-label">Owner</div>
+              <div className="deal-metric-value" style={{fontSize:14,display:'flex',alignItems:'center',gap:6}}>
+                {dealOwner && <div style={{width:22,height:22,borderRadius:'50%',background:'var(--accent)',display:'inline-flex',alignItems:'center',justifyContent:'center',fontSize:9,fontWeight:700,color:'white'}}>{initials(dealOwner.display_name)}</div>}
+                {dealOwner?.display_name || '\u2014'}
+              </div>
+              <div className="deal-metric-sub">{deal.champion_name ? 'Champion: ' + deal.champion_name : 'No champion set'}</div>
+            </div>
+          </div>
+
+          {/* Stage progress */}
+          <div className="deal-stage-progress">
+            {STAGES.map((stage, idx) => {
+              const isPast = idx < stageIdx;
+              const isCurrent = idx === stageIdx;
+              return (
+                <React.Fragment key={stage.key}>
+                  <div className="deal-stage-step">
+                    <div className={`deal-stage-dot ${isPast?'past':isCurrent?'current':'future'}`}>
+                      {isPast ? '\u2713' : idx + 1}
+                    </div>
+                    <span className={`deal-stage-label ${isPast?'past':isCurrent?'current':'future'}`}>{stage.label}</span>
+                  </div>
+                  {idx < STAGES.length - 1 && <div className={`deal-stage-connector ${idx < stageIdx ? 'past' : 'future'}`}></div>}
+                </React.Fragment>
+              );
+            })}
+          </div>
+
+          {/* Tabs */}
+          <div className="deal-tab-bar">
+            <button className={`deal-tab ${activeTab==='overview'?'active':''}`} onClick={() => setActiveTab('overview')}>Overview</button>
+            <button className={`deal-tab ${activeTab==='tasks'?'active':''}`} onClick={() => setActiveTab('tasks')}>Tasks{taskCount > 0 && <span className="deal-tab-count">{taskCount}</span>}</button>
+            <button className={`deal-tab ${activeTab==='gameplan'?'active':''}`} onClick={() => setActiveTab('gameplan')}>Gameplan</button>
+            <button className={`deal-tab ${activeTab==='route'?'active':''}`} onClick={() => setActiveTab('route')}>Route to Cash</button>
+          </div>
+        </div>
+      </div>
+
+      {/* Tab content */}
+      {activeTab === 'overview' && <OverviewTab deal={deal} teamMembers={teamMembers} onEditDeal={handleEditDeal} canEdit={canEdit} />}
+      {activeTab === 'tasks' && <div style={{padding:'24px 32px'}}><TasksTab deal={deal} teamMembers={teamMembers} canEdit={canEdit} user={user} /></div>}
+      {activeTab === 'gameplan' && <div style={{padding:'24px 32px'}}><GameplanTab deal={deal} /></div>}
+      {activeTab === 'route' && <div style={{padding:'24px 32px'}}><RouteToCashTab deal={deal} /></div>}
+
+      {/* Edit Modal */}
+      {editing && (
+        <div className="deal-edit-overlay" onClick={(e) => { if (e.target === e.currentTarget) setEditing(false); }}>
+          <div className="deal-edit-modal">
+            <div className="deal-edit-header">
+              <span className="deal-edit-title">Edit Deal</span>
+              <button className="panel-close" onClick={() => setEditing(false)}>&times;</button>
+            </div>
+            <div className="deal-edit-body">
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+                <div className="deal-edit-row">
+                  <div className="deal-edit-label">Stage</div>
+                  <select className="edit-field" value={form.stage||''} onChange={e => setForm({...form,stage:e.target.value})}>
+                    {STAGES.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}
+                  </select>
+                </div>
+                <div className="deal-edit-row">
+                  <div className="deal-edit-label">Status</div>
+                  <select className="edit-field" value={form.status||''} onChange={e => setForm({...form,status:e.target.value})}>
+                    <option value="active">Active</option>
+                    <option value="stalled">Stalled</option>
+                  </select>
+                </div>
+                <div className="deal-edit-row">
+                  <div className="deal-edit-label">Deal Value</div>
+                  <input className="edit-field" type="number" value={form.deal_value||''} onChange={e => setForm({...form,deal_value:e.target.value?Number(e.target.value):null})} placeholder="e.g. 150000" />
+                </div>
+                <div className="deal-edit-row">
+                  <div className="deal-edit-label">Deal Owner</div>
+                  <select className="edit-field" value={form.deal_owner_id||''} onChange={e => setForm({...form,deal_owner_id:e.target.value})}>
+                    <option value="">Select...</option>
+                    {teamMembers.map(t => <option key={t.id} value={t.id}>{t.display_name}</option>)}
+                  </select>
+                </div>
+              </div>
+              <div className="deal-edit-row">
+                <div className="deal-edit-label">Champion</div>
+                <input className="edit-field" value={form.champion_name||''} onChange={e => setForm({...form,champion_name:e.target.value})} placeholder="Client champion name" />
+              </div>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+                <div className="deal-edit-row">
+                  <div className="deal-edit-label">Next Action</div>
+                  <input className="edit-field" value={form.next_action||''} onChange={e => setForm({...form,next_action:e.target.value})} placeholder="What needs to happen next" />
+                </div>
+                <div className="deal-edit-row">
+                  <div className="deal-edit-label">Due Date</div>
+                  <input className="edit-field" type="date" value={form.next_action_due||''} onChange={e => setForm({...form,next_action_due:e.target.value})} />
+                </div>
+              </div>
+              <div className="deal-edit-row">
+                <div className="deal-edit-label">Next Action Owner</div>
+                <select className="edit-field" value={form.next_action_owner_id||''} onChange={e => setForm({...form,next_action_owner_id:e.target.value})}>
+                  <option value="">Select...</option>
+                  {teamMembers.map(t => <option key={t.id} value={t.id}>{t.display_name}</option>)}
+                </select>
+              </div>
+              {form.status === 'stalled' && (
+                <div className="deal-edit-row">
+                  <div className="deal-edit-label">Stall Reason</div>
+                  <textarea className="edit-field" value={form.stall_reason||''} onChange={e => setForm({...form,stall_reason:e.target.value})} rows={2} placeholder="Why is this deal stalled?"></textarea>
+                </div>
+              )}
+              <div className="deal-edit-row">
+                <div className="deal-edit-label">Notes</div>
+                <textarea className="edit-field" value={form.notes||''} onChange={e => setForm({...form,notes:e.target.value})} rows={3} placeholder="Additional notes"></textarea>
+              </div>
+            </div>
+            <div className="deal-edit-footer">
+              <button className="btn btn-secondary" onClick={() => setEditing(false)}>Cancel</button>
+              <button className="btn btn-primary" onClick={saveDeal}>Save Changes</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}unction AccountView({ dealId, deals, teamMembers, onBack, canEdit, user }) {
   const deal = deals.find(d => d.id === dealId);
   const [activeTab, setActiveTab] = useState('overview');
   const [editing, setEditing] = useState(false);
