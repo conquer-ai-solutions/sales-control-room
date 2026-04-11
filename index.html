@@ -1139,7 +1139,8 @@ function OverviewTab({ deal, teamMembers, onEditDeal, canEdit }) {
       </div>
     </div>
   );
-}unction OverviewTab({ deal, teamMembers, onEditDeal, canEdit }) {
+}
+function OverviewTab({ deal, teamMembers, onEditDeal, canEdit }) {
   const [activities, setActivities] = useState([]);
   const tmMap = useMemo(() => Object.fromEntries(teamMembers.map(t => [t.id, t])), [teamMembers]);
 
@@ -1766,7 +1767,8 @@ function AccountView({ dealId, deals, teamMembers, onBack, canEdit, user }) {
       )}
     </div>
   );
-}unction AccountView({ dealId, deals, teamMembers, onBack, canEdit, user }) {
+}
+function AccountView({ dealId, deals, teamMembers, onBack, canEdit, user }) {
   const deal = deals.find(d => d.id === dealId);
   const [activeTab, setActiveTab] = useState('overview');
   const [editing, setEditing] = useState(false);
