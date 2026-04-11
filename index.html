@@ -602,6 +602,9 @@
 /* ===== INITIATIVES FEATURE STYLES ===== */
 .initiatives-screen { display:flex; flex-direction:column; height:100%; gap:1.5rem; padding:2rem; background-color:var(--bg); color:var(--text); overflow-y:auto; }
 .initiatives-header { display:flex; justify-content:space-between; align-items:center; gap:1rem; }
+.initiatives-breadcrumb { margin-bottom: 0.25rem; }
+.initiatives-breadcrumb a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; cursor: pointer; transition: color 0.15s; }
+.initiatives-breadcrumb a:hover { color: var(--accent); }
 .initiatives-header h1 { font-size:2rem; font-weight:700; margin:0; color:var(--text); }
 .initiatives-header-actions { display:flex; gap:0.75rem; align-items:center; }
 .btn-new-initiative { padding:0.75rem 1.5rem; background-color:var(--accent); color:white; border:none; border-radius:var(--radius); font-weight:600; font-size:0.95rem; cursor:pointer; transition:background-color 0.2s ease; }
@@ -2242,6 +2245,7 @@ function InitiativesScreen({currentUser, initialInitiativeId, onClearSelId}) {
 
   return (
     <div className="initiatives-screen">
+      <div className="initiatives-breadcrumb"><a onClick={function(){ window.location.hash = 'board'; }}>← Sales Control Room</a></div>
       <div className="initiatives-header">
         <h1>Initiatives</h1>
         <div className="initiatives-header-actions">
