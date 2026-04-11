@@ -1863,7 +1863,7 @@ function LinkDealModal({ initiativeId, onClose, onLinked, currentUser }) {
 }
 
 
-function InitiativeModal({ initiative, onClose, onSave, currentUser }) {
+function InitiativeModal({ initiative, onClose, onSave, currentUser, teamMembers }) {
   var isEdit = !!initiative;
   const [title, setTitle] = useStateI(initiative ? initiative.title : '');
   const [description, setDescription] = useStateI(initiative ? (initiative.description || '') : '');
@@ -2005,7 +2005,7 @@ function InitiativeModal({ initiative, onClose, onSave, currentUser }) {
 }
 
 
-function InitiativeDetail({ initiative, ownerName, contributorCount, onBack, onUpdate, onEdit, currentUser }) {
+function InitiativeDetail({ initiative, ownerName, contributorCount, onBack, onUpdate, onEdit, currentUser, teamMembers }) {
   const [updates, setUpdates] = useStateI([]);
   const [members, setMembers] = useStateI([]);
   const [linkedDeals, setLinkedDeals] = useStateI([]);
@@ -2144,6 +2144,9 @@ function InitiativeDetail({ initiative, ownerName, contributorCount, onBack, onU
 
 
 function InitiativesScreen({currentUser}) {
+    var [teamMembers, setTeamMembers] = useStateI([]);
+    useEffectI(function() { supabase.from('team_members').select('*').then(function(res) { if (res.data) setTeamMembers(res.data); }); }, []);
+
   const [initiatives, setInitiatives] = useStateI([]);
   const [members, setMembers] = useStateI([]);
   const [loading, setLoading] = useStateI(true);
@@ -2210,6 +2213,7 @@ function InitiativesScreen({currentUser}) {
     if (!init) { setSelectedInitiative(null); return null; }
     return <InitiativeDetail
       currentUser={currentUser}
+    teamMembers={teamMembers}
                   initiative={init}
       ownerName={getOwnerName(init.id)}
       contributorCount={getContributorCount(init.id)}
@@ -2274,7 +2278,8 @@ function InitiativesScreen({currentUser}) {
         </div>
       )}
 
-      {showModal && <InitiativeModal currentUser={currentUser} initiative={editInitiative} onClose={function() { setShowModal(false); setEditInitiative(null); }} onSave={function() { setShowModal(false); setEditInitiative(null); loadData(); }} />}
+      {showModal && <InitiativeModal currentUser={currentUser}
+    teamMembers={teamMembers} initiative={editInitiative} onClose={function() { setShowModal(false); setEditInitiative(null); }} onSave={function() { setShowModal(false); setEditInitiative(null); loadData(); }} />}
     </div>
   );
 }
