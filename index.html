@@ -108,6 +108,11 @@
     position:relative;
     overflow:hidden;
   }
+  .stat-card.clickable { cursor:pointer; transition:transform 0.15s, box-shadow 0.15s; }
+  .stat-card.clickable:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,0.15); }
+  .stat-card.clickable.active { ring: 2px solid; outline:2px solid var(--accent); outline-offset:2px; }
+  .stat-card.clickable.active-red { outline:2px solid var(--red); outline-offset:2px; }
+  .stat-card.clickable.active-orange { outline:2px solid var(--orange); outline-offset:2px; }
   .stat-card::before {
     content:'';
     position:absolute; top:0; left:0; right:0; height:2px;
@@ -2328,6 +2333,7 @@ function App() {
   const [search, setSearch] = useState('');
   const [stageF, setStageF] = useState('all');
   const [regionF, setRegionF] = useState('all');
+  const [statusF, setStatusF] = useState('all');
   const [toast, setToast] = useState(null);
   const [ts, setTs] = useState(new Date());
 
@@ -2471,8 +2477,10 @@ function App() {
     }
     if (stageF !== 'all' && d.stage !== stageF) return false;
     if (regionF !== 'all' && d.region !== regionF) return false;
+    if (statusF === 'stalled' && d.status !== 'stalled') return false;
+    if (statusF === 'overdue' && !(daysUntil(d.next_action_due) < 0 && d.status === 'active')) return false;
     return true;
-  }), [deals, search, stageF, regionF]);
+  }), [deals, search, stageF, regionF, statusF]);
 
   const stats = useMemo(() => {
     const active = deals.filter(d => d.status === 'active');
@@ -2740,15 +2748,15 @@ function App() {
           <div className="stat-value" style={{color:'var(--teal)'}}>{fmt(stats.val)}</div>
           <div className="stat-sub">Weighted: {fmt(stats.w)}</div>
         </div>
-        <div className="stat-card">
+        <div className={"stat-card clickable" + (statusF==='stalled'?' active-red':'')} onClick={() => { if (statusF==='stalled') { setStatusF('all'); } else { setStatusF('stalled'); setStageF('all'); setRegionF('all'); setSearch(''); } }} style={{cursor:'pointer'}}>
           <div className="stat-label">Stalled</div>
           <div className="stat-value" style={{color:'var(--red)'}}>{stats.stalled}</div>
-          <div className="stat-sub">Needs attention</div>
+          <div className="stat-sub">{statusF==='stalled' ? '✕ Clear filter' : 'Click to filter'}</div>
         </div>
-        <div className="stat-card">
+        <div className={"stat-card clickable" + (statusF==='overdue'?' active-orange':'')} onClick={() => { if (statusF==='overdue') { setStatusF('all'); } else { setStatusF('overdue'); setStageF('all'); setRegionF('all'); setSearch(''); } }} style={{cursor:'pointer'}}>
           <div className="stat-label">Overdue Actions</div>
           <div className="stat-value" style={{color:'var(--orange)'}}>{stats.overdue}</div>
-          <div className="stat-sub">Past due date</div>
+          <div className="stat-sub">{statusF==='overdue' ? '✕ Clear filter' : 'Click to filter'}</div>
         </div>
       </div>
 
