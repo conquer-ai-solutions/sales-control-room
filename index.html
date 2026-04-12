@@ -2570,7 +2570,7 @@ function App() {
     if (p === 'initiatives' && dealId) return '#initiative/' + dealId;
     if (['revenue','audit','admin','initiatives'].includes(p)) return '#' + p;
     return '#board';
-  }, [[selectedClient]);
+  }, [selectedClient]);
 
   const parseHash = useCallback(() => {
     const h = window.location.hash.replace(/^#\/?/, '');
