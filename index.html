@@ -572,7 +572,24 @@
   .deal-stall-banner { background:var(--red-bg); border:1px solid rgba(236,53,64,0.2); border-radius:var(--radius); padding:12px 16px; grid-column:1 / -1; display:flex; align-items:flex-start; gap:10px; }
   .deal-stall-icon { width:20px; height:20px; border-radius:50%; background:var(--red); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:10px; color:white; font-weight:700; }
   .deal-stall-text { font-size:13px; color:var(--red); line-height:1.4; }
-  .deal-stall-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--red); margin-bottom:2px; }
+  .deal-stall-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--red); margin-bottom:2px; 
+  .engagement-overview-card { grid-column:1 / -1; background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+  .engagement-overview-header { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid var(--border); }
+  .engagement-overview-title { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-muted); }
+  .engagement-overview-body { padding:16px; display:flex; flex-direction:column; gap:12px; }
+  .engagement-meta-row { display:flex; align-items:center; gap:8px; }
+  .engagement-meta-label { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-muted); min-width:90px; }
+  .engagement-meta-value { font-size:13px; color:var(--text); }
+  .engagement-pattern-pills { display:flex; flex-wrap:wrap; gap:6px; }
+  .engagement-pattern-pill { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:100px; font-size:11px; font-weight:600; letter-spacing:0.3px; }
+  .pattern-Extract { background:rgba(59,130,246,0.12); color:#3b82f6; }
+  .pattern-Sense { background:rgba(168,85,247,0.12); color:#a855f7; }
+  .pattern-Generate { background:rgba(34,197,94,0.12); color:#22c55e; }
+  .pattern-Automate { background:rgba(249,115,22,0.12); color:#f97316; }
+  .pattern-Triage { background:rgba(236,72,153,0.12); color:#ec4899; }
+  .pattern-Enable { background:rgba(20,184,166,0.12); color:#14b8a6; }
+  .engagement-overview-text { font-size:13px; line-height:1.5; color:var(--text); margin-top:4px; padding-top:12px; border-top:1px solid var(--border); }
+  .engagement-vertical-tag { display:inline-flex; align-items:center; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:500; background:rgba(255,255,255,0.06); color:var(--text); border:1px solid var(--border); }}
   .deal-activity-section { grid-column:1 / -1; }
   .deal-activity-list { display:flex; flex-direction:column; }
   .deal-activity-item { display:flex; gap:12px; padding:12px 0; border-bottom:1px solid rgba(60,60,60,0.3); }
@@ -810,6 +827,20 @@ const WEIGHT_MAP = {
   proposal: 0.5,
   procurement: 0.75,
   contract_signed: 1,
+};
+
+const ENGAGEMENT_META = {
+  'd5d93142-43df-47fe-b928-8767fa32a1d6': { patterns: ['Extract','Generate'], vertical: 'Industrial / Manufacturing', function: 'Engineering & Quality', overview: 'AI-driven DFMEA generation and analysis from engineering documentation, deployed within Sensata Azure estate.' },
+  '6bef4756-edae-4fa5-87c7-230f2923fce8': { patterns: ['Generate'], vertical: 'Financial Services', function: 'Investment Banking', overview: 'Automated pitchbook generation for sell-side and buy-side investment banking with AI narrative building and data validation.' },
+  '7ab3ec6f-02da-42af-b775-3f1009babb8b': { patterns: ['Extract'], vertical: 'Financial Services', function: 'Commercial Lending', overview: 'Loan document extraction and financial spreading for CRE and commercial lending. 30-day POC deployed within EWB cloud.' },
+  'e4daa5a8-6cca-4575-894a-8342dd9722ab': { patterns: ['Enable'], vertical: 'Investment Management', function: 'Cross-functional', overview: 'Enterprise AI enablement programme — Claude deployment, DLP/Purview integration, sensitivity labelling, and team-level enablement.' },
+  'f738655c-658f-4a7c-b99e-5d50462830c2': { patterns: ['Extract','Generate'], vertical: 'Healthcare', function: 'Operations', overview: 'Real-time data platform with native apps for medical practice management across PE portfolio companies.' },
+  '60d97536-a184-4b4d-b977-37eee9f9694d': { patterns: ['Extract','Generate'], vertical: 'Media & Publishing', function: 'Editorial & Content', overview: 'Automated editorial content pack generation — wire feed ingestion, style guide compliance, and multi-title workflow automation.' },
+  '103483fb-e3f9-4d22-923f-e013500f5c6a': { patterns: ['Automate'], vertical: 'Aviation', function: 'Operations / Crew Planning', overview: 'AI-powered crew rostering optimisation, analysing flight schedules, crew availability, and regulatory constraints.' },
+  '9a3a773d-c328-4d00-923f-47d18cafc8a9': { patterns: ['Enable'], vertical: 'Life Sciences / Pharma', function: 'Cross-functional', overview: 'Anthropic stack enablement for biopharma consulting — platform install, RBAC, sandboxing, and use case support for 30-70 users.' },
+  'fbb6c9c0-785c-41d9-9467-92bd693b2b29': { patterns: ['Automate','Sense'], vertical: 'Financial Services', function: 'Change Delivery / PMO', overview: 'Charlie Change agentic companion for OCF lifecycle management plus Portfolio Intelligence Layer for real-time change portfolio health monitoring.' },
+  'cf773276-9acf-43c2-897d-4f209fc78c71': { patterns: ['Sense'], vertical: 'Manufacturing / Consumer Products', function: 'Marketing & Sales', overview: 'Unified market and competitive intelligence layer connecting Stackline, Helium 10, Bazaarvoice, and POS data to surface trends and buying signals.' },
+  '16b2e99e-e6d8-4df3-8ae9-ad29168d3a5f': { patterns: ['Automate'], vertical: 'Real Estate', function: 'Operations (Multi-dept)', overview: 'AI operations platform across five departments — leasing, finance, maintenance, construction, and legal — integrating Yardi and Teams.' },
 };
 
 function fmt(val, note) {
@@ -1482,6 +1513,36 @@ function AccountView({ dealId, deals, teamMembers, onBack, canEdit, user }) {
           </div>
         </div>
       )}
+
+      {/* ENGAGEMENT OVERVIEW */}
+      {(() => {
+        const meta = deal.intel_engagement_id && ENGAGEMENT_META[deal.intel_engagement_id];
+        if (!meta) return null;
+        return (
+          <div className="engagement-overview-card">
+            <div className="engagement-overview-header">
+              <span className="engagement-overview-title">Engagement Overview</span>
+            </div>
+            <div className="engagement-overview-body">
+              <div className="engagement-meta-row">
+                <span className="engagement-meta-label">AI Patterns</span>
+                <div className="engagement-pattern-pills">
+                  {meta.patterns.map(p => <span key={p} className={`engagement-pattern-pill pattern-${p}`}>{p}</span>)}
+                </div>
+              </div>
+              <div className="engagement-meta-row">
+                <span className="engagement-meta-label">Vertical</span>
+                <span className="engagement-vertical-tag">{meta.vertical}</span>
+              </div>
+              <div className="engagement-meta-row">
+                <span className="engagement-meta-label">Function</span>
+                <span className="engagement-meta-value">{meta.function}</span>
+              </div>
+              <div className="engagement-overview-text">{meta.overview}</div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* DEAL INFO + PEOPLE — two-column grid using detail-section cards */}
       <div className="deal-info-people-grid">
