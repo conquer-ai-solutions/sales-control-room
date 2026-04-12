@@ -1883,7 +1883,8 @@ function PathwayToInvoice({ deals, teamMembers, onDealClick }) {
   );
 }
 
-  const statusLabels = { not_started: 'Not Started', in_progress: 'In Progress', on_hold: 'On Hold', done: 'Done' };
+  function InitiativeCard({ initiative, onClick }) {
+const statusLabels = { not_started: 'Not Started', in_progress: 'In Progress', on_hold: 'On Hold', done: 'Done' };
   return (
     <div className="initiative-card" onClick={onClick}>
       <div className="card-header">
@@ -1912,6 +1913,7 @@ function PathwayToInvoice({ deals, teamMembers, onDealClick }) {
       </div>
     </div>
   );
+}
 
 function LinkDealModal({ initiativeId, onClose, onLinked, currentUser }) {
   const [search, setSearch] = useState('');
