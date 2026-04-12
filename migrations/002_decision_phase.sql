@@ -1,12 +1,21 @@
 -- =============================================================================
 -- Migration 002: Rename Procurement → Decision Phase + add decision_signal
 -- =============================================================================
--- Run in Supabase SQL Editor. Wrapped in a transaction. The trigger from
--- migration 001 is temporarily disabled during the UPDATE to avoid flooding
--- deal_events with stage_changed rows (one per existing Procurement deal).
+-- IMPORTANT: deals.stage is a Postgres enum (deal_stage), not a text column.
+-- ALTER TYPE ... ADD VALUE must run OUTSIDE a transaction, so this migration
+-- is in TWO STEPS. Run step 1 first, wait for success, then run step 2.
 --
 -- Before running, sanity-check how many deals will be retagged:
 --   SELECT COUNT(*) FROM public.deals WHERE stage = 'procurement';
+--
+-- =============================================================================
+-- STEP 1 — Run this first, on its own (no transaction wrapper)
+-- =============================================================================
+
+ALTER TYPE deal_stage ADD VALUE IF NOT EXISTS 'decision_phase' AFTER 'procurement';
+
+-- =============================================================================
+-- STEP 2 — Then run this as a separate query
 -- =============================================================================
 
 BEGIN;
@@ -18,13 +27,7 @@ ALTER TABLE public.deals
 COMMENT ON COLUMN public.deals.decision_signal IS
   'Signal strength within Decision Phase. Values: submitted | engaged | positive_signal | verbal_commit. Nullable.';
 
--- Optional constraint (uncomment if you want DB-level validation)
--- ALTER TABLE public.deals
---   ADD CONSTRAINT deals_decision_signal_check
---   CHECK (decision_signal IS NULL OR decision_signal IN ('submitted','engaged','positive_signal','verbal_commit'));
-
 -- 2. Temporarily disable the event-logging trigger ----------------------------
--- We don't want the stage rename to flood deal_events with noise.
 ALTER TABLE public.deals DISABLE TRIGGER deals_log_event;
 
 -- 3. Rename stage on existing deals -------------------------------------------
@@ -35,7 +38,7 @@ UPDATE public.deals
 -- 4. Re-enable the trigger ----------------------------------------------------
 ALTER TABLE public.deals ENABLE TRIGGER deals_log_event;
 
--- 5. Extend trigger function to also track decision_signal changes ------------
+-- 5. Extend trigger function — also track decision_signal, cast enums to text -
 CREATE OR REPLACE FUNCTION public.log_deal_event()
 RETURNS trigger
 LANGUAGE plpgsql
@@ -43,7 +46,7 @@ AS $$
 BEGIN
   IF NEW.stage IS DISTINCT FROM OLD.stage THEN
     INSERT INTO public.deal_events(deal_id, event_type, from_value, to_value)
-    VALUES (NEW.id, 'stage_changed', OLD.stage, NEW.stage);
+    VALUES (NEW.id, 'stage_changed', OLD.stage::text, NEW.stage::text);
   END IF;
 
   IF NEW.deal_value IS DISTINCT FROM OLD.deal_value THEN
@@ -76,13 +79,6 @@ COMMIT;
 -- Post-migration verification
 -- =============================================================================
 -- SELECT stage, COUNT(*) FROM public.deals GROUP BY stage ORDER BY stage;
---   (should show decision_phase with your previous Procurement count, zero procurement)
---
 -- SELECT column_name FROM information_schema.columns
 --   WHERE table_name = 'deals' AND column_name = 'decision_signal';
---   (should return 1 row)
---
--- SELECT COUNT(*) FROM public.deal_events
---   WHERE event_type = 'stage_changed' AND created_at > now() - interval '1 minute';
---   (should return 0 — trigger was disabled during the UPDATE)
 -- =============================================================================
