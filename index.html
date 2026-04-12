@@ -159,6 +159,11 @@
   .cz-hero-top { display:flex; justify-content:space-between; align-items:flex-start; gap:14px; margin-bottom:16px; }
   .cz-hero-account-block { flex:1; min-width:0; }
   .cz-hero-account { font-size:17px; font-weight:700; color:var(--text); margin-bottom:3px; }
+  .cz-slipping-tag { display:inline-block; margin-left:8px; font-size:9px; padding:2px 7px; border-radius:4px; background:rgba(234,88,12,0.15); color:var(--orange); font-weight:700; text-transform:uppercase; letter-spacing:0.5px; vertical-align:middle; }
+  .cz-close-strip { display:flex; align-items:center; gap:8px; margin-bottom:14px; padding:8px 12px; background:rgba(139,108,193,0.08); border:1px solid rgba(139,108,193,0.25); border-radius:6px; font-size:12px; }
+  .cz-close-label { font-size:9px; text-transform:uppercase; letter-spacing:0.4px; color:var(--text-muted); font-weight:600; }
+  .cz-close-date { color:var(--text); font-weight:700; }
+  .cz-close-days { color:var(--stage-procurement); font-weight:600; margin-left:auto; }
   .cz-hero-project { font-size:12px; color:var(--text-muted); }
   .cz-hero-value { font-size:18px; font-weight:700; color:var(--stage-procurement); white-space:nowrap; }
   .cz-hero-facts { display:grid; grid-template-columns:1fr 1fr; gap:10px 16px; margin-bottom:14px; padding:12px 14px; background:var(--bg-surface); border-radius:6px; }
@@ -1500,8 +1505,8 @@ function AccountView({ dealId, deals, teamMembers, onBack, canEdit, user }) {
   const saveDeal = async () => {
     if (!canEdit) return;
     const u = {};
-    ['stage','deal_owner_id','next_action','next_action_due','next_action_owner_id','champion_name','deal_value','status','stall_reason','notes','partner_id','decision_maker_name'].forEach(k => {
-      if (form[k] !== undefined) u[k] = k === 'deal_value' ? (form[k] || null) : (k === 'partner_id' ? (form[k] || null) : form[k]);
+    ['stage','deal_owner_id','next_action','next_action_due','next_action_owner_id','champion_name','deal_value','expected_close_date','status','stall_reason','notes','partner_id','decision_maker_name'].forEach(k => {
+      if (form[k] !== undefined) u[k] = k === 'deal_value' ? (form[k] || null) : (k === 'partner_id' ? (form[k] || null) : (k === 'expected_close_date' ? (form[k] || null) : form[k]));
     });
     const { error } = await supabase.from('deals').update(u).eq('id', deal.id);
     if (!error) { await logAudit(user, 'update_deal', 'deal', deal.id, deal.account_name, u); setEditing(false); }
@@ -1791,6 +1796,10 @@ function AccountView({ dealId, deals, teamMembers, onBack, canEdit, user }) {
               <div className="form-group">
                 <label className="form-label">Deal Value</label>
                 <input className="form-input" type="number" value={form.deal_value||''} onChange={e => setForm({...form,deal_value:e.target.value?Number(e.target.value):null})} placeholder="e.g. 150000" />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Expected Close Date</label>
+                <input className="form-input" type="date" value={form.expected_close_date||''} onChange={e => setForm({...form,expected_close_date:e.target.value})} />
               </div>
               <div className="form-group">
                 <label className="form-label">Deal Owner</label>
@@ -2623,6 +2632,14 @@ function ClosingZone({ deals, teamMembers, user, onDealClick }) {
 
   const tm = React.useMemo(() => Object.fromEntries((teamMembers||[]).map(m => [m.id, m])), [teamMembers]);
 
+  // Fetch deal_events for last 14 days to power What Changed + slipping detection
+  const [events, setEvents] = React.useState([]);
+  React.useEffect(() => {
+    const since = new Date(Date.now() - 14 * 86400000).toISOString();
+    supabase.from('deal_events').select('*').gte('created_at', since).order('created_at', { ascending: false })
+      .then(res => { if (res.data) setEvents(res.data); });
+  }, []);
+
   const commercial = React.useMemo(() =>
     (deals||[]).filter(d => (d.stage === 'procurement' || d.stage === 'proposal') && d.status !== 'lost' && d.status !== 'won')
   , [deals]);
@@ -2644,11 +2661,47 @@ function ClosingZone({ deals, teamMembers, user, onDealClick }) {
     (regionFilter === 'all' || d.region === regionFilter)
   );
 
-  const procurement = filtered.filter(d => d.stage === 'procurement').sort((a,b) => (b.deal_value||0) - (a.deal_value||0));
+  const procurement = filtered.filter(d => d.stage === 'procurement').sort((a,b) => {
+    // Sort by close date ascending when both have one; dateless fall back to value desc
+    if (a.expected_close_date && b.expected_close_date) return new Date(a.expected_close_date) - new Date(b.expected_close_date);
+    if (a.expected_close_date) return -1;
+    if (b.expected_close_date) return 1;
+    return (b.deal_value||0) - (a.deal_value||0);
+  });
   const proposal = filtered.filter(d => d.stage === 'proposal').sort((a,b) => (b.deal_value||0) - (a.deal_value||0));
   const procValue = procurement.reduce((s,d) => s + (d.deal_value||0), 0);
   const propValue = proposal.reduce((s,d) => s + (d.deal_value||0), 0);
   const totalCommercialValue = procValue + propValue;
+
+  // Forecast: deals in commercial territory with a close date set
+  const withDates = [...procurement, ...proposal].filter(d => d.expected_close_date);
+  const now = new Date();
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth()+1, 0);
+  const endOfQuarter = new Date(now.getFullYear(), Math.floor(now.getMonth()/3)*3 + 3, 0);
+  const closingThisMonth = withDates.filter(d => new Date(d.expected_close_date) <= endOfMonth);
+  const closingThisQuarter = withDates.filter(d => new Date(d.expected_close_date) <= endOfQuarter);
+  const forecastMonthValue = closingThisMonth.reduce((s,d) => s + (d.deal_value||0), 0);
+  const forecastQuarterValue = closingThisQuarter.reduce((s,d) => s + (d.deal_value||0), 0);
+  const noCloseDates = withDates.length === 0;
+
+  // Slipping: a deal is "slipping" if its close_date has moved backwards (to_value > from_value) in last 14d
+  const slippingIds = React.useMemo(() => {
+    const set = new Set();
+    events.filter(e => e.event_type === 'close_date_changed' && e.from_value && e.to_value).forEach(e => {
+      if (new Date(e.to_value) > new Date(e.from_value)) set.add(e.deal_id);
+    });
+    return set;
+  }, [events]);
+
+  // Build unified "what changed" list from deal_events (fallback: none)
+  const dealsById = React.useMemo(() => Object.fromEntries(filtered.map(d => [d.id, d])), [filtered]);
+  const recentChanges = React.useMemo(() => {
+    const sevenDaysAgo = Date.now() - 7 * 86400000;
+    return events
+      .filter(e => new Date(e.created_at).getTime() >= sevenDaysAgo)
+      .filter(e => dealsById[e.deal_id]) // only deals in current filter scope
+      .slice(0, 20);
+  }, [events, dealsById]);
 
   const recentMoves = filtered.filter(d => {
     if (!d.stage_entered_at) return false;
@@ -2677,6 +2730,12 @@ function ClosingZone({ deals, teamMembers, user, onDealClick }) {
       `Total commercial pipeline: ${fmt(totalCommercialValue)}.`,
       ``,
     ];
+    if (!noCloseDates) {
+      lines.push(`Forecast:`);
+      lines.push(`  • ${fmt(forecastMonthValue)} expected to close by end of ${now.toLocaleDateString('en-GB',{month:'long'})}`);
+      lines.push(`  • ${fmt(forecastQuarterValue)} expected to close by end of quarter`);
+      lines.push(``);
+    }
     if (procurement.length > 0) {
       lines.push(`In Procurement:`);
       procurement.forEach(d => { lines.push(`  • ${d.account_name} — ${fmt(d.deal_value, d.deal_value_note)}`); });
@@ -2701,15 +2760,29 @@ function ClosingZone({ deals, teamMembers, user, onDealClick }) {
     const daysInStage = d.stage_entered_at ? Math.floor((Date.now() - new Date(d.stage_entered_at)) / 86400000) : null;
     const daysSinceActivity = d.last_activity_date ? Math.floor((Date.now() - new Date(d.last_activity_date)) / 86400000) : null;
     const benchmark = stageBenchmark('procurement', daysInStage);
+    const isSlipping = slippingIds.has(d.id);
+    const closeDate = d.expected_close_date ? new Date(d.expected_close_date) : null;
+    const daysToClose = closeDate ? Math.ceil((closeDate - Date.now()) / 86400000) : null;
+    const closeLabel = closeDate ? closeDate.toLocaleDateString('en-GB', { day:'numeric', month:'short' }) : null;
     return (
       <div className="cz-hero-card" onClick={() => onDealClick(d.id)}>
         <div className="cz-hero-top">
           <div className="cz-hero-account-block">
-            <div className="cz-hero-account">{d.account_name}</div>
+            <div className="cz-hero-account">
+              {d.account_name}
+              {isSlipping && <span className="cz-slipping-tag" title="Close date moved backwards recently">slipping</span>}
+            </div>
             <div className="cz-hero-project">{d.project_name}</div>
           </div>
           <div className="cz-hero-value">{fmt(d.deal_value, d.deal_value_note)}</div>
         </div>
+        {closeDate && (
+          <div className="cz-close-strip">
+            <span className="cz-close-label">Expected close</span>
+            <span className="cz-close-date">{closeLabel}</span>
+            <span className="cz-close-days">{daysToClose > 0 ? `in ${daysToClose}d` : daysToClose === 0 ? 'today' : `${-daysToClose}d overdue`}</span>
+          </div>
+        )}
         <div className="cz-hero-facts">
           {daysInStage !== null && (
             <div className={`cz-fact cz-fact-${benchmark||''}`}>
@@ -2800,7 +2873,16 @@ function ClosingZone({ deals, teamMembers, user, onDealClick }) {
           <div className="cz-headline-sec-money">{fmt(propValue)}</div>
           <div className="cz-headline-sec-copy">in active commercial negotiation · <strong>{proposal.length}</strong> {proposal.length === 1 ? 'account' : 'accounts'} at Proposal</div>
         </div>
-        <div className="cz-headline-total">Total commercial pipeline: <strong>{fmt(totalCommercialValue)}</strong></div>
+        <div className="cz-headline-total">
+          {noCloseDates ? (
+            <span style={{fontStyle:'italic'}}>Add expected close dates on Procurement deals to unlock forecast</span>
+          ) : (
+            <>
+              <span style={{color:'var(--stage-signed)'}}>●</span> <strong>{fmt(forecastMonthValue)}</strong> expected to close by end of {now.toLocaleDateString('en-GB',{month:'long'})} · <strong>{fmt(forecastQuarterValue)}</strong> by end of quarter
+            </>
+          )}
+        </div>
+        <div className="cz-headline-total" style={{marginTop:6}}>Total commercial pipeline: <strong>{fmt(totalCommercialValue)}</strong></div>
       </div>
 
       {/* What changed — hidden in board mode */}
@@ -2808,10 +2890,47 @@ function ClosingZone({ deals, teamMembers, user, onDealClick }) {
         <div className="cz-whatchanged">
           <div className="cz-whatchanged-header">
             <h3 className="cz-whatchanged-title">What changed this week</h3>
-            <span className="cz-whatchanged-count">{recentMoves.length} {recentMoves.length === 1 ? 'movement' : 'movements'} in the last 7 days</span>
+            <span className="cz-whatchanged-count">{recentChanges.length > 0 ? `${recentChanges.length} ${recentChanges.length === 1 ? 'change' : 'changes'}` : `${recentMoves.length} stage ${recentMoves.length === 1 ? 'movement' : 'movements'}`} in the last 7 days</span>
           </div>
-          {recentMoves.length === 0 ? (
-            <div className="cz-whatchanged-empty">No stage movements in commercial territory this week.</div>
+          {recentChanges.length === 0 && recentMoves.length === 0 ? (
+            <div className="cz-whatchanged-empty">No changes in commercial territory this week.</div>
+          ) : recentChanges.length > 0 ? (
+            <div className="cz-whatchanged-list">
+              {recentChanges.map(e => {
+                const d = dealsById[e.deal_id];
+                if (!d) return null;
+                const ageDays = Math.floor((Date.now() - new Date(e.created_at)) / 86400000);
+                let text = null;
+                let dotColor = 'var(--text-muted)';
+                if (e.event_type === 'stage_changed') {
+                  const toStage = STAGE_MAP[e.to_value];
+                  text = <><strong>{d.account_name}</strong> moved to {toStage?.label || e.to_value}</>;
+                  dotColor = toStage?.color || dotColor;
+                } else if (e.event_type === 'close_date_changed') {
+                  const slipped = e.from_value && e.to_value && new Date(e.to_value) > new Date(e.from_value);
+                  text = <><strong>{d.account_name}</strong> close date {slipped ? 'slipped to' : 'set to'} {e.to_value ? new Date(e.to_value).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : '—'}</>;
+                  dotColor = slipped ? 'var(--orange)' : 'var(--stage-signed)';
+                } else if (e.event_type === 'value_changed') {
+                  const oldV = e.from_value ? Number(e.from_value) : 0;
+                  const newV = e.to_value ? Number(e.to_value) : 0;
+                  text = <><strong>{d.account_name}</strong> value {newV > oldV ? 'raised' : 'revised'} to {fmt(newV)}</>;
+                  dotColor = newV >= oldV ? 'var(--stage-signed)' : 'var(--orange)';
+                } else if (e.event_type === 'champion_changed') {
+                  text = <><strong>{d.account_name}</strong> champion → {e.to_value || '—'}</>;
+                  dotColor = 'var(--accent)';
+                }
+                if (!text) return null;
+                return (
+                  <div key={e.id} className="cz-whatchanged-item" onClick={() => onDealClick(d.id)}>
+                    <div className="cz-whatchanged-dot" style={{background:dotColor}}></div>
+                    <div className="cz-whatchanged-body">
+                      <div className="cz-whatchanged-text">{text}</div>
+                      <div className="cz-whatchanged-when">{fmtDays(ageDays)}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           ) : (
             <div className="cz-whatchanged-list">
               {recentMoves.map(d => {
