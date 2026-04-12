@@ -2792,14 +2792,14 @@ function ClosingZone({ deals, teamMembers, user, onDealClick }) {
     const isSlipping = slippingIds.has(d.id);
     const closeDate = d.expected_close_date ? new Date(d.expected_close_date) : null;
     const daysToClose = closeDate ? Math.ceil((closeDate - Date.now()) / 86400000) : null;
-    const closeLabel = closeDate ? closeDate.toLocaleDateString('en-GB', { day:'numeric', month:'short' }) : null;
+    const closeLabel = closeDate ? closeDate.toLocaleDateString('en-GB', { month:'long' }) : null;
     return (
       <div className="cz-hero-card" onClick={() => onDealClick(d.id)}>
         <div className="cz-hero-top">
           <div className="cz-hero-account-block">
             <div className="cz-hero-account">
               {d.account_name}
-              {isSlipping && <span className="cz-slipping-tag" title="Close date moved backwards recently">slipping</span>}
+              {/* slipping tag removed — will redesign later */}
             </div>
             <div className="cz-hero-project">{d.project_name}</div>
           </div>
@@ -2820,7 +2820,7 @@ function ClosingZone({ deals, teamMembers, user, onDealClick }) {
           <div className="cz-close-strip">
             <span className="cz-close-label">Expected close</span>
             <span className="cz-close-date">{closeLabel}</span>
-            <span className="cz-close-days">{daysToClose > 0 ? `in ${daysToClose}d` : daysToClose === 0 ? 'today' : `${-daysToClose}d overdue`}</span>
+            <span className="cz-close-days">{daysToClose > 0 ? `~${Math.ceil(daysToClose / 7)}w` : daysToClose === 0 ? 'this week' : 'overdue'}</span>
           </div>
         )}
         <div className="cz-hero-facts">
