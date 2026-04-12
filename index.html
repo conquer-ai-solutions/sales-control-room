@@ -1921,7 +1921,7 @@ function LinkDealModal({ initiativeId, onClose, onLinked, currentUser }) {
   const [note, setNote] = useState('');
   const [saving, setSaving] = useState(false);
 
-  useEffectI(function() {
+  useEffect(function() {
     supabase.from('deals').select('id, account_name, project_name, created_at').order('created_at', { ascending: false }).limit(50)
       .then(function(res) { setDeals(res.data || []); setLoading(false); });
   }, []);
@@ -2134,7 +2134,7 @@ function InitiativeDetail({ initiative, ownerName, contributorCount, onBack, onU
   };
   const statusLabels = { not_started: 'Not Started', in_progress: 'In Progress', on_hold: 'On Hold', done: 'Done' };
 
-  useEffectI(function() {
+  useEffect(function() {
     supabase.from('initiative_updates').select('*').eq('initiative_id', initiative.id).order('created_at', { ascending: false })
       .then(function(res) { setUpdates(res.data || []); });
     supabase.from('initiative_members').select('*').eq('initiative_id', initiative.id)
@@ -2270,7 +2270,7 @@ function InitiativeDetail({ initiative, ownerName, contributorCount, onBack, onU
 function InitiativesScreen({currentUser, initialInitiativeId, onClearSelId}) {
     var [teamMembers, setTeamMembers] = useState([]);
     var [appUsers, setAppUsers] = useState([]);
-    useEffectI(function() {
+    useEffect(function() {
       supabase.from('team_members').select('*').then(function(res) { if (res.data) setTeamMembers(res.data); });
       supabase.from('app_users').select('id,display_name').then(function(res) { if (res.data) setAppUsers(res.data); });
     }, []);
@@ -2283,7 +2283,7 @@ function InitiativesScreen({currentUser, initialInitiativeId, onClearSelId}) {
   const [priorityFilter, setPriorityFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedInitiative, setSelectedInitiative] = useState(initialInitiativeId || null);
-  useEffectI(function() {
+  useEffect(function() {
     if (selectedInitiative) {
       window.history.pushState(null, '', '#initiative/' + selectedInitiative);
     } else if (!initialInitiativeId) {
@@ -2293,7 +2293,7 @@ function InitiativesScreen({currentUser, initialInitiativeId, onClearSelId}) {
   const [showModal, setShowModal] = useState(false);
   const [editInitiative, setEditInitiative] = useState(null);
 
-  var loadData = useCallbackI(function() {
+  var loadData = useCallback(function() {
     setLoading(true);
     Promise.all([
       supabase.from('initiatives').select('*').order('created_at', { ascending: false }),
@@ -2306,7 +2306,7 @@ function InitiativesScreen({currentUser, initialInitiativeId, onClearSelId}) {
     });
   }, []);
 
-  useEffectI(function() { loadData(); }, [loadData]);
+  useEffect(function() { loadData(); }, [loadData]);
 
   function getOwnerName(initiativeId) {
     var ownerMember = members.find(function(m) { return m.initiative_id === initiativeId && m.role === 'owner'; });
@@ -2321,7 +2321,7 @@ function InitiativesScreen({currentUser, initialInitiativeId, onClearSelId}) {
     return members.filter(function(m) { return m.initiative_id === initiativeId; }).length;
   }
 
-  var filtered = useMemoI(function() {
+  var filtered = useMemo(function() {
     return initiatives.filter(function(i) {
       if (statusFilter !== 'all' && i.status !== statusFilter) return false;
       if (priorityFilter !== 'all' && i.priority !== priorityFilter) return false;
@@ -2335,7 +2335,7 @@ function InitiativesScreen({currentUser, initialInitiativeId, onClearSelId}) {
     });
   }, [initiatives, statusFilter, priorityFilter, searchQuery]);
 
-  var stats = useMemoI(function() {
+  var stats = useMemo(function() {
     return {
       total: initiatives.length,
       in_progress: initiatives.filter(function(i) { return i.status === 'in_progress'; }).length,
