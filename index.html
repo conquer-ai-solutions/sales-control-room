@@ -133,20 +133,7 @@
   .cz-headline-total { margin-top:16px; padding-top:14px; border-top:1px dashed var(--border); font-size:12px; color:var(--text-muted); }
   .cz-headline-total strong { color:var(--text); font-weight:700; font-size:14px; }
 
-  /* What changed this week */
-  .cz-whatchanged { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:18px 22px; margin-bottom:32px; }
-  .cz-whatchanged-header { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:14px; }
-  .cz-whatchanged-title { font-size:13px; font-weight:600; color:var(--text); margin:0; text-transform:uppercase; letter-spacing:0.5px; }
-  .cz-whatchanged-count { font-size:11px; color:var(--text-muted); }
-  .cz-whatchanged-empty { font-size:12px; color:var(--text-muted); font-style:italic; padding:8px 0; }
-  .cz-whatchanged-list { display:flex; flex-direction:column; gap:10px; }
-  .cz-whatchanged-item { display:flex; gap:12px; align-items:center; padding:10px 12px; background:var(--bg-surface); border-radius:6px; cursor:pointer; transition:all 0.15s; }
-  .cz-whatchanged-item:hover { background:var(--bg-card); border-color:var(--accent); }
-  .cz-whatchanged-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
-  .cz-whatchanged-body { flex:1; display:flex; align-items:center; justify-content:space-between; gap:12px; }
-  .cz-whatchanged-text { font-size:13px; color:var(--text); }
-  .cz-whatchanged-text strong { font-weight:600; }
-  .cz-whatchanged-when { font-size:11px; color:var(--text-muted); }
+  /* What changed this week — temporarily removed, will redesign later */
 
   /* Hero section — Procurement */
   .cz-hero-section { margin-bottom:36px; }
@@ -2943,78 +2930,7 @@ function ClosingZone({ deals, teamMembers, user, onDealClick }) {
         <div className="cz-headline-total" style={{marginTop:6}}>Total commercial pipeline: <strong>{fmt(totalCommercialValue)}</strong></div>
       </div>
 
-      {/* What changed — hidden in board mode */}
-      {!isBoardMode && (
-        <div className="cz-whatchanged">
-          <div className="cz-whatchanged-header">
-            <h3 className="cz-whatchanged-title">What changed this week</h3>
-            <span className="cz-whatchanged-count">{recentChanges.length > 0 ? `${recentChanges.length} ${recentChanges.length === 1 ? 'change' : 'changes'}` : `${recentMoves.length} stage ${recentMoves.length === 1 ? 'movement' : 'movements'}`} in the last 7 days</span>
-          </div>
-          {recentChanges.length === 0 && recentMoves.length === 0 ? (
-            <div className="cz-whatchanged-empty">No changes in commercial territory this week.</div>
-          ) : recentChanges.length > 0 ? (
-            <div className="cz-whatchanged-list">
-              {recentChanges.map(e => {
-                const d = dealsById[e.deal_id];
-                if (!d) return null;
-                const ageDays = Math.floor((Date.now() - new Date(e.created_at)) / 86400000);
-                let text = null;
-                let dotColor = 'var(--text-muted)';
-                if (e.event_type === 'stage_changed') {
-                  const toStage = STAGE_MAP[e.to_value];
-                  text = <><strong>{d.account_name}</strong> moved to {toStage?.label || e.to_value}</>;
-                  dotColor = toStage?.color || dotColor;
-                } else if (e.event_type === 'close_date_changed') {
-                  const slipped = e.from_value && e.to_value && new Date(e.to_value) > new Date(e.from_value);
-                  text = <><strong>{d.account_name}</strong> close date {slipped ? 'slipped to' : 'set to'} {e.to_value ? new Date(e.to_value).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : '—'}</>;
-                  dotColor = slipped ? 'var(--orange)' : 'var(--stage-signed)';
-                } else if (e.event_type === 'value_changed') {
-                  const oldV = e.from_value ? Number(e.from_value) : 0;
-                  const newV = e.to_value ? Number(e.to_value) : 0;
-                  text = <><strong>{d.account_name}</strong> value {newV > oldV ? 'raised' : 'revised'} to {fmt(newV)}</>;
-                  dotColor = newV >= oldV ? 'var(--stage-signed)' : 'var(--orange)';
-                } else if (e.event_type === 'champion_changed') {
-                  text = <><strong>{d.account_name}</strong> champion → {e.to_value || '—'}</>;
-                  dotColor = 'var(--accent)';
-                } else if (e.event_type === 'signal_changed') {
-                  const labels = { verbal_commit:'Verbal commit', positive_signal:'Positive signal', engaged:'Engaged', submitted:'Submitted' };
-                  const oldRank = { verbal_commit:4, positive_signal:3, engaged:2, submitted:1 }[e.from_value] || 0;
-                  const newRank = { verbal_commit:4, positive_signal:3, engaged:2, submitted:1 }[e.to_value] || 0;
-                  const stronger = newRank > oldRank;
-                  text = <><strong>{d.account_name}</strong> signal {stronger ? 'strengthened' : (newRank < oldRank ? 'weakened' : 'updated')} to {labels[e.to_value] || e.to_value || '—'}</>;
-                  dotColor = stronger ? 'var(--stage-signed)' : (newRank < oldRank ? 'var(--orange)' : 'var(--accent)');
-                }
-                if (!text) return null;
-                return (
-                  <div key={e.id} className="cz-whatchanged-item" onClick={() => onDealClick(d.id)}>
-                    <div className="cz-whatchanged-dot" style={{background:dotColor}}></div>
-                    <div className="cz-whatchanged-body">
-                      <div className="cz-whatchanged-text">{text}</div>
-                      <div className="cz-whatchanged-when">{fmtDays(ageDays)}</div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="cz-whatchanged-list">
-              {recentMoves.map(d => {
-                const days = Math.floor((Date.now() - new Date(d.stage_entered_at)) / 86400000);
-                const stageInfo = STAGE_MAP[d.stage];
-                return (
-                  <div key={d.id} className="cz-whatchanged-item" onClick={() => onDealClick(d.id)}>
-                    <div className="cz-whatchanged-dot" style={{background:stageInfo?.color}}></div>
-                    <div className="cz-whatchanged-body">
-                      <div className="cz-whatchanged-text"><strong>{d.account_name}</strong> entered {stageInfo?.label}</div>
-                      <div className="cz-whatchanged-when">{fmtDays(days)} · {fmt(d.deal_value, d.deal_value_note)}</div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      )}
+      {/* What changed — temporarily removed, will redesign later */}
 
       {/* Procurement — hero section (always shown) */}
       <div className="cz-hero-section">
