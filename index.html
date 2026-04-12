@@ -2638,6 +2638,7 @@ function App() {
   const buildHash = useCallback((p, v, dealId) => {
     if (p === 'account' && dealId) return '#deal/' + dealId;
     if (p === 'board') return '#board';
+    if (p === 'closing') return '#closing';
     if (p === 'clients' && selectedClient) return '#client/' + encodeURIComponent(selectedClient);
     if (p === 'clients') return '#clients';
     if (p === 'initiatives' && dealId) return '#initiative/' + dealId;
@@ -2663,6 +2664,7 @@ function App() {
     if (h === 'clients') return { page: 'clients', view: 'kanban', dealId: null };
     if (h === 'initiatives') return { page: 'initiatives', view: 'kanban', dealId: null };
     if (h === 'board') return { page: 'board', view: 'kanban', dealId: null };
+    if (h === 'closing') return { page: 'closing', view: 'kanban', dealId: null };
     if (['audit','admin'].includes(h)) return { page: h, view: 'kanban', dealId: null };
     return { page: 'board', view: 'kanban', dealId: null };
   }, []);
