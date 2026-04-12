@@ -160,6 +160,17 @@
   .cz-hero-account-block { flex:1; min-width:0; }
   .cz-hero-account { font-size:17px; font-weight:700; color:var(--text); margin-bottom:3px; }
   .cz-slipping-tag { display:inline-block; margin-left:8px; font-size:9px; padding:2px 7px; border-radius:4px; background:rgba(234,88,12,0.15); color:var(--orange); font-weight:700; text-transform:uppercase; letter-spacing:0.5px; vertical-align:middle; }
+  .cz-signal-pill { display:inline-flex; align-items:center; gap:8px; margin-bottom:14px; padding:7px 12px; border-radius:6px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; }
+  .cz-signal-dot { width:8px; height:8px; border-radius:50%; display:inline-block; }
+  .cz-signal-verbal_commit { background:rgba(55,165,132,0.15); color:var(--stage-signed); }
+  .cz-signal-verbal_commit .cz-signal-dot { background:var(--stage-signed); box-shadow:0 0 0 3px rgba(55,165,132,0.25); }
+  .cz-signal-positive_signal { background:rgba(55,165,132,0.10); color:var(--stage-signed); }
+  .cz-signal-positive_signal .cz-signal-dot { background:var(--stage-signed); }
+  .cz-signal-engaged { background:rgba(59,130,246,0.12); color:var(--blue); }
+  .cz-signal-engaged .cz-signal-dot { background:var(--blue); }
+  .cz-signal-submitted { background:var(--bg-surface); color:var(--text-muted); }
+  .cz-signal-submitted .cz-signal-dot { background:var(--text-muted); }
+  .cz-signal-unset { background:rgba(217,119,6,0.10); color:var(--stage-discovery); border:1px dashed rgba(217,119,6,0.3); font-style:italic; text-transform:none; letter-spacing:0; }
   .cz-close-strip { display:flex; align-items:center; gap:8px; margin-bottom:14px; padding:8px 12px; background:rgba(139,108,193,0.08); border:1px solid rgba(139,108,193,0.25); border-radius:6px; font-size:12px; }
   .cz-close-label { font-size:9px; text-transform:uppercase; letter-spacing:0.4px; color:var(--text-muted); font-weight:600; }
   .cz-close-date { color:var(--text); font-weight:700; }
@@ -927,7 +938,7 @@ const STAGES = [
   { key:'discovery', label:'Discovery', color:'var(--stage-discovery)', order:2 },
   { key:'poc', label:'POC', color:'var(--stage-poc)', order:3 },
   { key:'proposal', label:'Proposal', color:'var(--stage-proposal)', order:4 },
-  { key:'procurement', label:'Procurement', color:'var(--stage-procurement)', order:5 },
+  { key:'decision_phase', label:'Decision Phase', color:'var(--stage-procurement)', order:5 },
   { key:'contract_signed', label:'Signed', color:'var(--stage-signed)', order:6 },
 ];
 
@@ -1505,8 +1516,8 @@ function AccountView({ dealId, deals, teamMembers, onBack, canEdit, user }) {
   const saveDeal = async () => {
     if (!canEdit) return;
     const u = {};
-    ['stage','deal_owner_id','next_action','next_action_due','next_action_owner_id','champion_name','deal_value','expected_close_date','status','stall_reason','notes','partner_id','decision_maker_name'].forEach(k => {
-      if (form[k] !== undefined) u[k] = k === 'deal_value' ? (form[k] || null) : (k === 'partner_id' ? (form[k] || null) : (k === 'expected_close_date' ? (form[k] || null) : form[k]));
+    ['stage','deal_owner_id','next_action','next_action_due','next_action_owner_id','champion_name','deal_value','expected_close_date','decision_signal','status','stall_reason','notes','partner_id','decision_maker_name'].forEach(k => {
+      if (form[k] !== undefined) u[k] = k === 'deal_value' ? (form[k] || null) : (k === 'partner_id' ? (form[k] || null) : (k === 'expected_close_date' ? (form[k] || null) : (k === 'decision_signal' ? (form[k] || null) : form[k])));
     });
     const { error } = await supabase.from('deals').update(u).eq('id', deal.id);
     if (!error) { await logAudit(user, 'update_deal', 'deal', deal.id, deal.account_name, u); setEditing(false); }
@@ -1801,6 +1812,18 @@ function AccountView({ dealId, deals, teamMembers, onBack, canEdit, user }) {
                 <label className="form-label">Expected Close Date</label>
                 <input className="form-input" type="date" value={form.expected_close_date||''} onChange={e => setForm({...form,expected_close_date:e.target.value})} />
               </div>
+              {form.stage === 'decision_phase' && (
+                <div className="form-group">
+                  <label className="form-label">Decision Signal</label>
+                  <select className="form-select" value={form.decision_signal||''} onChange={e => setForm({...form,decision_signal:e.target.value||null})}>
+                    <option value="">Not set</option>
+                    <option value="submitted">Submitted — awaiting response</option>
+                    <option value="engaged">Engaged — questions, active process</option>
+                    <option value="positive_signal">Positive signal — leaning yes</option>
+                    <option value="verbal_commit">Verbal commit — paperwork coming</option>
+                  </select>
+                </div>
+              )}
               <div className="form-group">
                 <label className="form-label">Deal Owner</label>
                 <select className="form-select" value={form.deal_owner_id||''} onChange={e => setForm({...form,deal_owner_id:e.target.value})}>
@@ -1861,7 +1884,7 @@ function PriorityActionsBoard({ deals, teamMembers }) {
   // Priority deals: in proposal/procurement/poc stages, active, sorted by value
   const priorityDeals = useMemo(() => {
     return deals
-      .filter(d => ['proposal', 'procurement', 'poc'].includes(d.stage) && d.status === 'active')
+      .filter(d => ['proposal', 'decision_phase', 'poc'].includes(d.stage) && d.status === 'active')
       .sort((a, b) => (b.deal_value || 0) - (a.deal_value || 0));
   }, [deals]);
 
@@ -1883,7 +1906,7 @@ function PriorityActionsBoard({ deals, teamMembers }) {
 
   const getPriorityLevel = (a) => {
     if (a.isOverdue) return 'critical';
-    if (a.stage === 'procurement') return 'critical';
+    if (a.stage === 'decision_phase') return 'critical';
     if (a.stage === 'proposal') return 'high';
     return 'medium';
   };
@@ -1980,7 +2003,7 @@ function PathwayToInvoice({ deals, teamMembers, onDealClick }) {
   // Focus on deals closest to money: proposal, procurement stages
   const invoiceDeals = useMemo(() => {
     return deals
-      .filter(d => ['proposal', 'procurement', 'poc'].includes(d.stage) && d.status === 'active')
+      .filter(d => ['proposal', 'decision_phase', 'poc'].includes(d.stage) && d.status === 'active')
       .sort((a, b) => {
         const stageOrder = { procurement: 0, proposal: 1, poc: 2 };
         const so = (stageOrder[a.stage] || 9) - (stageOrder[b.stage] || 9);
@@ -2641,7 +2664,7 @@ function ClosingZone({ deals, teamMembers, user, onDealClick }) {
   }, []);
 
   const commercial = React.useMemo(() =>
-    (deals||[]).filter(d => (d.stage === 'procurement' || d.stage === 'proposal') && d.status !== 'lost' && d.status !== 'won')
+    (deals||[]).filter(d => (d.stage === 'decision_phase' || d.stage === 'proposal') && d.status !== 'lost' && d.status !== 'won')
   , [deals]);
 
   // Does the user own any commercial deals? If yes, default to "My deals".
@@ -2661,14 +2684,29 @@ function ClosingZone({ deals, teamMembers, user, onDealClick }) {
     (regionFilter === 'all' || d.region === regionFilter)
   );
 
-  const procurement = filtered.filter(d => d.stage === 'procurement').sort((a,b) => {
-    // Sort by close date ascending when both have one; dateless fall back to value desc
+  const SIGNAL_RANK = { verbal_commit: 4, positive_signal: 3, engaged: 2, submitted: 1 };
+  const SIGNAL_LABEL = {
+    verbal_commit: 'Verbal commit',
+    positive_signal: 'Positive signal',
+    engaged: 'Engaged',
+    submitted: 'Submitted',
+  };
+
+  const procurement = filtered.filter(d => d.stage === 'decision_phase').sort((a,b) => {
+    // 1. Signal strength desc (verbal_commit first, unset last)
+    const ra = SIGNAL_RANK[a.decision_signal] || 0;
+    const rb = SIGNAL_RANK[b.decision_signal] || 0;
+    if (ra !== rb) return rb - ra;
+    // 2. Close date ascending
     if (a.expected_close_date && b.expected_close_date) return new Date(a.expected_close_date) - new Date(b.expected_close_date);
     if (a.expected_close_date) return -1;
     if (b.expected_close_date) return 1;
+    // 3. Fallback by value desc
     return (b.deal_value||0) - (a.deal_value||0);
   });
   const proposal = filtered.filter(d => d.stage === 'proposal').sort((a,b) => (b.deal_value||0) - (a.deal_value||0));
+  const strongSignal = procurement.filter(d => d.decision_signal === 'verbal_commit' || d.decision_signal === 'positive_signal');
+  const strongSignalValue = strongSignal.reduce((s,d) => s + (d.deal_value||0), 0);
   const procValue = procurement.reduce((s,d) => s + (d.deal_value||0), 0);
   const propValue = proposal.reduce((s,d) => s + (d.deal_value||0), 0);
   const totalCommercialValue = procValue + propValue;
@@ -2713,7 +2751,7 @@ function ClosingZone({ deals, teamMembers, user, onDealClick }) {
 
   const stageBenchmark = (stage, days) => {
     if (days == null) return null;
-    if (stage === 'procurement') return days <= 21 ? 'on-track' : 'stretching';
+    if (stage === 'decision_phase') return days <= 21 ? 'on-track' : 'stretching';
     if (stage === 'proposal') return days <= 30 ? 'on-track' : 'stretching';
     return null;
   };
@@ -2725,8 +2763,9 @@ function ClosingZone({ deals, teamMembers, user, onDealClick }) {
     const lines = [
       `Commercial pipeline snapshot · ${today}`,
       ``,
-      `${fmt(procValue)} close to closing across ${procurement.length} ${procurement.length===1?'account':'accounts'} in Procurement.`,
-      `${fmt(propValue)} in active commercial negotiation across ${proposal.length} ${proposal.length===1?'account':'accounts'} at Proposal.`,
+      `${fmt(strongSignalValue)} truly close to closing across ${strongSignal.length} ${strongSignal.length===1?'account':'accounts'} with positive or verbal signal.`,
+      `${fmt(procValue - strongSignalValue)} also in Decision Phase (${procurement.length - strongSignal.length} awaiting stronger signal).`,
+      `${fmt(propValue)} in active commercial negotiation at Proposal stage (${proposal.length} ${proposal.length===1?'account':'accounts'}).`,
       `Total commercial pipeline: ${fmt(totalCommercialValue)}.`,
       ``,
     ];
@@ -2737,8 +2776,11 @@ function ClosingZone({ deals, teamMembers, user, onDealClick }) {
       lines.push(``);
     }
     if (procurement.length > 0) {
-      lines.push(`In Procurement:`);
-      procurement.forEach(d => { lines.push(`  • ${d.account_name} — ${fmt(d.deal_value, d.deal_value_note)}`); });
+      lines.push(`In Decision Phase (strongest signal first):`);
+      procurement.forEach(d => {
+        const sig = d.decision_signal ? ` [${SIGNAL_LABEL[d.decision_signal]}]` : '';
+        lines.push(`  • ${d.account_name}${sig} — ${fmt(d.deal_value, d.deal_value_note)}`);
+      });
       lines.push(``);
     }
     if (recentMoves.length > 0) {
@@ -2759,7 +2801,7 @@ function ClosingZone({ deals, teamMembers, user, onDealClick }) {
     const owner = tm[d.deal_owner_id];
     const daysInStage = d.stage_entered_at ? Math.floor((Date.now() - new Date(d.stage_entered_at)) / 86400000) : null;
     const daysSinceActivity = d.last_activity_date ? Math.floor((Date.now() - new Date(d.last_activity_date)) / 86400000) : null;
-    const benchmark = stageBenchmark('procurement', daysInStage);
+    const benchmark = stageBenchmark('decision_phase', daysInStage);
     const isSlipping = slippingIds.has(d.id);
     const closeDate = d.expected_close_date ? new Date(d.expected_close_date) : null;
     const daysToClose = closeDate ? Math.ceil((closeDate - Date.now()) / 86400000) : null;
@@ -2776,6 +2818,17 @@ function ClosingZone({ deals, teamMembers, user, onDealClick }) {
           </div>
           <div className="cz-hero-value">{fmt(d.deal_value, d.deal_value_note)}</div>
         </div>
+        {d.decision_signal && (
+          <div className={`cz-signal-pill cz-signal-${d.decision_signal}`}>
+            <span className="cz-signal-dot"></span>
+            <span className="cz-signal-text">{SIGNAL_LABEL[d.decision_signal]}</span>
+          </div>
+        )}
+        {!d.decision_signal && (
+          <div className="cz-signal-pill cz-signal-unset">
+            <span className="cz-signal-text">Signal not set</span>
+          </div>
+        )}
         {closeDate && (
           <div className="cz-close-strip">
             <span className="cz-close-label">Expected close</span>
@@ -2786,7 +2839,7 @@ function ClosingZone({ deals, teamMembers, user, onDealClick }) {
         <div className="cz-hero-facts">
           {daysInStage !== null && (
             <div className={`cz-fact cz-fact-${benchmark||''}`}>
-              <span className="cz-fact-label">In Procurement</span>
+              <span className="cz-fact-label">In Decision Phase</span>
               <span className="cz-fact-value">{daysInStage}d {benchmark === 'stretching' && '· stretching'}{benchmark === 'on-track' && '· on track'}</span>
             </div>
           )}
@@ -2861,12 +2914,17 @@ function ClosingZone({ deals, teamMembers, user, onDealClick }) {
         </div>
       )}
 
-      {/* Headline — money first */}
+      {/* Headline — strong signal first */}
       <div className="cz-headline-card">
-        <div className="cz-headline-money">{fmt(procValue)}</div>
+        <div className="cz-headline-money">{fmt(strongSignalValue)}</div>
         <div className="cz-headline-copy">
-          <div className="cz-headline-title">close to closing across <strong>{procurement.length}</strong> {procurement.length === 1 ? 'account' : 'accounts'}</div>
-          <div className="cz-headline-sub">Currently in Procurement — contracts being finalised</div>
+          <div className="cz-headline-title">truly close to closing · <strong>{strongSignal.length}</strong> {strongSignal.length === 1 ? 'account' : 'accounts'} with positive or verbal signal</div>
+          <div className="cz-headline-sub">In Decision Phase with a direct signal from the decision-maker</div>
+        </div>
+        <div className="cz-headline-divider"></div>
+        <div className="cz-headline-secondary">
+          <div className="cz-headline-sec-money">{fmt(procValue - strongSignalValue)}</div>
+          <div className="cz-headline-sec-copy">also in Decision Phase · <strong>{procurement.length - strongSignal.length}</strong> awaiting stronger signal</div>
         </div>
         <div className="cz-headline-divider"></div>
         <div className="cz-headline-secondary">
@@ -2875,7 +2933,7 @@ function ClosingZone({ deals, teamMembers, user, onDealClick }) {
         </div>
         <div className="cz-headline-total">
           {noCloseDates ? (
-            <span style={{fontStyle:'italic'}}>Add expected close dates on Procurement deals to unlock forecast</span>
+            <span style={{fontStyle:'italic'}}>Add expected close dates on Decision Phase deals to unlock forecast</span>
           ) : (
             <>
               <span style={{color:'var(--stage-signed)'}}>●</span> <strong>{fmt(forecastMonthValue)}</strong> expected to close by end of {now.toLocaleDateString('en-GB',{month:'long'})} · <strong>{fmt(forecastQuarterValue)}</strong> by end of quarter
@@ -2918,6 +2976,13 @@ function ClosingZone({ deals, teamMembers, user, onDealClick }) {
                 } else if (e.event_type === 'champion_changed') {
                   text = <><strong>{d.account_name}</strong> champion → {e.to_value || '—'}</>;
                   dotColor = 'var(--accent)';
+                } else if (e.event_type === 'signal_changed') {
+                  const labels = { verbal_commit:'Verbal commit', positive_signal:'Positive signal', engaged:'Engaged', submitted:'Submitted' };
+                  const oldRank = { verbal_commit:4, positive_signal:3, engaged:2, submitted:1 }[e.from_value] || 0;
+                  const newRank = { verbal_commit:4, positive_signal:3, engaged:2, submitted:1 }[e.to_value] || 0;
+                  const stronger = newRank > oldRank;
+                  text = <><strong>{d.account_name}</strong> signal {stronger ? 'strengthened' : (newRank < oldRank ? 'weakened' : 'updated')} to {labels[e.to_value] || e.to_value || '—'}</>;
+                  dotColor = stronger ? 'var(--stage-signed)' : (newRank < oldRank ? 'var(--orange)' : 'var(--accent)');
                 }
                 if (!text) return null;
                 return (
@@ -2954,7 +3019,7 @@ function ClosingZone({ deals, teamMembers, user, onDealClick }) {
       {/* Procurement — hero section (always shown) */}
       <div className="cz-hero-section">
         <div className="cz-hero-section-header">
-          <h3 className="cz-hero-section-title">Close to closing · Procurement</h3>
+          <h3 className="cz-hero-section-title">Close to closing · Decision Phase</h3>
           <span className="cz-hero-section-count">{procurement.length} {procurement.length === 1 ? 'deal' : 'deals'} · {fmt(procValue)}</span>
         </div>
         {procurement.length === 0 ? (
