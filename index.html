@@ -3034,7 +3034,7 @@ function App() {
       </div>
 
       {/* Stats */}
-      {page === 'board' && (
+      {page === 'board' && (<>
       <div className="stats-bar">
         <div className="stat-card">
           <div className="stat-label">Pipeline Deals</div>
@@ -3067,7 +3067,7 @@ function App() {
         <button className={`filter-chip ${regionF==='all'?'active':''}`} onClick={()=>setRegionF('all')}>All Regions</button>
         {regions.map(r => <button key={r} className={`filter-chip ${regionF===r?'active':''}`} onClick={()=>setRegionF(r)}>{r}</button>)}
       </div>
-      )}
+      </>)}
 
       {/* Kanban */}
       {page === 'board' && view === 'kanban' && (
