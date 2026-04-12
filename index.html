@@ -170,12 +170,6 @@
   .deal-owner-name { font-size:10px; color:var(--text-muted); }
 
   /* TABLE VIEW */
-  .table-container { padding:0 32px 32px; overflow-x:auto; }
-  .data-table { width:100%; border-collapse:separate; border-spacing:0; }
-  .data-table th { padding:10px 14px; font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.6px; color:var(--text-muted); text-align:left; border-bottom:1px solid var(--border); position:sticky; top:60px; background:var(--bg); z-index:10; }
-  .data-table td { padding:10px 14px; font-size:13px; border-bottom:1px solid rgba(30,34,100,0.3); vertical-align:middle; }
-  .data-table tr { transition:background 0.1s; cursor:pointer; }
-  .data-table tbody tr:hover { background:var(--bg-card); }
   .stage-badge { display:inline-block; padding:3px 10px; border-radius:5px; font-size:10px; font-weight:600; color:white; text-transform:uppercase; letter-spacing:0.3px; }
 
   /* DETAIL PANEL */
@@ -2340,7 +2334,6 @@ function App() {
   // Hash-based routing for shareable URLs
   const buildHash = useCallback((p, v, dealId) => {
     if (p === 'account' && dealId) return '#deal/' + dealId;
-    if (p === 'board' && v === 'table') return '#board/table';
     if (p === 'board') return '#board';
     if (p === 'initiatives' && dealId) return '#initiative/' + dealId;
     if (['revenue','audit','admin','initiatives'].includes(p)) return '#' + p;
@@ -2359,7 +2352,6 @@ function App() {
       return { page: 'initiatives', view: 'kanban', dealId: id || null };
     }
     if (h === 'initiatives') return { page: 'initiatives', view: 'kanban', dealId: null };
-    if (h === 'board/table') return { page: 'board', view: 'table', dealId: null };
     if (h === 'board') return { page: 'board', view: 'kanban', dealId: null };
     if (['revenue','audit','admin'].includes(h)) return { page: h, view: 'kanban', dealId: null };
     return { page: 'board', view: 'kanban', dealId: null };
@@ -2576,7 +2568,6 @@ function App() {
           <div className="header-right">
             <div className="view-toggle">
               {canAccessScreen('board') && <button className={`view-btn ${page==='board'?'active':''}`} onClick={()=>{setPage('board');setView('kanban');}}>Board</button>}
-              {canAccessScreen('board') && <button className={`view-btn ${page==='board'&&view==='table'?'active':''}`} onClick={()=>{setPage('board');setView('table');}}>Table</button>}
               {canAccessScreen('revenue') && <button className={`view-btn ${page==='revenue'?'active':''}`} onClick={()=>setPage('revenue')} style={page==='revenue'?{background:'var(--stage-procurement)',color:'white'}:{}}>Revenue</button>}
               {canAccessScreen('audit') && <button className={`view-btn ${page==='audit'?'active':''}`} onClick={()=>setPage('audit')} style={page==='audit'?{background:'var(--accent)',color:'white'}:{}}>Audit</button>}
               {canAccessScreen('admin') && <button className={`view-btn ${page==='admin'?'active':''}`} onClick={()=>setPage('admin')} style={page==='admin'?{background:'var(--accent)',color:'white'}:{}}>Admin</button>}
@@ -2633,7 +2624,6 @@ function App() {
           <div className="header-right">
             <div className="view-toggle">
               {canAccessScreen('board') && <button className={`view-btn ${page==='board'?'active':''}`} onClick={()=>{setPage('board');setView('kanban');}}>Board</button>}
-              {canAccessScreen('board') && <button className={`view-btn ${page==='board'&&view==='table'?'active':''}`} onClick={()=>{setPage('board');setView('table');}}>Table</button>}
               {canAccessScreen('revenue') && <button className={`view-btn ${page==='revenue'?'active':''}`} onClick={()=>setPage('revenue')} style={page==='revenue'?{background:'var(--stage-procurement)',color:'white'}:{}}>Revenue</button>}
               {canAccessScreen('audit') && <button className={`view-btn ${page==='audit'?'active':''}`} onClick={()=>setPage('audit')} style={page==='audit'?{background:'var(--accent)',color:'white'}:{}}>Audit</button>}
               {canAccessScreen('admin') && <button className={`view-btn ${page==='admin'?'active':''}`} onClick={()=>setPage('admin')} style={page==='admin'?{background:'var(--accent)',color:'white'}:{}}>Admin</button>}
@@ -2691,7 +2681,6 @@ function App() {
           <div className="header-right">
             <div className="view-toggle">
               {canAccessScreen('board') && <button className={`view-btn ${page==='board'&&view==='kanban'?'active':''}`} onClick={()=>{setPage('board');setView('kanban');}}>Board</button>}
-              {canAccessScreen('board') && <button className={`view-btn ${page==='board'&&view==='table'?'active':''}`} onClick={()=>{setPage('board');setView('table');}}>Table</button>}
               {canAccessScreen('revenue') && <button className={`view-btn ${page==='revenue'?'active':''}`} onClick={()=>setPage('revenue')} style={page==='revenue'?{background:'var(--stage-procurement)',color:'white'}:{}}>Revenue</button>}
               {canAccessScreen('audit') && <button className={`view-btn ${page==='audit'?'active':''}`} onClick={()=>setPage('audit')} style={page==='audit'?{background:'var(--accent)',color:'white'}:{}}>Audit</button>}
               {canAccessScreen('admin') && <button className={`view-btn ${page==='admin'?'active':''}`} onClick={()=>setPage('admin')} style={page==='admin'?{background:'var(--accent)',color:'white'}:{}}>Admin</button>}
@@ -2724,7 +2713,6 @@ function App() {
         <div className="header-right">
           <div className="view-toggle">
             {canAccessScreen('board') && <button className={`view-btn ${page==='board'&&view==='kanban'?'active':''}`} onClick={()=>{setPage('board');setView('kanban');}}>Board</button>}
-            {canAccessScreen('board') && <button className={`view-btn ${page==='board'&&view==='table'?'active':''}`} onClick={()=>{setPage('board');setView('table');}}>Table</button>}
             {canAccessScreen('revenue') && <button className={`view-btn ${page==='revenue'?'active':''}`} onClick={()=>setPage('revenue')} style={page==='revenue'?{background:'var(--stage-procurement)',color:'white'}:{}}>Revenue</button>}
             {canAccessScreen('audit') && <button className={`view-btn ${page==='audit'?'active':''}`} onClick={()=>setPage('audit')} style={page==='audit'?{background:'var(--accent)',color:'white'}:{}}>Audit</button>}
             {canAccessScreen('admin') && <button className={`view-btn ${page==='admin'?'active':''}`} onClick={()=>setPage('admin')} style={page==='admin'?{background:'var(--accent)',color:'white'}:{}}>Admin</button>}
@@ -2815,45 +2803,6 @@ function App() {
         </div>
       )}
 
-      {/* Table */}
-      {view === 'table' && (
-        <div className="table-container">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Account</th>
-                <th>Project</th>
-                <th>Stage</th>
-                <th>Value</th>
-                <th>Owner</th>
-                <th>Status</th>
-                <th>Next Action</th>
-                <th>Due</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map(d => {
-                const owner = tm[d.deal_owner_id];
-                const stageInfo = STAGE_MAP[d.stage];
-                const dueDays = daysUntil(d.next_action_due);
-                const isOverdue = dueDays !== null && dueDays < 0;
-                return (
-                  <tr key={d.id} onClick={() => {setSelId(d.id); setPage('account');}}>
-                    <td>{d.account_name}</td>
-                    <td>{d.project_name}</td>
-                    <td><span className="stage-badge" style={{background:stageInfo?.color}}>{stageInfo?.label}</span></td>
-                    <td>{fmt(d.deal_value,d.deal_value_note)}</td>
-                    <td>{owner?.display_name||'—'}</td>
-                    <td style={{color:d.status==='stalled'?'var(--red)':'inherit'}}>{d.status}</td>
-                    <td>{d.next_action||'—'}</td>
-                    <td style={{color:isOverdue?'var(--orange)':'inherit'}}>{d.next_action_due?`${isOverdue?'-':''}${Math.abs(dueDays||0)}d`:'—'}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
 
       {toast && <div className="toast">{toast}</div>}
     </div>
