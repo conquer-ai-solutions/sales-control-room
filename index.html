@@ -93,36 +93,99 @@
   .view-btn:hover:not(.active) { color:var(--text-dim); }
 
   /* Closing Zone */
-  .closing-zone { padding:24px 32px 48px; max-width:1400px; margin:0 auto; }
-  .cz-header { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:24px 28px; margin-bottom:28px; }
-  .cz-headline { display:flex; align-items:center; gap:20px; }
-  .cz-headline-number { font-size:56px; font-weight:700; color:var(--stage-procurement); line-height:1; letter-spacing:-1px; }
-  .cz-headline-title { font-size:20px; font-weight:600; color:var(--text); margin-bottom:4px; }
-  .cz-headline-sub { font-size:13px; color:var(--text-muted); }
-  .cz-headline-secondary { margin-top:16px; padding-top:16px; border-top:1px solid var(--border); font-size:13px; color:var(--text-muted); }
-  .cz-headline-secondary strong { color:var(--text); font-weight:600; }
-  .cz-section { margin-bottom:32px; }
-  .cz-section-header { display:flex; align-items:center; gap:10px; margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--border); }
-  .cz-section-dot { width:10px; height:10px; border-radius:50%; display:inline-block; }
-  .cz-section-title { font-size:14px; font-weight:600; color:var(--text); margin:0; letter-spacing:0.2px; flex:1; }
-  .cz-section-count { font-size:11px; color:var(--text-muted); font-weight:500; }
-  .cz-cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:14px; }
-  .cz-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:16px 18px; cursor:pointer; transition:all 0.15s; }
-  .cz-card:hover { border-color:var(--accent); transform:translateY(-1px); }
-  .cz-card-top { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:12px; }
-  .cz-card-account { font-size:15px; font-weight:600; color:var(--text); margin-bottom:3px; }
-  .cz-card-project { font-size:12px; color:var(--text-muted); }
-  .cz-card-value { font-size:14px; font-weight:700; white-space:nowrap; }
-  .cz-card-signals { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
-  .cz-signal { font-size:10px; padding:3px 8px; border-radius:4px; background:var(--bg-surface); color:var(--text-muted); font-weight:500; }
-  .cz-signal-good { background:rgba(55,165,132,0.12); color:var(--stage-signed); }
-  .cz-signal-warn { background:rgba(217,119,6,0.12); color:var(--stage-discovery); }
-  .cz-card-action { display:flex; align-items:center; gap:6px; padding-top:10px; border-top:1px solid var(--border); font-size:12px; color:var(--text-dim); }
-  .cz-action-arrow { color:var(--accent); font-weight:700; }
-  .cz-action-text { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .cz-action-due { font-size:10px; padding:2px 6px; border-radius:3px; background:var(--bg-surface); color:var(--text-muted); font-weight:600; }
-  .cz-action-due.overdue { background:rgba(220,38,38,0.15); color:var(--red); }
+  .closing-zone { padding:24px 32px 64px; max-width:1400px; margin:0 auto; }
+
+  /* Filters */
+  .cz-filters { display:flex; align-items:center; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
+  .cz-filter-label { font-size:11px; color:var(--text-muted); text-transform:uppercase; font-weight:600; letter-spacing:0.5px; }
+  .cz-select { background:var(--bg-card); border:1px solid var(--border); color:var(--text); padding:7px 12px; border-radius:6px; font-size:12px; font-family:var(--font); cursor:pointer; }
+  .cz-select:hover { border-color:var(--accent); }
+  .cz-filter-clear { background:transparent; border:none; color:var(--accent); font-size:11px; font-weight:600; cursor:pointer; padding:0 6px; }
+
+  /* Headline card — money first */
+  .cz-headline-card { background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:28px 32px; margin-bottom:28px; position:relative; overflow:hidden; }
+  .cz-headline-card::before { content:""; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--stage-procurement); }
+  .cz-headline-money { font-size:48px; font-weight:700; color:var(--stage-procurement); line-height:1; letter-spacing:-1px; margin-bottom:8px; }
+  .cz-headline-copy { margin-bottom:18px; }
+  .cz-headline-title { font-size:17px; color:var(--text); font-weight:500; }
+  .cz-headline-title strong { color:var(--stage-procurement); font-weight:700; }
+  .cz-headline-sub { font-size:12px; color:var(--text-muted); margin-top:3px; }
+  .cz-headline-divider { height:1px; background:var(--border); margin:16px 0; }
+  .cz-headline-secondary { display:flex; align-items:baseline; gap:14px; }
+  .cz-headline-sec-money { font-size:22px; font-weight:600; color:var(--stage-proposal); line-height:1; }
+  .cz-headline-sec-copy { font-size:13px; color:var(--text-muted); }
+  .cz-headline-sec-copy strong { color:var(--text); font-weight:600; }
+  .cz-headline-total { margin-top:16px; padding-top:14px; border-top:1px dashed var(--border); font-size:12px; color:var(--text-muted); }
+  .cz-headline-total strong { color:var(--text); font-weight:700; font-size:14px; }
+
+  /* What changed this week */
+  .cz-whatchanged { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:18px 22px; margin-bottom:32px; }
+  .cz-whatchanged-header { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:14px; }
+  .cz-whatchanged-title { font-size:13px; font-weight:600; color:var(--text); margin:0; text-transform:uppercase; letter-spacing:0.5px; }
+  .cz-whatchanged-count { font-size:11px; color:var(--text-muted); }
+  .cz-whatchanged-empty { font-size:12px; color:var(--text-muted); font-style:italic; padding:8px 0; }
+  .cz-whatchanged-list { display:flex; flex-direction:column; gap:10px; }
+  .cz-whatchanged-item { display:flex; gap:12px; align-items:center; padding:10px 12px; background:var(--bg-surface); border-radius:6px; cursor:pointer; transition:all 0.15s; }
+  .cz-whatchanged-item:hover { background:var(--bg-card); border-color:var(--accent); }
+  .cz-whatchanged-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .cz-whatchanged-body { flex:1; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .cz-whatchanged-text { font-size:13px; color:var(--text); }
+  .cz-whatchanged-text strong { font-weight:600; }
+  .cz-whatchanged-when { font-size:11px; color:var(--text-muted); }
+
+  /* Hero section — Procurement */
+  .cz-hero-section { margin-bottom:36px; }
+  .cz-hero-section-header { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:16px; padding-bottom:10px; border-bottom:2px solid var(--stage-procurement); }
+  .cz-hero-section-title { font-size:15px; font-weight:700; color:var(--text); margin:0; text-transform:uppercase; letter-spacing:0.5px; }
+  .cz-hero-section-count { font-size:12px; color:var(--text-muted); font-weight:500; }
+  .cz-hero-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(380px,1fr)); gap:16px; }
+  .cz-hero-card { background:var(--bg-card); border:1px solid var(--border); border-left:3px solid var(--stage-procurement); border-radius:10px; padding:20px 22px; cursor:pointer; transition:all 0.15s; }
+  .cz-hero-card:hover { border-color:var(--stage-procurement); transform:translateY(-2px); box-shadow:0 4px 16px rgba(139,108,193,0.15); }
+  .cz-hero-top { display:flex; justify-content:space-between; align-items:flex-start; gap:14px; margin-bottom:16px; }
+  .cz-hero-account-block { flex:1; min-width:0; }
+  .cz-hero-account { font-size:17px; font-weight:700; color:var(--text); margin-bottom:3px; }
+  .cz-hero-project { font-size:12px; color:var(--text-muted); }
+  .cz-hero-value { font-size:18px; font-weight:700; color:var(--stage-procurement); white-space:nowrap; }
+  .cz-hero-facts { display:grid; grid-template-columns:1fr 1fr; gap:10px 16px; margin-bottom:14px; padding:12px 14px; background:var(--bg-surface); border-radius:6px; }
+  .cz-fact { display:flex; flex-direction:column; gap:2px; }
+  .cz-fact-label { font-size:9px; text-transform:uppercase; color:var(--text-muted); font-weight:600; letter-spacing:0.4px; }
+  .cz-fact-value { font-size:12px; color:var(--text); font-weight:500; }
+  .cz-fact-on-track .cz-fact-value { color:var(--stage-signed); }
+  .cz-fact-stretching .cz-fact-value { color:var(--stage-discovery); }
+  .cz-hero-action { display:flex; align-items:center; gap:8px; padding-top:12px; border-top:1px solid var(--border); font-size:12px; color:var(--text-dim); }
+  .cz-hero-action-arrow { color:var(--accent); font-weight:700; font-size:14px; }
+
+  /* Subordinate section — Proposal */
+  .cz-sub-section { margin-bottom:20px; }
+  .cz-sub-section-header { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+  .cz-sub-section-title { font-size:12px; font-weight:600; color:var(--text-muted); margin:0; text-transform:uppercase; letter-spacing:0.5px; }
+  .cz-sub-section-count { font-size:11px; color:var(--text-muted); }
+  .cz-rows { display:flex; flex-direction:column; gap:6px; }
+  .cz-row { display:grid; grid-template-columns:2fr 1fr 2.5fr; gap:16px; align-items:center; padding:12px 16px; background:var(--bg-card); border:1px solid var(--border); border-left:2px solid var(--stage-proposal); border-radius:6px; cursor:pointer; transition:all 0.15s; }
+  .cz-row:hover { border-color:var(--stage-proposal); background:var(--bg-surface); }
+  .cz-row-account { min-width:0; }
+  .cz-row-name { font-size:13px; font-weight:600; color:var(--text); }
+  .cz-row-project { font-size:11px; color:var(--text-muted); margin-top:1px; }
+  .cz-row-value { font-size:13px; font-weight:600; color:var(--text); }
+  .cz-row-meta { font-size:11px; color:var(--text-muted); display:flex; gap:5px; flex-wrap:wrap; align-items:center; }
+  .cz-row-owner { margin-left:auto; color:var(--text-dim); font-weight:500; }
   .cz-empty { padding:24px; text-align:center; color:var(--text-muted); font-size:13px; background:var(--bg-card); border:1px dashed var(--border); border-radius:var(--radius); }
+
+  /* Mobile responsive */
+  @media (max-width: 720px) {
+    .closing-zone { padding:16px 14px 40px; }
+    .cz-headline-card { padding:20px 18px; }
+    .cz-headline-money { font-size:36px; }
+    .cz-headline-title { font-size:14px; }
+    .cz-headline-sec-money { font-size:18px; }
+    .cz-hero-grid { grid-template-columns:1fr; }
+    .cz-hero-card { padding:16px 18px; }
+    .cz-hero-facts { grid-template-columns:1fr 1fr; padding:10px 12px; }
+    .cz-row { grid-template-columns:1fr; gap:6px; }
+    .cz-row-meta { flex-wrap:wrap; }
+    .cz-filters { gap:8px; }
+    .cz-select { flex:1; min-width:0; }
+  }
 
   .refresh-btn { padding:6px 12px; border-radius:var(--radius); border:1px solid var(--border); background:transparent; color:var(--text-dim); cursor:pointer; font-size:12px; font-family:var(--font); transition:all 0.15s; }
   .refresh-btn:hover { border-color:var(--accent); color:var(--text); }
@@ -2528,81 +2591,200 @@ function InitiativesScreen({currentUser, initialInitiativeId, onClearSelId}) {
 }
 
 function ClosingZone({ deals, teamMembers, onDealClick }) {
+  const [ownerFilter, setOwnerFilter] = React.useState('all');
+  const [regionFilter, setRegionFilter] = React.useState('all');
   const tm = React.useMemo(() => Object.fromEntries((teamMembers||[]).map(m => [m.id, m])), [teamMembers]);
-  const active = (deals||[]).filter(d => d.status !== 'lost' && d.status !== 'won' && d.stage !== 'contract_signed');
-  const procurement = active.filter(d => d.stage === 'procurement').sort((a,b) => (b.deal_value||0) - (a.deal_value||0));
-  const proposal = active.filter(d => d.stage === 'proposal').sort((a,b) => (b.deal_value||0) - (a.deal_value||0));
+
+  const commercial = React.useMemo(() =>
+    (deals||[]).filter(d => (d.stage === 'procurement' || d.stage === 'proposal') && d.status !== 'lost' && d.status !== 'won')
+  , [deals]);
+
+  const owners = React.useMemo(() => {
+    const ids = [...new Set(commercial.map(d => d.deal_owner_id).filter(Boolean))];
+    return ids.map(id => tm[id]).filter(Boolean);
+  }, [commercial, tm]);
+  const regions = React.useMemo(() => [...new Set(commercial.map(d => d.region).filter(Boolean))], [commercial]);
+
+  const filtered = commercial.filter(d =>
+    (ownerFilter === 'all' || d.deal_owner_id === ownerFilter) &&
+    (regionFilter === 'all' || d.region === regionFilter)
+  );
+
+  const procurement = filtered.filter(d => d.stage === 'procurement').sort((a,b) => (b.deal_value||0) - (a.deal_value||0));
+  const proposal = filtered.filter(d => d.stage === 'proposal').sort((a,b) => (b.deal_value||0) - (a.deal_value||0));
   const procValue = procurement.reduce((s,d) => s + (d.deal_value||0), 0);
   const propValue = proposal.reduce((s,d) => s + (d.deal_value||0), 0);
+  const totalCommercialValue = procValue + propValue;
 
-  const DealCard = ({ d, tone }) => {
+  // What changed in last 7 days — deals that entered their current stage
+  const recentMoves = filtered.filter(d => {
+    if (!d.stage_entered_at) return false;
+    const days = Math.floor((Date.now() - new Date(d.stage_entered_at)) / 86400000);
+    return days <= 7;
+  }).sort((a,b) => new Date(b.stage_entered_at) - new Date(a.stage_entered_at));
+
+  const fmtDays = (n) => n === 0 ? 'today' : n === 1 ? 'yesterday' : `${n}d ago`;
+
+  // Days in stage benchmarks (rough, tweak later as data grows)
+  const stageBenchmark = (stage, days) => {
+    if (days == null) return null;
+    if (stage === 'procurement') return days <= 21 ? 'on-track' : 'stretching';
+    if (stage === 'proposal') return days <= 30 ? 'on-track' : 'stretching';
+    return null;
+  };
+
+  const ProcurementCard = ({ d }) => {
     const owner = tm[d.deal_owner_id];
     const daysInStage = d.stage_entered_at ? Math.floor((Date.now() - new Date(d.stage_entered_at)) / 86400000) : null;
-    const dueDays = daysUntil(d.next_action_due);
-    const isOverdue = dueDays !== null && dueDays < 0;
+    const daysSinceActivity = d.last_activity_date ? Math.floor((Date.now() - new Date(d.last_activity_date)) / 86400000) : null;
+    const benchmark = stageBenchmark('procurement', daysInStage);
     return (
-      <div className="cz-card" onClick={() => onDealClick(d.id)}>
-        <div className="cz-card-top">
-          <div>
-            <div className="cz-card-account">{d.account_name}</div>
-            <div className="cz-card-project">{d.project_name}</div>
+      <div className="cz-hero-card" onClick={() => onDealClick(d.id)}>
+        <div className="cz-hero-top">
+          <div className="cz-hero-account-block">
+            <div className="cz-hero-account">{d.account_name}</div>
+            <div className="cz-hero-project">{d.project_name}</div>
           </div>
-          <div className="cz-card-value" style={{color: tone === 'procurement' ? 'var(--stage-procurement)' : 'var(--stage-proposal)'}}>{fmt(d.deal_value, d.deal_value_note)}</div>
+          <div className="cz-hero-value">{fmt(d.deal_value, d.deal_value_note)}</div>
         </div>
-        <div className="cz-card-signals">
-          {daysInStage !== null && <span className="cz-signal">{daysInStage}d in stage</span>}
-          {d.champion_name ? <span className="cz-signal cz-signal-good">Champion: {d.champion_name}</span> : <span className="cz-signal cz-signal-warn">No champion</span>}
-          {owner && <span className="cz-signal">Owner: {owner.display_name}</span>}
+        <div className="cz-hero-facts">
+          {daysInStage !== null && (
+            <div className={`cz-fact cz-fact-${benchmark||''}`}>
+              <span className="cz-fact-label">In Procurement</span>
+              <span className="cz-fact-value">{daysInStage}d {benchmark === 'stretching' && '· stretching'}{benchmark === 'on-track' && '· on track'}</span>
+            </div>
+          )}
+          {daysSinceActivity !== null && (
+            <div className="cz-fact">
+              <span className="cz-fact-label">Last activity</span>
+              <span className="cz-fact-value">{fmtDays(daysSinceActivity)}</span>
+            </div>
+          )}
+          <div className="cz-fact">
+            <span className="cz-fact-label">Champion</span>
+            <span className="cz-fact-value">{d.champion_name || '—'}</span>
+          </div>
+          {owner && (
+            <div className="cz-fact">
+              <span className="cz-fact-label">Owner</span>
+              <span className="cz-fact-value">{owner.display_name}</span>
+            </div>
+          )}
         </div>
         {d.next_action && (
-          <div className="cz-card-action">
-            <span className="cz-action-arrow">›</span>
-            <span className="cz-action-text">{d.next_action}</span>
-            {d.next_action_due && <span className={`cz-action-due ${isOverdue?'overdue':''}`}>{isOverdue ? `${-dueDays}d overdue` : `${dueDays}d`}</span>}
+          <div className="cz-hero-action">
+            <span className="cz-hero-action-arrow">›</span>
+            <span>{d.next_action}</span>
           </div>
         )}
       </div>
     );
   };
 
-  return (
-    <div className="closing-zone">
-      <div className="cz-header">
-        <div className="cz-headline">
-          <div className="cz-headline-number">{procurement.length}</div>
-          <div className="cz-headline-text">
-            <div className="cz-headline-title">{procurement.length === 1 ? 'account is' : 'accounts are'} close to closing</div>
-            <div className="cz-headline-sub">Currently in Procurement — contracts being finalised · {fmt(procValue)} total value</div>
-          </div>
+  const ProposalRow = ({ d }) => {
+    const owner = tm[d.deal_owner_id];
+    const daysInStage = d.stage_entered_at ? Math.floor((Date.now() - new Date(d.stage_entered_at)) / 86400000) : null;
+    const daysSinceActivity = d.last_activity_date ? Math.floor((Date.now() - new Date(d.last_activity_date)) / 86400000) : null;
+    return (
+      <div className="cz-row" onClick={() => onDealClick(d.id)}>
+        <div className="cz-row-account">
+          <div className="cz-row-name">{d.account_name}</div>
+          <div className="cz-row-project">{d.project_name}</div>
         </div>
-        <div className="cz-headline-secondary">
-          A further <strong>{proposal.length}</strong> {proposal.length === 1 ? 'account is' : 'accounts are'} in active commercial negotiation at Proposal stage · {fmt(propValue)}
+        <div className="cz-row-value">{fmt(d.deal_value, d.deal_value_note)}</div>
+        <div className="cz-row-meta">
+          {daysInStage !== null && <span>{daysInStage}d in stage</span>}
+          {daysSinceActivity !== null && <span>· last activity {fmtDays(daysSinceActivity)}</span>}
+          {d.champion_name && <span>· {d.champion_name}</span>}
+          {owner && <span className="cz-row-owner">{owner.display_name}</span>}
         </div>
       </div>
+    );
+  };
 
-      <div className="cz-section">
-        <div className="cz-section-header">
-          <span className="cz-section-dot" style={{background:'var(--stage-procurement)'}}></span>
-          <h3 className="cz-section-title">Procurement · Close to closing</h3>
-          <span className="cz-section-count">{procurement.length} {procurement.length === 1 ? 'deal' : 'deals'}</span>
+  return (
+    <div className="closing-zone">
+      {/* Filters */}
+      <div className="cz-filters">
+        <span className="cz-filter-label">Filter</span>
+        <select className="cz-select" value={ownerFilter} onChange={e => setOwnerFilter(e.target.value)}>
+          <option value="all">All owners</option>
+          {owners.map(o => <option key={o.id} value={o.id}>{o.display_name}</option>)}
+        </select>
+        <select className="cz-select" value={regionFilter} onChange={e => setRegionFilter(e.target.value)}>
+          <option value="all">All regions</option>
+          {regions.map(r => <option key={r} value={r}>{r}</option>)}
+        </select>
+        {(ownerFilter !== 'all' || regionFilter !== 'all') && (
+          <button className="cz-filter-clear" onClick={() => { setOwnerFilter('all'); setRegionFilter('all'); }}>Clear</button>
+        )}
+      </div>
+
+      {/* Headline — money first */}
+      <div className="cz-headline-card">
+        <div className="cz-headline-money">{fmt(procValue)}</div>
+        <div className="cz-headline-copy">
+          <div className="cz-headline-title">close to closing across <strong>{procurement.length}</strong> {procurement.length === 1 ? 'account' : 'accounts'}</div>
+          <div className="cz-headline-sub">Currently in Procurement — contracts being finalised</div>
+        </div>
+        <div className="cz-headline-divider"></div>
+        <div className="cz-headline-secondary">
+          <div className="cz-headline-sec-money">{fmt(propValue)}</div>
+          <div className="cz-headline-sec-copy">in active commercial negotiation · <strong>{proposal.length}</strong> {proposal.length === 1 ? 'account' : 'accounts'} at Proposal</div>
+        </div>
+        <div className="cz-headline-total">Total commercial pipeline: <strong>{fmt(totalCommercialValue)}</strong></div>
+      </div>
+
+      {/* What changed this week */}
+      <div className="cz-whatchanged">
+        <div className="cz-whatchanged-header">
+          <h3 className="cz-whatchanged-title">What changed this week</h3>
+          <span className="cz-whatchanged-count">{recentMoves.length} {recentMoves.length === 1 ? 'movement' : 'movements'} in the last 7 days</span>
+        </div>
+        {recentMoves.length === 0 ? (
+          <div className="cz-whatchanged-empty">No stage movements in commercial territory this week.</div>
+        ) : (
+          <div className="cz-whatchanged-list">
+            {recentMoves.map(d => {
+              const days = Math.floor((Date.now() - new Date(d.stage_entered_at)) / 86400000);
+              const stageInfo = STAGE_MAP[d.stage];
+              return (
+                <div key={d.id} className="cz-whatchanged-item" onClick={() => onDealClick(d.id)}>
+                  <div className="cz-whatchanged-dot" style={{background:stageInfo?.color}}></div>
+                  <div className="cz-whatchanged-body">
+                    <div className="cz-whatchanged-text"><strong>{d.account_name}</strong> entered {stageInfo?.label}</div>
+                    <div className="cz-whatchanged-when">{fmtDays(days)} · {fmt(d.deal_value, d.deal_value_note)}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Procurement — hero section */}
+      <div className="cz-hero-section">
+        <div className="cz-hero-section-header">
+          <h3 className="cz-hero-section-title">Close to closing · Procurement</h3>
+          <span className="cz-hero-section-count">{procurement.length} {procurement.length === 1 ? 'deal' : 'deals'} · {fmt(procValue)}</span>
         </div>
         {procurement.length === 0 ? (
           <div className="cz-empty">No deals in Procurement right now.</div>
         ) : (
-          <div className="cz-cards">{procurement.map(d => <DealCard key={d.id} d={d} tone="procurement" />)}</div>
+          <div className="cz-hero-grid">{procurement.map(d => <ProcurementCard key={d.id} d={d} />)}</div>
         )}
       </div>
 
-      <div className="cz-section">
-        <div className="cz-section-header">
-          <span className="cz-section-dot" style={{background:'var(--stage-proposal)'}}></span>
-          <h3 className="cz-section-title">Proposal · Active commercial negotiation</h3>
-          <span className="cz-section-count">{proposal.length} {proposal.length === 1 ? 'deal' : 'deals'}</span>
+      {/* Proposal — subordinate band */}
+      <div className="cz-sub-section">
+        <div className="cz-sub-section-header">
+          <h4 className="cz-sub-section-title">Behind them · Proposal</h4>
+          <span className="cz-sub-section-count">{proposal.length} {proposal.length === 1 ? 'deal' : 'deals'} · {fmt(propValue)}</span>
         </div>
         {proposal.length === 0 ? (
           <div className="cz-empty">No deals in Proposal right now.</div>
         ) : (
-          <div className="cz-cards">{proposal.map(d => <DealCard key={d.id} d={d} tone="proposal" />)}</div>
+          <div className="cz-rows">{proposal.map(d => <ProposalRow key={d.id} d={d} />)}</div>
         )}
       </div>
     </div>
