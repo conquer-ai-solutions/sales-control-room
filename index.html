@@ -1914,12 +1914,12 @@ function PathwayToInvoice({ deals, teamMembers, onDealClick }) {
 }
 
 function LinkDealModal({ initiativeId, onClose, onLinked, currentUser }) {
-  const [search, setSearch] = useStateI('');
-  const [deals, setDeals] = useStateI([]);
-  const [loading, setLoading] = useStateI(true);
-  const [selectedDeal, setSelectedDeal] = useStateI(null);
-  const [note, setNote] = useStateI('');
-  const [saving, setSaving] = useStateI(false);
+  const [search, setSearch] = useState('');
+  const [deals, setDeals] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedDeal, setSelectedDeal] = useState(null);
+  const [note, setNote] = useState('');
+  const [saving, setSaving] = useState(false);
 
   useEffectI(function() {
     supabase.from('deals').select('id, account_name, project_name, created_at').order('created_at', { ascending: false }).limit(50)
@@ -1980,17 +1980,17 @@ function LinkDealModal({ initiativeId, onClose, onLinked, currentUser }) {
 
 function InitiativeModal({ initiative, onClose, onSave, currentUser, teamMembers }) {
   var isEdit = !!initiative;
-  const [title, setTitle] = useStateI(initiative ? initiative.title : '');
-  const [description, setDescription] = useStateI(initiative ? (initiative.description || '') : '');
-  const [status, setStatus] = useStateI(initiative ? initiative.status : 'not_started');
-  const [priority, setPriority] = useStateI(initiative ? initiative.priority : 'medium');
-  const [targetDate, setTargetDate] = useStateI(initiative ? (initiative.target_date || '') : '');
-  const [tagInput, setTagInput] = useStateI('');
-  const [tags, setTags] = useStateI(initiative ? (initiative.tags || []) : []);
-  const [owner, setOwner] = useStateI(initiative ? (initiative._owner || currentUser.id) : currentUser.id);
-  const [contributors, setContributors] = useStateI(initiative ? (initiative._contributors || []) : []);
-  const [watchers, setWatchers] = useStateI(initiative ? (initiative._watchers || []) : []);
-  const [saving, setSaving] = useStateI(false);
+  const [title, setTitle] = useState(initiative ? initiative.title : '');
+  const [description, setDescription] = useState(initiative ? (initiative.description || '') : '');
+  const [status, setStatus] = useState(initiative ? initiative.status : 'not_started');
+  const [priority, setPriority] = useState(initiative ? initiative.priority : 'medium');
+  const [targetDate, setTargetDate] = useState(initiative ? (initiative.target_date || '') : '');
+  const [tagInput, setTagInput] = useState('');
+  const [tags, setTags] = useState(initiative ? (initiative.tags || []) : []);
+  const [owner, setOwner] = useState(initiative ? (initiative._owner || currentUser.id) : currentUser.id);
+  const [contributors, setContributors] = useState(initiative ? (initiative._contributors || []) : []);
+  const [watchers, setWatchers] = useState(initiative ? (initiative._watchers || []) : []);
+  const [saving, setSaving] = useState(false);
 
   function addTag() {
     var t = tagInput.trim();
@@ -2121,13 +2121,13 @@ function InitiativeModal({ initiative, onClose, onSave, currentUser, teamMembers
 
 
 function InitiativeDetail({ initiative, ownerName, contributorCount, onBack, onUpdate, onEdit, currentUser, teamMembers }) {
-  const [updates, setUpdates] = useStateI([]);
-  const [members, setMembers] = useStateI([]);
-  const [linkedDeals, setLinkedDeals] = useStateI([]);
-  const [newUpdate, setNewUpdate] = useStateI('');
-  const [submitting, setSubmitting] = useStateI(false);
-  const [showLinkDeal, setShowLinkDeal] = useStateI(false);
-  var [showCopiedI, setShowCopiedI] = useStateI(false);
+  const [updates, setUpdates] = useState([]);
+  const [members, setMembers] = useState([]);
+  const [linkedDeals, setLinkedDeals] = useState([]);
+  const [newUpdate, setNewUpdate] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [showLinkDeal, setShowLinkDeal] = useState(false);
+  var [showCopiedI, setShowCopiedI] = useState(false);
   var copyInitiativeLink = function() {
     var url = window.location.origin + window.location.pathname + '#initiative/' + initiative.id;
     navigator.clipboard.writeText(url).then(function() { setShowCopiedI(true); setTimeout(function() { setShowCopiedI(false); }, 2000); });
@@ -2268,21 +2268,21 @@ function InitiativeDetail({ initiative, ownerName, contributorCount, onBack, onU
 
 
 function InitiativesScreen({currentUser, initialInitiativeId, onClearSelId}) {
-    var [teamMembers, setTeamMembers] = useStateI([]);
-    var [appUsers, setAppUsers] = useStateI([]);
+    var [teamMembers, setTeamMembers] = useState([]);
+    var [appUsers, setAppUsers] = useState([]);
     useEffectI(function() {
       supabase.from('team_members').select('*').then(function(res) { if (res.data) setTeamMembers(res.data); });
       supabase.from('app_users').select('id,display_name').then(function(res) { if (res.data) setAppUsers(res.data); });
     }, []);
 
-  const [initiatives, setInitiatives] = useStateI([]);
-  const [members, setMembers] = useStateI([]);
-  const [loading, setLoading] = useStateI(true);
-  const [error, setError] = useStateI(null);
-  const [statusFilter, setStatusFilter] = useStateI('all');
-  const [priorityFilter, setPriorityFilter] = useStateI('all');
-  const [searchQuery, setSearchQuery] = useStateI('');
-  const [selectedInitiative, setSelectedInitiative] = useStateI(initialInitiativeId || null);
+  const [initiatives, setInitiatives] = useState([]);
+  const [members, setMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [priorityFilter, setPriorityFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedInitiative, setSelectedInitiative] = useState(initialInitiativeId || null);
   useEffectI(function() {
     if (selectedInitiative) {
       window.history.pushState(null, '', '#initiative/' + selectedInitiative);
@@ -2290,8 +2290,8 @@ function InitiativesScreen({currentUser, initialInitiativeId, onClearSelId}) {
       window.history.pushState(null, '', '#initiatives');
     }
   }, [selectedInitiative]);
-  const [showModal, setShowModal] = useStateI(false);
-  const [editInitiative, setEditInitiative] = useStateI(null);
+  const [showModal, setShowModal] = useState(false);
+  const [editInitiative, setEditInitiative] = useState(null);
 
   var loadData = useCallbackI(function() {
     setLoading(true);
