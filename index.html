@@ -1363,6 +1363,7 @@ function AccountView({ dealId, deals, teamMembers, onBack, canEdit, user }) {
     navigator.clipboard.writeText(url).then(() => { setShowCopied(true); setTimeout(() => setShowCopied(false), 2000); });
   };
 
+  function InitiativeCard({ initiative, onClick }) {
   const statusLabels = { active: 'Active', stalled: 'Stalled' };
 
   return (
