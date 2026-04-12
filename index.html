@@ -348,7 +348,66 @@
 
   .rev-empty { padding:24px; text-align:center; color:var(--text-muted); font-size:12px; }
 
-  /* LOGIN SCREEN */
+  
+  /* CLIENTS PAGE */
+  .clients-wrapper { padding:20px 32px 32px; min-height:calc(100vh - 60px); }
+  .clients-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
+  .clients-title { font-size:18px; font-weight:700; color:var(--text); }
+  .clients-count { font-size:13px; color:var(--text-dim); }
+  .clients-search { padding:6px 14px; border-radius:var(--radius); border:1px solid var(--border); background:var(--bg-card); color:var(--text); font-size:13px; font-family:var(--font); width:260px; transition:border-color 0.15s; }
+  .clients-search:focus { outline:none; border-color:var(--accent); }
+  .clients-search::placeholder { color:var(--text-muted); }
+  .clients-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(340px, 1fr)); gap:14px; }
+  .client-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:18px 20px; cursor:pointer; transition:all 0.15s; position:relative; overflow:hidden; }
+  .client-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:var(--accent); }
+  .client-card:hover { border-color:var(--border-light); transform:translateY(-2px); box-shadow:0 4px 16px rgba(0,0,0,0.3); }
+  .client-card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+  .client-card-name { font-size:15px; font-weight:700; color:var(--text); }
+  .client-card-region { font-size:9px; padding:2px 7px; border-radius:4px; font-weight:600; text-transform:uppercase; letter-spacing:0.3px; background:var(--blue-bg); color:var(--blue); }
+  .client-card-stats { display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-bottom:14px; }
+  .client-stat { text-align:center; }
+  .client-stat-val { font-size:18px; font-weight:700; font-variant-numeric:tabular-nums; }
+  .client-stat-label { font-size:9px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-muted); margin-top:2px; }
+  .client-card-deals { display:flex; flex-direction:column; gap:6px; }
+  .client-deal-row { display:flex; align-items:center; justify-content:space-between; padding:6px 10px; background:var(--bg-surface); border-radius:var(--radius); }
+  .client-deal-left { display:flex; align-items:center; gap:8px; flex:1; min-width:0; }
+  .client-deal-name { font-size:11px; color:var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .client-deal-stage { font-size:8px; padding:2px 6px; border-radius:3px; font-weight:700; color:white; text-transform:uppercase; letter-spacing:0.3px; flex-shrink:0; }
+  .client-deal-value { font-size:11px; font-weight:600; color:var(--accent); font-variant-numeric:tabular-nums; flex-shrink:0; margin-left:8px; }
+  .client-card-flags { display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; }
+  .client-flag { font-size:9px; padding:2px 7px; border-radius:4px; font-weight:600; text-transform:uppercase; }
+  .client-flag.stalled { background:var(--red-bg); color:var(--red); }
+  .client-flag.overdue { background:var(--orange-bg); color:var(--orange); }
+
+  /* CLIENT DETAIL VIEW */
+  .client-detail-wrapper { min-height:100vh; background:var(--bg); }
+  .client-detail-header { background:rgba(20,20,20,0.95); border-bottom:1px solid var(--border); padding:20px 32px; position:sticky; top:0; z-index:90; backdrop-filter:blur(16px); }
+  .client-detail-top { display:flex; align-items:center; gap:16px; }
+  .client-detail-title { font-size:20px; font-weight:700; color:var(--text); }
+  .client-detail-meta { display:flex; gap:12px; align-items:center; font-size:12px; color:var(--text-dim); margin-top:6px; }
+  .client-detail-body { padding:24px 32px; }
+  .client-detail-stats { display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:12px; margin-bottom:24px; }
+  .client-detail-stat { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:14px 18px; position:relative; overflow:hidden; }
+  .client-detail-stat::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
+  .client-detail-stat:nth-child(1)::before { background:var(--accent); }
+  .client-detail-stat:nth-child(2)::before { background:var(--teal); }
+  .client-detail-stat:nth-child(3)::before { background:var(--red); }
+  .client-detail-stat:nth-child(4)::before { background:var(--orange); }
+  .client-deals-list { display:flex; flex-direction:column; gap:10px; }
+  .client-deal-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:16px 20px; cursor:pointer; transition:all 0.15s; }
+  .client-deal-card:hover { border-color:var(--border-light); transform:translateY(-1px); box-shadow:0 4px 16px rgba(0,0,0,0.3); }
+  .client-deal-card.stalled { border-left:3px solid var(--red); }
+  .client-deal-card.overdue-card { border-left:3px solid var(--orange); }
+  .client-deal-card-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+  .client-deal-card-name { font-size:14px; font-weight:600; color:var(--text); }
+  .client-deal-card-value { font-size:14px; font-weight:700; color:var(--accent); font-variant-numeric:tabular-nums; }
+  .client-deal-card-meta { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
+  .client-deal-card-action { font-size:12px; color:var(--text-dim); display:flex; align-items:start; gap:5px; padding-top:8px; border-top:1px solid rgba(60,60,60,0.4); }
+  .client-deal-card-due { font-size:11px; color:var(--text-muted); margin-top:4px; }
+  .client-deal-card-due.overdue { color:var(--orange); font-weight:600; }
+  .client-deal-card-owner { display:flex; align-items:center; gap:6px; margin-top:8px; }
+
+/* LOGIN SCREEN */
   .login-container {
     display:flex; align-items:center; justify-content:center;
     min-height:100vh; background:var(--bg); padding:20px;
@@ -1151,6 +1210,170 @@ function AdminPanel({ users, onUserUpdate, userRole }) {
             ))}
           </tbody>
         </table>
+      </div>
+    </div>
+  );
+}
+
+function ClientsPage({ deals, teamMembers, onDealClick, onClientClick, selectedClient, onBack }) {
+  const [clientSearch, setClientSearch] = useState('');
+
+  const clients = useMemo(() => {
+    const map = {};
+    deals.forEach(d => {
+      const name = d.account_name || 'Unknown';
+      if (!map[name]) map[name] = { name, deals: [], regions: new Set() };
+      map[name].deals.push(d);
+      if (d.region) map[name].regions.add(d.region);
+    });
+    return Object.values(map).map(c => {
+      const active = c.deals.filter(d => d.status === 'active');
+      const stalled = c.deals.filter(d => d.status === 'stalled');
+      const overdue = c.deals.filter(d => daysUntil(d.next_action_due) < 0 && d.status === 'active');
+      const totalValue = c.deals.reduce((s, d) => s + (d.deal_value || 0), 0);
+      const highestStage = c.deals.reduce((best, d) => {
+        const order = { intro:1, discovery:2, poc:3, proposal:4, procurement:5, contract_signed:6 };
+        return (order[d.stage] || 0) > (order[best] || 0) ? d.stage : best;
+      }, 'intro');
+      return { ...c, regions: [...c.regions], active: active.length, stalled: stalled.length, overdue: overdue.length, totalValue, highestStage, dealCount: c.deals.length };
+    }).sort((a, b) => b.totalValue - a.totalValue);
+  }, [deals]);
+
+  const filteredClients = useMemo(() => {
+    if (!clientSearch) return clients;
+    const s = clientSearch.toLowerCase();
+    return clients.filter(c => c.name.toLowerCase().includes(s) || c.deals.some(d => (d.project_name || '').toLowerCase().includes(s) || (d.champion_name || '').toLowerCase().includes(s)));
+  }, [clients, clientSearch]);
+
+  const tm = useMemo(() => {
+    const m = {};
+    teamMembers.forEach(t => { m[t.id] = t; });
+    return m;
+  }, [teamMembers]);
+
+  if (selectedClient) {
+    const client = clients.find(c => c.name === selectedClient);
+    if (!client) return <div style={{padding:'40px',textAlign:'center',color:'var(--text-muted)'}}>Client not found.</div>;
+    return (
+      <div className="client-detail-wrapper">
+        <div className="client-detail-header">
+          <div className="client-detail-top">
+            <button className="back-btn" onClick={onBack}>← Back to Clients</button>
+            <div>
+              <div className="client-detail-title">{client.name}</div>
+              <div className="client-detail-meta">
+                {client.regions.map(r => <span key={r}>{r}</span>)}
+                <span>·</span>
+                <span>{client.dealCount} deal{client.dealCount !== 1 ? 's' : ''}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="client-detail-body">
+          <div className="client-detail-stats">
+            <div className="client-detail-stat">
+              <div className="stat-label">Total Value</div>
+              <div className="stat-value" style={{color:'var(--accent)', fontSize:'22px'}}>{fmt(client.totalValue)}</div>
+            </div>
+            <div className="client-detail-stat">
+              <div className="stat-label">Deals</div>
+              <div className="stat-value" style={{color:'var(--teal)', fontSize:'22px'}}>{client.dealCount}</div>
+              <div className="stat-sub">{client.active} active</div>
+            </div>
+            <div className="client-detail-stat">
+              <div className="stat-label">Stalled</div>
+              <div className="stat-value" style={{color:'var(--red)', fontSize:'22px'}}>{client.stalled}</div>
+            </div>
+            <div className="client-detail-stat">
+              <div className="stat-label">Overdue</div>
+              <div className="stat-value" style={{color:'var(--orange)', fontSize:'22px'}}>{client.overdue}</div>
+            </div>
+          </div>
+          <div style={{fontSize:'10px', fontWeight:700, textTransform:'uppercase', letterSpacing:'1px', color:'var(--text-muted)', marginBottom:'12px'}}>Deals</div>
+          <div className="client-deals-list">
+            {client.deals.sort((a,b) => (b.deal_value||0) - (a.deal_value||0)).map(d => {
+              const owner = tm[d.deal_owner_id];
+              const isStalled = d.status === 'stalled';
+              const dueDays = daysUntil(d.next_action_due);
+              const isOverdue = dueDays !== null && dueDays < 0;
+              const stageInfo = STAGE_MAP[d.stage] || { label: d.stage, color: 'var(--border)' };
+              return (
+                <div key={d.id} className={`client-deal-card ${isStalled?'stalled':''} ${isOverdue?'overdue-card':''}`} onClick={() => onDealClick(d.id)}>
+                  <div className="client-deal-card-top">
+                    <div className="client-deal-card-name">{d.project_name || 'Untitled'}</div>
+                    <div className="client-deal-card-value">{fmt(d.deal_value, d.deal_value_note)}</div>
+                  </div>
+                  <div className="client-deal-card-meta">
+                    <span className="client-deal-stage" style={{background:stageInfo.color}}>{stageInfo.label}</span>
+                    {d.region && <span className="deal-tag tag-region">{d.region}</span>}
+                    {isStalled && <span className="deal-tag tag-stalled">Stalled</span>}
+                    {isOverdue && <span className="deal-tag tag-overdue">Overdue</span>}
+                  </div>
+                  {d.next_action && <div className="client-deal-card-action"><span style={{color:'var(--accent)', fontWeight:600}}>›</span> {d.next_action}</div>}
+                  {d.next_action_due && <div className={`client-deal-card-due ${isOverdue?'overdue':''}`}>{isOverdue ? `${-dueDays}d overdue` : `Due in ${dueDays}d`}</div>}
+                  {owner && <div className="client-deal-card-owner"><div className="deal-owner-avatar">{initials(owner.display_name)}</div><span className="deal-owner-name">{owner.display_name}</span></div>}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="clients-wrapper">
+      <div className="clients-header">
+        <div>
+          <div className="clients-title">Clients</div>
+          <div className="clients-count">{filteredClients.length} account{filteredClients.length !== 1 ? 's' : ''} · {deals.length} deal{deals.length !== 1 ? 's' : ''}</div>
+        </div>
+        <input className="clients-search" placeholder="Search clients or deals…" value={clientSearch} onChange={e => setClientSearch(e.target.value)} />
+      </div>
+      <div className="clients-grid">
+        {filteredClients.map(c => (
+          <div key={c.name} className="client-card" onClick={() => onClientClick(c.name)}>
+            <div className="client-card-header">
+              <div className="client-card-name">{c.name}</div>
+              {c.regions.length > 0 && <span className="client-card-region">{c.regions.join(', ')}</span>}
+            </div>
+            <div className="client-card-stats">
+              <div className="client-stat">
+                <div className="client-stat-val" style={{color:'var(--accent)'}}>{fmt(c.totalValue)}</div>
+                <div className="client-stat-label">Value</div>
+              </div>
+              <div className="client-stat">
+                <div className="client-stat-val" style={{color:'var(--teal)'}}>{c.dealCount}</div>
+                <div className="client-stat-label">Deals</div>
+              </div>
+              <div className="client-stat">
+                <div className="client-stat-val" style={{color:'var(--text-dim)'}}>{c.active}</div>
+                <div className="client-stat-label">Active</div>
+              </div>
+            </div>
+            <div className="client-card-deals">
+              {c.deals.sort((a,b) => (b.deal_value||0) - (a.deal_value||0)).map(d => {
+                const stageInfo = STAGE_MAP[d.stage] || { label: d.stage, color: 'var(--border)' };
+                return (
+                  <div key={d.id} className="client-deal-row">
+                    <div className="client-deal-left">
+                      <span className="client-deal-stage" style={{background:stageInfo.color}}>{stageInfo.label}</span>
+                      <span className="client-deal-name">{d.project_name || 'Untitled'}</span>
+                    </div>
+                    <span className="client-deal-value">{fmt(d.deal_value, d.deal_value_note)}</span>
+                  </div>
+                );
+              })}
+            </div>
+            {(c.stalled > 0 || c.overdue > 0) && (
+              <div className="client-card-flags">
+                {c.stalled > 0 && <span className="client-flag stalled">{c.stalled} Stalled</span>}
+                {c.overdue > 0 && <span className="client-flag overdue">{c.overdue} Overdue</span>}
+              </div>
+            )}
+          </div>
+        ))}
+        {filteredClients.length === 0 && <div className="empty-state">No clients found.</div>}
       </div>
     </div>
   );
@@ -2334,6 +2557,7 @@ function App() {
   const [stageF, setStageF] = useState('all');
   const [regionF, setRegionF] = useState('all');
   const [statusF, setStatusF] = useState('all');
+  const [selectedClient, setSelectedClient] = useState(null);
   const [toast, setToast] = useState(null);
   const [ts, setTs] = useState(new Date());
 
@@ -2341,10 +2565,12 @@ function App() {
   const buildHash = useCallback((p, v, dealId) => {
     if (p === 'account' && dealId) return '#deal/' + dealId;
     if (p === 'board') return '#board';
+    if (p === 'clients' && selectedClient) return '#client/' + encodeURIComponent(selectedClient);
+    if (p === 'clients') return '#clients';
     if (p === 'initiatives' && dealId) return '#initiative/' + dealId;
     if (['revenue','audit','admin','initiatives'].includes(p)) return '#' + p;
     return '#board';
-  }, []);
+  }, [[selectedClient]);
 
   const parseHash = useCallback(() => {
     const h = window.location.hash.replace(/^#\/?/, '');
@@ -2357,6 +2583,11 @@ function App() {
       const id = h.slice(11);
       return { page: 'initiatives', view: 'kanban', dealId: id || null };
     }
+    if (h.startsWith('client/')) {
+      const name = decodeURIComponent(h.slice(7));
+      return { page: 'clients', view: 'kanban', dealId: null, clientName: name };
+    }
+    if (h === 'clients') return { page: 'clients', view: 'kanban', dealId: null };
     if (h === 'initiatives') return { page: 'initiatives', view: 'kanban', dealId: null };
     if (h === 'board') return { page: 'board', view: 'kanban', dealId: null };
     if (['revenue','audit','admin'].includes(h)) return { page: h, view: 'kanban', dealId: null };
@@ -2379,6 +2610,8 @@ function App() {
       setView(parsed.view);
       if (parsed.dealId) setSelId(parsed.dealId);
       else setSelId(null);
+      if (parsed.clientName) setSelectedClient(parsed.clientName);
+      else if (parsed.page !== 'clients') setSelectedClient(null);
     };
     window.addEventListener('hashchange', onHashChange);
     return () => window.removeEventListener('hashchange', onHashChange);
@@ -2402,6 +2635,7 @@ function App() {
       setPage(parsed.page);
       setView(parsed.view);
       if (parsed.dealId) setSelId(parsed.dealId);
+      if (parsed.clientName) setSelectedClient(parsed.clientName);
     }
     setTimeout(() => { initialMount.current = false; }, 100);
   }, []);
@@ -2580,6 +2814,7 @@ function App() {
               {canAccessScreen('audit') && <button className={`view-btn ${page==='audit'?'active':''}`} onClick={()=>setPage('audit')} style={page==='audit'?{background:'var(--accent)',color:'white'}:{}}>Audit</button>}
               {canAccessScreen('admin') && <button className={`view-btn ${page==='admin'?'active':''}`} onClick={()=>setPage('admin')} style={page==='admin'?{background:'var(--accent)',color:'white'}:{}}>Admin</button>}
               <button className={`view-btn ${page==='initiatives'?'active':''}`} onClick={()=>setPage('initiatives')} style={page==='initiatives'?{background:'var(--accent)',color:'white'}:{}}>Initiatives</button>
+              <button className={`view-btn ${page==='clients'?'active':''}`} onClick={()=>{setPage('clients');setSelectedClient(null);}} style={page==='clients'?{background:'var(--accent)',color:'white'}:{}}>Clients</button>
             </div>
             <button className="refresh-btn" onClick={load}>↻ Refresh</button>
             <span className="timestamp">{ts.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span>
@@ -2636,6 +2871,7 @@ function App() {
               {canAccessScreen('audit') && <button className={`view-btn ${page==='audit'?'active':''}`} onClick={()=>setPage('audit')} style={page==='audit'?{background:'var(--accent)',color:'white'}:{}}>Audit</button>}
               {canAccessScreen('admin') && <button className={`view-btn ${page==='admin'?'active':''}`} onClick={()=>setPage('admin')} style={page==='admin'?{background:'var(--accent)',color:'white'}:{}}>Admin</button>}
               <button className={`view-btn ${page==='initiatives'?'active':''}`} onClick={()=>setPage('initiatives')} style={page==='initiatives'?{background:'var(--accent)',color:'white'}:{}}>Initiatives</button>
+              <button className={`view-btn ${page==='clients'?'active':''}`} onClick={()=>{setPage('clients');setSelectedClient(null);}} style={page==='clients'?{background:'var(--accent)',color:'white'}:{}}>Clients</button>
             </div>
             <button className="refresh-btn" onClick={load}>↻ Refresh</button>
             <span className="timestamp">{ts.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span>
@@ -2647,6 +2883,46 @@ function App() {
           </div>
         </div>
         <AdminPanel users={appUsers} userRole={user.role} onUserUpdate={() => fetchAppUsers().then(setAppUsers)} />
+        {toast && <div className="toast">{toast}</div>}
+      </div>
+    );
+  }
+
+    if (page === 'clients') {
+    return (
+      <div>
+        <div className="header">
+          <div className="header-left">
+            <div className="logo"><img src={CONQUER_LOGO} alt="Conquer AI" /></div>
+            <div className="logo-divider"></div>
+            <span className="logo-product">Control Room</span>
+          </div>
+          <div className="header-right">
+            <div className="view-toggle">
+              {canAccessScreen('board') && <button className={`view-btn ${page==='board'?'active':''}`} onClick={()=>{setPage('board');setView('kanban');}}>Board</button>}
+              {canAccessScreen('revenue') && <button className={`view-btn ${page==='revenue'?'active':''}`} onClick={()=>setPage('revenue')} style={page==='revenue'?{background:'var(--stage-procurement)',color:'white'}:{}}>Revenue</button>}
+              {canAccessScreen('audit') && <button className={`view-btn ${page==='audit'?'active':''}`} onClick={()=>setPage('audit')} style={page==='audit'?{background:'var(--accent)',color:'white'}:{}}>Audit</button>}
+              {canAccessScreen('admin') && <button className={`view-btn ${page==='admin'?'active':''}`} onClick={()=>setPage('admin')} style={page==='admin'?{background:'var(--accent)',color:'white'}:{}}>Admin</button>}
+              <button className={`view-btn ${page==='initiatives'?'active':''}`} onClick={()=>setPage('initiatives')} style={page==='initiatives'?{background:'var(--accent)',color:'white'}:{}}>Initiatives</button>
+              <button className={`view-btn ${page==='clients'?'active':''}`} onClick={()=>{setPage('clients');setSelectedClient(null);}} style={page==='clients'?{background:'var(--accent)',color:'white'}:{}}>Clients</button>
+            </div>
+            <button className="refresh-btn" onClick={load}>↻ Refresh</button>
+            <span className="timestamp">{ts.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span>
+            <div className="user-badge">
+              <span className="user-name">{user.name}</span>
+              <span className="user-role">{user.role}</span>
+            </div>
+            <button className="logout-btn" onClick={handleLogout}>Logout</button>
+          </div>
+        </div>
+        <ClientsPage
+          deals={deals}
+          teamMembers={team}
+          onDealClick={(id) => { setSelId(id); setPage('account'); }}
+          onClientClick={(name) => { setSelectedClient(name); window.history.pushState(null, '', '#client/' + encodeURIComponent(name)); }}
+          selectedClient={selectedClient}
+          onBack={() => { setSelectedClient(null); window.history.pushState(null, '', '#clients'); }}
+        />
         {toast && <div className="toast">{toast}</div>}
       </div>
     );
@@ -2693,6 +2969,7 @@ function App() {
               {canAccessScreen('audit') && <button className={`view-btn ${page==='audit'?'active':''}`} onClick={()=>setPage('audit')} style={page==='audit'?{background:'var(--accent)',color:'white'}:{}}>Audit</button>}
               {canAccessScreen('admin') && <button className={`view-btn ${page==='admin'?'active':''}`} onClick={()=>setPage('admin')} style={page==='admin'?{background:'var(--accent)',color:'white'}:{}}>Admin</button>}
               <button className={`view-btn ${page==='initiatives'?'active':''}`} onClick={()=>setPage('initiatives')} style={page==='initiatives'?{background:'var(--accent)',color:'white'}:{}}>Initiatives</button>
+              <button className={`view-btn ${page==='clients'?'active':''}`} onClick={()=>{setPage('clients');setSelectedClient(null);}} style={page==='clients'?{background:'var(--accent)',color:'white'}:{}}>Clients</button>
             </div>
             <button className="refresh-btn" onClick={load}>↻ Refresh</button>
             <span className="timestamp">{ts.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span>
@@ -2725,6 +3002,7 @@ function App() {
             {canAccessScreen('audit') && <button className={`view-btn ${page==='audit'?'active':''}`} onClick={()=>setPage('audit')} style={page==='audit'?{background:'var(--accent)',color:'white'}:{}}>Audit</button>}
             {canAccessScreen('admin') && <button className={`view-btn ${page==='admin'?'active':''}`} onClick={()=>setPage('admin')} style={page==='admin'?{background:'var(--accent)',color:'white'}:{}}>Admin</button>}
               <button className={`view-btn ${page==='initiatives'?'active':''}`} onClick={()=>setPage('initiatives')} style={page==='initiatives'?{background:'var(--accent)',color:'white'}:{}}>Initiatives</button>
+              <button className={`view-btn ${page==='clients'?'active':''}`} onClick={()=>{setPage('clients');setSelectedClient(null);}} style={page==='clients'?{background:'var(--accent)',color:'white'}:{}}>Clients</button>
           </div>
           <button className="refresh-btn" onClick={load}>↻ Refresh</button>
           <span className="timestamp">{ts.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span>
