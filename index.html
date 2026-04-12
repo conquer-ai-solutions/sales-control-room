@@ -1883,7 +1883,7 @@ function PathwayToInvoice({ deals, teamMembers, onDealClick }) {
   );
 }
 
-  function InitiativeCard({ initiative, onClick }) {
+  function InitiativeCard({ initiative, onClick, ownerName, contributorCount }) {
 const statusLabels = { not_started: 'Not Started', in_progress: 'In Progress', on_hold: 'On Hold', done: 'Done' };
   return (
     <div className="initiative-card" onClick={onClick}>
