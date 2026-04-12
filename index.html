@@ -1361,10 +1361,9 @@ function AccountView({ dealId, deals, teamMembers, onBack, canEdit, user }) {
   const copyLink = () => {
     const url = window.location.origin + window.location.pathname + '#deal/' + deal.id;
     navigator.clipboard.writeText(url).then(() => { setShowCopied(true); setTimeout(() => setShowCopied(false), 2000); });
-  };}
+  };
 
 
-  function _AccountViewCard({ initiative, onClick }) {
   const statusLabels = { active: 'Active', stalled: 'Stalled' };
 
   return (
