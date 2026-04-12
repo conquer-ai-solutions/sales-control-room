@@ -95,6 +95,21 @@
   /* Closing Zone */
   .closing-zone { padding:24px 32px 64px; max-width:1400px; margin:0 auto; }
 
+  /* Board mode — strip-down, phone-first */
+  .closing-zone.cz-board-mode { padding:20px 20px 40px; max-width:720px; }
+  .closing-zone.cz-board-mode .cz-hero-grid { grid-template-columns:1fr; }
+
+  /* Top bar */
+  .cz-topbar { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:20px; flex-wrap:wrap; }
+  .cz-copy-btn { background:var(--bg-card); border:1px solid var(--border); color:var(--text); padding:8px 14px; border-radius:6px; font-size:12px; font-weight:600; font-family:var(--font); cursor:pointer; transition:all 0.15s; }
+  .cz-copy-btn:hover { border-color:var(--accent); color:var(--accent); }
+
+  /* My / All toggle */
+  .cz-toggle { display:inline-flex; background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:2px; }
+  .cz-toggle-btn { background:transparent; border:none; color:var(--text-muted); padding:6px 14px; border-radius:4px; font-size:12px; font-weight:600; font-family:var(--font); cursor:pointer; transition:all 0.15s; }
+  .cz-toggle-btn.active { background:var(--accent); color:white; }
+  .cz-toggle-btn:hover:not(.active) { color:var(--text); }
+
   /* Filters */
   .cz-filters { display:flex; align-items:center; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
   .cz-filter-label { font-size:11px; color:var(--text-muted); text-transform:uppercase; font-weight:600; letter-spacing:0.5px; }
@@ -2590,23 +2605,42 @@ function InitiativesScreen({currentUser, initialInitiativeId, onClearSelId}) {
   );
 }
 
-function ClosingZone({ deals, teamMembers, onDealClick }) {
-  const [ownerFilter, setOwnerFilter] = React.useState('all');
-  const [regionFilter, setRegionFilter] = React.useState('all');
+function ClosingZone({ deals, teamMembers, user, onDealClick }) {
+  // Detect board mode from URL: #closing?board=1 or ?board=1 in query
+  const isBoardMode = React.useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    const hash = window.location.hash || '';
+    const search = window.location.search || '';
+    return /[?&]board=1\b/.test(hash) || /[?&]board=1\b/.test(search);
+  }, []);
+
+  // Map logged-in user to their team_member.id (if they are one)
+  const myTeamMemberId = React.useMemo(() => {
+    if (!user || !teamMembers) return null;
+    const tm = teamMembers.find(t => t.user_id === user.id);
+    return tm ? tm.id : null;
+  }, [user, teamMembers]);
+
   const tm = React.useMemo(() => Object.fromEntries((teamMembers||[]).map(m => [m.id, m])), [teamMembers]);
 
   const commercial = React.useMemo(() =>
     (deals||[]).filter(d => (d.stage === 'procurement' || d.stage === 'proposal') && d.status !== 'lost' && d.status !== 'won')
   , [deals]);
 
-  const owners = React.useMemo(() => {
-    const ids = [...new Set(commercial.map(d => d.deal_owner_id).filter(Boolean))];
-    return ids.map(id => tm[id]).filter(Boolean);
-  }, [commercial, tm]);
+  // Does the user own any commercial deals? If yes, default to "My deals".
+  const userOwnsCommercial = React.useMemo(() =>
+    !!myTeamMemberId && commercial.some(d => d.deal_owner_id === myTeamMemberId)
+  , [myTeamMemberId, commercial]);
+
+  const [scopeFilter, setScopeFilter] = React.useState('all'); // 'mine' | 'all'
+  React.useEffect(() => { if (userOwnsCommercial) setScopeFilter('mine'); }, [userOwnsCommercial]);
+
+  const [regionFilter, setRegionFilter] = React.useState('all');
+
   const regions = React.useMemo(() => [...new Set(commercial.map(d => d.region).filter(Boolean))], [commercial]);
 
   const filtered = commercial.filter(d =>
-    (ownerFilter === 'all' || d.deal_owner_id === ownerFilter) &&
+    (scopeFilter === 'all' || (scopeFilter === 'mine' && d.deal_owner_id === myTeamMemberId)) &&
     (regionFilter === 'all' || d.region === regionFilter)
   );
 
@@ -2616,7 +2650,6 @@ function ClosingZone({ deals, teamMembers, onDealClick }) {
   const propValue = proposal.reduce((s,d) => s + (d.deal_value||0), 0);
   const totalCommercialValue = procValue + propValue;
 
-  // What changed in last 7 days — deals that entered their current stage
   const recentMoves = filtered.filter(d => {
     if (!d.stage_entered_at) return false;
     const days = Math.floor((Date.now() - new Date(d.stage_entered_at)) / 86400000);
@@ -2625,12 +2658,42 @@ function ClosingZone({ deals, teamMembers, onDealClick }) {
 
   const fmtDays = (n) => n === 0 ? 'today' : n === 1 ? 'yesterday' : `${n}d ago`;
 
-  // Days in stage benchmarks (rough, tweak later as data grows)
   const stageBenchmark = (stage, days) => {
     if (days == null) return null;
     if (stage === 'procurement') return days <= 21 ? 'on-track' : 'stretching';
     if (stage === 'proposal') return days <= 30 ? 'on-track' : 'stretching';
     return null;
+  };
+
+  // Copy Briefing — generates a plain-text summary
+  const [copied, setCopied] = React.useState(false);
+  const copyBriefing = () => {
+    const today = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+    const lines = [
+      `Commercial pipeline snapshot · ${today}`,
+      ``,
+      `${fmt(procValue)} close to closing across ${procurement.length} ${procurement.length===1?'account':'accounts'} in Procurement.`,
+      `${fmt(propValue)} in active commercial negotiation across ${proposal.length} ${proposal.length===1?'account':'accounts'} at Proposal.`,
+      `Total commercial pipeline: ${fmt(totalCommercialValue)}.`,
+      ``,
+    ];
+    if (procurement.length > 0) {
+      lines.push(`In Procurement:`);
+      procurement.forEach(d => { lines.push(`  • ${d.account_name} — ${fmt(d.deal_value, d.deal_value_note)}`); });
+      lines.push(``);
+    }
+    if (recentMoves.length > 0) {
+      lines.push(`Moved this week:`);
+      recentMoves.slice(0, 5).forEach(d => {
+        const days = Math.floor((Date.now() - new Date(d.stage_entered_at)) / 86400000);
+        const stageInfo = STAGE_MAP[d.stage];
+        lines.push(`  • ${d.account_name} → ${stageInfo?.label} (${fmtDays(days)})`);
+      });
+    }
+    const text = lines.join('\n');
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); });
+    }
   };
 
   const ProcurementCard = ({ d }) => {
@@ -2703,22 +2766,27 @@ function ClosingZone({ deals, teamMembers, onDealClick }) {
   };
 
   return (
-    <div className="closing-zone">
-      {/* Filters */}
-      <div className="cz-filters">
-        <span className="cz-filter-label">Filter</span>
-        <select className="cz-select" value={ownerFilter} onChange={e => setOwnerFilter(e.target.value)}>
-          <option value="all">All owners</option>
-          {owners.map(o => <option key={o.id} value={o.id}>{o.display_name}</option>)}
-        </select>
-        <select className="cz-select" value={regionFilter} onChange={e => setRegionFilter(e.target.value)}>
-          <option value="all">All regions</option>
-          {regions.map(r => <option key={r} value={r}>{r}</option>)}
-        </select>
-        {(ownerFilter !== 'all' || regionFilter !== 'all') && (
-          <button className="cz-filter-clear" onClick={() => { setOwnerFilter('all'); setRegionFilter('all'); }}>Clear</button>
-        )}
-      </div>
+    <div className={"closing-zone" + (isBoardMode ? " cz-board-mode" : "")}>
+      {/* Top bar: filters + copy briefing (hidden in board mode) */}
+      {!isBoardMode && (
+        <div className="cz-topbar">
+          <div className="cz-filters">
+            {myTeamMemberId && (
+              <div className="cz-toggle">
+                <button className={`cz-toggle-btn ${scopeFilter==='mine'?'active':''}`} onClick={() => setScopeFilter('mine')}>My deals</button>
+                <button className={`cz-toggle-btn ${scopeFilter==='all'?'active':''}`} onClick={() => setScopeFilter('all')}>All deals</button>
+              </div>
+            )}
+            <select className="cz-select" value={regionFilter} onChange={e => setRegionFilter(e.target.value)}>
+              <option value="all">All regions</option>
+              {regions.map(r => <option key={r} value={r}>{r}</option>)}
+            </select>
+          </div>
+          <button className="cz-copy-btn" onClick={copyBriefing}>
+            {copied ? '✓ Copied' : '📋 Copy briefing'}
+          </button>
+        </div>
+      )}
 
       {/* Headline — money first */}
       <div className="cz-headline-card">
@@ -2735,34 +2803,36 @@ function ClosingZone({ deals, teamMembers, onDealClick }) {
         <div className="cz-headline-total">Total commercial pipeline: <strong>{fmt(totalCommercialValue)}</strong></div>
       </div>
 
-      {/* What changed this week */}
-      <div className="cz-whatchanged">
-        <div className="cz-whatchanged-header">
-          <h3 className="cz-whatchanged-title">What changed this week</h3>
-          <span className="cz-whatchanged-count">{recentMoves.length} {recentMoves.length === 1 ? 'movement' : 'movements'} in the last 7 days</span>
-        </div>
-        {recentMoves.length === 0 ? (
-          <div className="cz-whatchanged-empty">No stage movements in commercial territory this week.</div>
-        ) : (
-          <div className="cz-whatchanged-list">
-            {recentMoves.map(d => {
-              const days = Math.floor((Date.now() - new Date(d.stage_entered_at)) / 86400000);
-              const stageInfo = STAGE_MAP[d.stage];
-              return (
-                <div key={d.id} className="cz-whatchanged-item" onClick={() => onDealClick(d.id)}>
-                  <div className="cz-whatchanged-dot" style={{background:stageInfo?.color}}></div>
-                  <div className="cz-whatchanged-body">
-                    <div className="cz-whatchanged-text"><strong>{d.account_name}</strong> entered {stageInfo?.label}</div>
-                    <div className="cz-whatchanged-when">{fmtDays(days)} · {fmt(d.deal_value, d.deal_value_note)}</div>
-                  </div>
-                </div>
-              );
-            })}
+      {/* What changed — hidden in board mode */}
+      {!isBoardMode && (
+        <div className="cz-whatchanged">
+          <div className="cz-whatchanged-header">
+            <h3 className="cz-whatchanged-title">What changed this week</h3>
+            <span className="cz-whatchanged-count">{recentMoves.length} {recentMoves.length === 1 ? 'movement' : 'movements'} in the last 7 days</span>
           </div>
-        )}
-      </div>
+          {recentMoves.length === 0 ? (
+            <div className="cz-whatchanged-empty">No stage movements in commercial territory this week.</div>
+          ) : (
+            <div className="cz-whatchanged-list">
+              {recentMoves.map(d => {
+                const days = Math.floor((Date.now() - new Date(d.stage_entered_at)) / 86400000);
+                const stageInfo = STAGE_MAP[d.stage];
+                return (
+                  <div key={d.id} className="cz-whatchanged-item" onClick={() => onDealClick(d.id)}>
+                    <div className="cz-whatchanged-dot" style={{background:stageInfo?.color}}></div>
+                    <div className="cz-whatchanged-body">
+                      <div className="cz-whatchanged-text"><strong>{d.account_name}</strong> entered {stageInfo?.label}</div>
+                      <div className="cz-whatchanged-when">{fmtDays(days)} · {fmt(d.deal_value, d.deal_value_note)}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
 
-      {/* Procurement — hero section */}
+      {/* Procurement — hero section (always shown) */}
       <div className="cz-hero-section">
         <div className="cz-hero-section-header">
           <h3 className="cz-hero-section-title">Close to closing · Procurement</h3>
@@ -2775,18 +2845,20 @@ function ClosingZone({ deals, teamMembers, onDealClick }) {
         )}
       </div>
 
-      {/* Proposal — subordinate band */}
-      <div className="cz-sub-section">
-        <div className="cz-sub-section-header">
-          <h4 className="cz-sub-section-title">Behind them · Proposal</h4>
-          <span className="cz-sub-section-count">{proposal.length} {proposal.length === 1 ? 'deal' : 'deals'} · {fmt(propValue)}</span>
+      {/* Proposal — hidden in board mode */}
+      {!isBoardMode && (
+        <div className="cz-sub-section">
+          <div className="cz-sub-section-header">
+            <h4 className="cz-sub-section-title">Behind them · Proposal</h4>
+            <span className="cz-sub-section-count">{proposal.length} {proposal.length === 1 ? 'deal' : 'deals'} · {fmt(propValue)}</span>
+          </div>
+          {proposal.length === 0 ? (
+            <div className="cz-empty">No deals in Proposal right now.</div>
+          ) : (
+            <div className="cz-rows">{proposal.map(d => <ProposalRow key={d.id} d={d} />)}</div>
+          )}
         </div>
-        {proposal.length === 0 ? (
-          <div className="cz-empty">No deals in Proposal right now.</div>
-        ) : (
-          <div className="cz-rows">{proposal.map(d => <ProposalRow key={d.id} d={d} />)}</div>
-        )}
-      </div>
+      )}
     </div>
   );
 }
@@ -2846,7 +2918,7 @@ function App() {
     if (h === 'clients') return { page: 'clients', view: 'kanban', dealId: null };
     if (h === 'initiatives') return { page: 'initiatives', view: 'kanban', dealId: null };
     if (h === 'board') return { page: 'board', view: 'kanban', dealId: null };
-    if (h === 'closing') return { page: 'closing', view: 'kanban', dealId: null };
+    if (h === 'closing' || h.startsWith('closing?')) return { page: 'closing', view: 'kanban', dealId: null };
     if (['audit','admin'].includes(h)) return { page: h, view: 'kanban', dealId: null };
     return { page: 'board', view: 'kanban', dealId: null };
   }, []);
@@ -3295,7 +3367,7 @@ function App() {
       )}
 
 
-      {page === 'closing' && <ClosingZone deals={deals} teamMembers={team} onDealClick={(id) => {setSelId(id); setPage('account');}} />}
+      {page === 'closing' && <ClosingZone deals={deals} teamMembers={team} user={user} onDealClick={(id) => {setSelId(id); setPage('account');}} />}
 
       {toast && <div className="toast">{toast}</div>}
     </div>
