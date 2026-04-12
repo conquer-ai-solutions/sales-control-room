@@ -1377,7 +1377,7 @@ function AccountView({ dealId, deals, teamMembers, onBack, canEdit, user }) {
           Pipeline
         </button>
         <div className="detail-title-section">
-          <h1 className="detail-title">{deal.account_name}</h1>
+          <h1 className="detail-title"><span onClick={() => window.location.hash = 'client/' + encodeURIComponent(deal.account_name)} style={{cursor:'pointer'}}>{deal.account_name}</span></h1>
           <div className="detail-meta">
             <span style={{fontSize:'0.95rem',color:'var(--text-dim)'}}>{deal.project_name}</span>
             {deal.region && <span className="deal-hero-region">{deal.region}</span>}
