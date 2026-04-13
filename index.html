@@ -1470,6 +1470,7 @@ function ClientsPage({ deals, teamMembers, onDealClick, onClientClick, selectedC
 function AccountView({ dealId, deals, teamMembers, onBack, canEdit, user }) {
   const deal = deals.find(d => d.id === dealId);
   const [editing, setEditing] = useState(false);
+  const [saveError, setSaveError] = useState(null);
   const [form, setForm] = useState({});
   const [showCopied, setShowCopied] = useState(false);
   const [activities, setActivities] = useState([]);
@@ -1507,7 +1508,14 @@ function AccountView({ dealId, deals, teamMembers, onBack, canEdit, user }) {
       if (form[k] !== undefined) u[k] = k === 'deal_value' ? (form[k] || null) : (k === 'partner_id' ? (form[k] || null) : (k === 'expected_close_date' ? (form[k] || null) : (k === 'decision_signal' ? (form[k] || null) : form[k])));
     });
     const { error } = await supabase.from('deals').update(u).eq('id', deal.id);
-    if (!error) { await logAudit(user, 'update_deal', 'deal', deal.id, deal.account_name, u); setEditing(false); }
+    if (error) {
+      setSaveError('Save failed: ' + (error.message || 'unknown error') + (error.details ? ' — ' + error.details : '') + (error.hint ? ' (hint: ' + error.hint + ')' : ''));
+      console.error('Deal save error:', error);
+      return;
+    }
+    setSaveError(null);
+    await logAudit(user, 'update_deal', 'deal', deal.id, deal.account_name, u);
+    setEditing(false);
   };
   const copyLink = () => {
     const url = window.location.origin + window.location.pathname + '#deal/' + deal.id;
@@ -1775,8 +1783,13 @@ function AccountView({ dealId, deals, teamMembers, onBack, canEdit, user }) {
           <div className="modal" style={{maxWidth:560}}>
             <div className="modal-header">
               <h2 className="modal-title">Edit Deal</h2>
-              <button className="btn-close-modal" onClick={() => setEditing(false)}>&times;</button>
+              <button className="btn-close-modal" onClick={() => { setEditing(false); setSaveError(null); }}>&times;</button>
             </div>
+            {saveError && (
+              <div style={{background:'rgba(220,38,38,0.12)',border:'1px solid rgba(220,38,38,0.4)',color:'var(--red)',padding:'10px 14px',borderRadius:6,marginBottom:14,fontSize:12,fontWeight:500}}>
+                {saveError}
+              </div>
+            )}
             <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
               <div className="form-group">
                 <label className="form-label">Stage</label>
@@ -3167,8 +3180,8 @@ function App() {
       return;
     }
     const u = {};
-    ['stage','deal_owner_id','next_action','next_action_due','next_action_owner_id','champion_name','deal_value','status','stall_reason','notes','partner_id'].forEach(k => {
-      if (form[k] !== undefined) u[k] = k === 'deal_value' ? (form[k] || null) : (k === 'partner_id' ? (form[k] || null) : form[k]);
+    ['stage','deal_owner_id','next_action','next_action_due','next_action_owner_id','champion_name','deal_value','expected_close_date','decision_signal','status','stall_reason','notes','partner_id'].forEach(k => {
+      if (form[k] !== undefined) u[k] = k === 'deal_value' ? (form[k] || null) : (k === 'partner_id' ? (form[k] || null) : (k === 'expected_close_date' ? (form[k] || null) : (k === 'decision_signal' ? (form[k] || null) : form[k])));
     });
     const { error } = await supabase.from('deals').update(u).eq('id', sel.id);
     if (error) { flash('Error: ' + error.message); return; }
