@@ -1468,15 +1468,24 @@ function ClientsPage({ deals, teamMembers, onDealClick, onClientClick, selectedC
 }
 
 function AccountView({ dealId, deals, teamMembers, onBack, canEdit, user }) {
-  const deal = deals.find(d => d.id === dealId);
+  const propDeal = deals.find(d => d.id === dealId);
+  const [localOverrides, setLocalOverrides] = useState(null);
+  const deal = localOverrides ? { ...propDeal, ...localOverrides } : propDeal;
   const [editing, setEditing] = useState(false);
   const [saveError, setSaveError] = useState(null);
+  const [saveSuccess, setSaveSuccess] = useState(false);
   const [form, setForm] = useState({});
   const [showCopied, setShowCopied] = useState(false);
   const [activities, setActivities] = useState([]);
   const [linkedInitiatives, setLinkedInitiatives] = useState([]);
 
   useEffect(() => { if (deal) setForm(deal); }, [deal]);
+  // Clear local overrides once parent prop catches up (Supabase realtime or refetch)
+  useEffect(() => {
+    if (!localOverrides || !propDeal) return;
+    const allMatch = Object.keys(localOverrides).every(k => propDeal[k] === localOverrides[k]);
+    if (allMatch) setLocalOverrides(null);
+  }, [propDeal, localOverrides]);
   useEffect(() => {
     if (!deal) return;
     const fetchData = async () => {
@@ -1515,7 +1524,10 @@ function AccountView({ dealId, deals, teamMembers, onBack, canEdit, user }) {
     }
     setSaveError(null);
     await logAudit(user, 'update_deal', 'deal', deal.id, deal.account_name, u);
+    setLocalOverrides(prev => ({ ...(prev || {}), ...u }));
     setEditing(false);
+    setSaveSuccess(true);
+    setTimeout(() => setSaveSuccess(false), 2500);
   };
   const copyLink = () => {
     const url = window.location.origin + window.location.pathname + '#deal/' + deal.id;
@@ -1528,6 +1540,7 @@ function AccountView({ dealId, deals, teamMembers, onBack, canEdit, user }) {
   return (
     <div className="initiative-detail">
       {showCopied && <div className="share-copied">Link copied to clipboard</div>}
+      {saveSuccess && <div className="share-copied" style={{background:'var(--stage-signed)',color:'white'}}>✓ Deal updated</div>}
 
       {/* HEADER — mirrors InitiativeDetail */}
       <div className="detail-header">
