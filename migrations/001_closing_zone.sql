@@ -93,8 +93,26 @@ CREATE POLICY "deal_events readable by authenticated"
   TO authenticated
   USING (true);
 
--- No INSERT policy needed — rows are written by the trigger, which runs as
--- the table owner, bypassing RLS.
+-- IMPORTANT: the trigger writes to this table on behalf of whoever is updating
+-- a deal. If your app uses the anon key (typical Supabase setup), you also need
+-- an INSERT policy for anon, otherwise every UPDATE that fires the trigger will
+-- be rolled back with "new row violates row-level security policy".
+DROP POLICY IF EXISTS "deal_events insertable by anon" ON public.deal_events;
+CREATE POLICY "deal_events insertable by anon"
+  ON public.deal_events
+  FOR INSERT
+  TO anon
+  WITH CHECK (true);
+
+DROP POLICY IF EXISTS "deal_events readable by anon" ON public.deal_events;
+CREATE POLICY "deal_events readable by anon"
+  ON public.deal_events
+  FOR SELECT
+  TO anon
+  USING (true);
+
+-- No INSERT policy for authenticated needed — rows are written by the trigger,
+-- which executes whatever role made the original UPDATE on deals.
 
 COMMIT;
 
