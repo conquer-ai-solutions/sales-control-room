@@ -4,7 +4,7 @@
 
 ## TL;DR
 
-The Sales Control Room contains a feature called **Initiatives** — a lightweight workstream tracker that lives alongside the deal pipeline and links many-to-many to deals. It has a clean data model, a working UI, and three years of conceptual room to run. **It is built infrastructure, not a feature with adoption**: the schema is sound, the components exist, but the team's working rhythm hasn't formed around it yet. The same is true of most of the Sales Control Room — these are deliberate scaffolds put in ahead of demand.
+The Sales Control Room contains a feature called **Initiatives** — a place to track things the team is working on that need visibility but don't have a natural home elsewhere in the system. Some of it relates to deals (and gets linked many-to-many), some of it doesn't relate to deals at all (advisor relationships, partnerships, ops work, anything that needs a home but isn't a commercial outcome). It has a clean data model, a working UI, and three years of conceptual room to run. **It is built infrastructure, not a feature with adoption**: the schema is sound, the components exist, but the team's working rhythm hasn't formed around it yet. The same is true of most of the Sales Control Room — these are deliberate scaffolds put in ahead of demand.
 
 This briefing covers what Initiatives is, the lane it occupies, the data model, and the surface area where Initiatives could plausibly read from or write to Conquer Intel if integration becomes useful later. **No recommendations are made about whether integration should happen** — that is a call for you and Bolaji to make once you've seen the shape of what exists.
 
@@ -14,15 +14,15 @@ One thing to flag upfront: Initiatives is not the only Sales Control Room subsys
 
 ## What Initiatives is
 
-An **Initiative** is a record representing *a strategic workstream, focus area, or piece of work that the team is collectively driving*. It exists as a layer above individual deals, on the assumption that deals are tactical commercial outcomes while initiatives are the longer-arc work the company invests in.
+An **Initiative** is a record representing *something the team is working on that needs to be tracked but doesn't have a natural home elsewhere in the system*. The defining characteristic isn't that initiatives are "strategic" or "long-arc" — it's that they're **homeless**. The deal pipeline tracks commercial outcomes. The clients view tracks accounts. Initiatives is what catches everything else that someone needs to remember about.
 
 Examples of what an initiative could represent (none of these are real records — they're illustrative of the intended use case):
-- "Pharma vertical expansion"
-- "Build out the AI investor narrative tooling"
-- "Establish referral relationships with three PE firms"
-- "Stand up the M&A pitchbook product line"
+- An advisor relationship that needs ongoing care but isn't a deal
+- A partnership being explored with a third party
+- A piece of internal work the team has committed to (e.g. building out a new pitchbook, standing up a vertical)
+- Something a deal is contributing to that's bigger than the deal itself (e.g. "validate the M&A workflow with three real customers" — a workstream that several deals support)
 
-The intent is that initiatives can have multiple deals contributing to them, and a deal can contribute to multiple initiatives — modelling the real-world fact that strategic work and commercial work intersect but don't map one-to-one.
+Some initiatives will link to deals (the schema supports many-to-many — one initiative can have multiple supporting deals, one deal can contribute to multiple initiatives). Others won't link to anything, because the work has nothing to do with the commercial pipeline. The optionality is the point: the system doesn't enforce a parent or assume a relationship to deals, because the whole reason Initiatives exists is to give a home to work that wouldn't otherwise have one.
 
 **Each initiative carries:**
 - A title and description
@@ -34,7 +34,7 @@ The intent is that initiatives can have multiple deals contributing to them, and
 - An activity feed of free-text updates from team members
 - Zero or more links to deals, each link optionally annotated with a note
 
-It is, structurally, a lightweight project tracker with a many-to-many bridge to the commercial pipeline. It is not OKRs. It is not a Kanban board. It is closer to "Linear projects, but for go-to-market work, with deals as supporting evidence."
+It is, structurally, a lightweight tracker with an optional many-to-many bridge to the commercial pipeline. It is not OKRs. It is not a Kanban board. It is closer to "Linear projects, but loose enough that a record can exist without belonging to anything else."
 
 ## The lane it occupies
 
@@ -44,9 +44,9 @@ The Sales Control Room has three top-level concerns the team currently tracks:
 2. **Clients** — the account-level rollup of deals. Lives as a derived view over `deals` grouped by account name. No first-class table.
 3. **Initiatives** — the strategic workstream layer. First-class table. Cross-references deals via the `initiative_deal_links` junction table.
 
-Initiatives is the only layer in the Sales Control Room that is *intentionally not* organised around money or commercial stage. It exists so that the team can answer the question *"what work are we actually driving forward, separate from what deals are in the pipeline?"* — a question that pipeline reports cannot answer because the same deal can serve different strategic purposes, and the same strategic push may be evidenced by deals that span multiple stages and verticals.
+Initiatives is the only layer in the Sales Control Room that is *intentionally not* organised around money or commercial stage. It exists so that the team has a place to capture *anything else* that needs visibility — work that's adjacent to deals, work that's adjacent to clients, and work that's adjacent to neither but still matters. Pipeline reports cannot answer "what else are we working on right now" because the pipeline only knows about deals; that's the gap Initiatives is meant to fill.
 
-In practice today: this layer is dormant. It is fully built and queryable, but the working habit of *"when we make a strategic decision, we open Initiatives and create a record"* has not yet been adopted by the team. Acknowledging this directly because Tom will see it in the data: there are very few real initiatives in the system and the activity feed on the ones that exist is sparse.
+In practice today: this layer is dormant. It is fully built and queryable, but the working habit of *"if a piece of work doesn't fit elsewhere, open Initiatives and create a record"* has not yet been adopted by the team. Acknowledging this directly because Tom will see it in the data: there are very few real initiatives in the system and the activity feed on the ones that exist is sparse.
 
 ## Logical architecture
 
