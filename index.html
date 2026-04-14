@@ -3402,7 +3402,21 @@ function UseCaseBuilder({ user, onBack }) {
   const [agreedSteps, setAgreedSteps] = useState([]);
   const [loading, setLoading] = useState(false);
   const [sessionCounts, setSessionCounts] = useState({});
+  const [clientList, setClientList] = useState([]);
   const saveTimeout = useRef({});
+
+  useEffect(() => {
+    // Fetch distinct client names from deals for the dropdown
+    (async () => {
+      try {
+        const { data } = await supabase.from('deals').select('account_name').order('account_name');
+        if (data) {
+          const unique = [...new Set(data.map(d => d.account_name).filter(Boolean))].sort();
+          setClientList(unique);
+        }
+      } catch (e) { console.error('Error fetching clients:', e); }
+    })();
+  }, []);
 
   useEffect(() => {
     if (tab === 'sessions') {
@@ -3654,8 +3668,12 @@ function UseCaseBuilder({ user, onBack }) {
                 <div className="ucb-form-row">
                   <div className="ucb-form-group">
                     <label>Client Name</label>
-                    <input type="text" placeholder="Enter client name" value={newSessionForm.client_name}
-                      onChange={(e) => setNewSessionForm({ ...newSessionForm, client_name: e.target.value })} />
+                    <select value={newSessionForm.client_name}
+                      onChange={(e) => setNewSessionForm({ ...newSessionForm, client_name: e.target.value })}
+                      style={{width:'100%',padding:'0.6rem 0.8rem',borderRadius:'8px',border:'1px solid var(--border)',background:'var(--bg)',color:'var(--text)',fontSize:'0.9rem'}}>
+                      <option value="">Select a client...</option>
+                      {clientList.map(name => <option key={name} value={name}>{name}</option>)}
+                    </select>
                   </div>
                 </div>
                 <div className="ucb-form-group">
