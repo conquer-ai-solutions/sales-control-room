@@ -905,6 +905,744 @@
   .btn-primary, .btn-secondary { width:100%; }
 }
 
+
+/* === USE-CASE BUILDER CSS === */
+
+.ucb-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: inherit;
+}
+
+.ucb-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+}
+
+.ucb-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.ucb-back-link:hover {
+  opacity: 0.8;
+}
+
+.ucb-header-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.ucb-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.ucb-tab-btn {
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.ucb-tab-btn.active {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+
+.ucb-tab-btn:hover:not(.active) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.ucb-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem;
+}
+
+.ucb-session-list {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.ucb-session-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.ucb-new-session-btn {
+  padding: 0.75rem 1.5rem;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: opacity 0.2s;
+}
+
+.ucb-new-session-btn:hover {
+  opacity: 0.9;
+}
+
+.ucb-session-form {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ucb-form-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.ucb-form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ucb-form-group label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.ucb-form-group input,
+.ucb-form-group textarea {
+  padding: 0.75rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.875rem;
+}
+
+.ucb-form-group input::placeholder,
+.ucb-form-group textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.ucb-form-buttons {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.ucb-btn-primary {
+  padding: 0.75rem 1.5rem;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.ucb-btn-primary:hover {
+  opacity: 0.9;
+}
+
+.ucb-btn-secondary {
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.ucb-btn-secondary:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.ucb-sessions-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.ucb-sessions-table thead {
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.ucb-sessions-table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.ucb-sessions-table td {
+  padding: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.ucb-sessions-table tbody tr {
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.ucb-sessions-table tbody tr:hover {
+  background: var(--bg-surface);
+}
+
+.ucb-status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.ucb-status-badge.active {
+  background: rgba(55, 165, 132, 0.15);
+  color: #37A584;
+}
+
+.ucb-status-badge.completed {
+  background: rgba(245, 166, 35, 0.15);
+  color: #F5A623;
+}
+
+.ucb-builder {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.ucb-builder-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.ucb-builder-content.single-column {
+  grid-template-columns: 1fr;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.ucb-usecases-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.ucb-add-usecase-btn {
+  padding: 0.75rem 1.5rem;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  width: fit-content;
+}
+
+.ucb-add-usecase-btn:hover {
+  opacity: 0.9;
+}
+
+.ucb-usecase-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  transition: all 0.2s;
+}
+
+.ucb-usecase-card.starred {
+  background: linear-gradient(135deg, rgba(245, 166, 35, 0.06) 0%, var(--bg-card) 100%);
+  border-left: 3px solid #F5A623;
+}
+
+.ucb-usecase-header {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.ucb-usecase-title-input {
+  flex: 1;
+  padding: 0.5rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.ucb-usecase-title-input::placeholder {
+  color: var(--text-muted);
+}
+
+.ucb-usecase-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.ucb-star-btn,
+.ucb-delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.25rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.ucb-star-btn {
+  color: var(--text-muted);
+}
+
+.ucb-star-btn.active {
+  color: #F5A623;
+}
+
+.ucb-delete-btn {
+  color: var(--text-muted);
+}
+
+.ucb-delete-btn:hover {
+  color: #EC3540;
+}
+
+.ucb-usecase-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ucb-field-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.ucb-usecase-notes {
+  padding: 0.75rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.875rem;
+  resize: vertical;
+  min-height: 60px;
+}
+
+.ucb-usecase-notes::placeholder {
+  color: var(--text-muted);
+}
+
+.ucb-usecase-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.ucb-usecase-area {
+  padding: 0.5rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  font-size: 0.875rem;
+}
+
+.ucb-usecase-area::placeholder {
+  color: var(--text-muted);
+}
+
+.ucb-score-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.ucb-score-btn {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  color: var(--text);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.ucb-score-btn:hover {
+  border-color: var(--accent);
+}
+
+.ucb-score-btn.active.s1 {
+  background: #37A584;
+  border-color: #37A584;
+  color: white;
+}
+
+.ucb-score-btn.active.s2 {
+  background: #F5A623;
+  border-color: #F5A623;
+  color: white;
+}
+
+.ucb-score-btn.active.s3 {
+  background: #EC3540;
+  border-color: #EC3540;
+  color: white;
+}
+
+.ucb-agreed-steps {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.ucb-agreed-steps-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.ucb-step-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 30px;
+  gap: 0.75rem;
+  align-items: flex-end;
+  margin-bottom: 0.75rem;
+}
+
+.ucb-step-input {
+  padding: 0.5rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.ucb-step-input::placeholder {
+  color: var(--text-muted);
+}
+
+.ucb-step-delete-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1rem;
+  transition: color 0.2s;
+  padding: 0;
+}
+
+.ucb-step-delete-btn:hover {
+  color: #EC3540;
+}
+
+.ucb-add-step-btn {
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--accent);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  width: fit-content;
+  margin-top: 0.5rem;
+}
+
+.ucb-add-step-btn:hover {
+  border-color: var(--accent);
+}
+
+.ucb-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.ucb-sidebar-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ucb-section-title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.ucb-scored-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background: var(--bg-surface);
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.ucb-scored-title {
+  flex: 1;
+  color: var(--text);
+}
+
+.ucb-score-badge {
+  background: #F5A623;
+  color: var(--bg);
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.ucb-empty-state {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.ucb-call-notes {
+  padding: 0.75rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.875rem;
+  resize: vertical;
+  min-height: 120px;
+}
+
+.ucb-call-notes::placeholder {
+  color: var(--text-muted);
+}
+
+.ucb-context-left {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.ucb-context-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ucb-context-title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.ucb-session-goal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 1.5rem;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.ucb-prompt-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 3px solid #F5A623;
+  border-radius: 8px;
+  padding: 1.5rem;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.ucb-strength-item,
+.ucb-signal-item {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.ucb-strength-item:last-child,
+.ucb-signal-item:last-child {
+  border-bottom: none;
+}
+
+.ucb-strength-icon,
+.ucb-signal-icon {
+  flex-shrink: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.ucb-strength-icon {
+  color: #37A584;
+}
+
+.ucb-signal-icon {
+  color: var(--accent);
+}
+
+.ucb-shortlist-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.ucb-shortlist-rank {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--accent);
+  min-width: 40px;
+}
+
+.ucb-shortlist-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ucb-shortlist-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.ucb-shortlist-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.ucb-tag {
+  display: inline-block;
+  background: var(--bg-surface);
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.ucb-shortlist-notes {
+  color: var(--text);
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  line-height: 1.5;
+}
+
+.ucb-shortlist-labels {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.75rem;
+}
+
+.ucb-label-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-weight: 600;
+  background: var(--bg-surface);
+  color: var(--text-dim);
+}
+
+.ucb-shortlist-score {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #F5A623;
+  min-width: 60px;
+  text-align: center;
+}
+
+.ucb-content::-webkit-scrollbar {
+  width: 5px;
+}
+
+.ucb-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.ucb-content:::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+.ucb-content::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
 </style>
 </head>
 <body>
@@ -2650,6 +3388,512 @@ function InitiativesScreen({currentUser, initialInitiativeId, onClearSelId}) {
   );
 }
 
+function UseCaseBuilder({ user, onBack }) {
+  const { useState, useEffect, useCallback, useRef, useMemo } = React;
+
+  const [tab, setTab] = useState('sessions');
+  const [sessions, setSessions] = useState([]);
+  const [currentSession, setCurrentSession] = useState(null);
+  const [showNewSessionForm, setShowNewSessionForm] = useState(false);
+  const [newSessionForm, setNewSessionForm] = useState({ client_name: '', session_goal: '' });
+  const [subTab, setSubTab] = useState('usecases');
+  const [useCases, setUseCases] = useState([]);
+  const [callNotes, setCallNotes] = useState('');
+  const [agreedSteps, setAgreedSteps] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [sessionCounts, setSessionCounts] = useState({});
+  const saveTimeout = useRef({});
+
+  useEffect(() => {
+    if (tab === 'sessions') {
+      fetchSessions();
+    }
+  }, [tab]);
+
+  useEffect(() => {
+    if (tab === 'builder' && currentSession) {
+      fetchSessionData();
+    }
+  }, [tab, currentSession]);
+
+  const fetchSessions = useCallback(async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('use_case_sessions')
+        .select('*')
+        .eq('created_by', user.email)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      setSessions(data || []);
+      // Fetch use-case counts per session
+      if (data && data.length > 0) {
+        const ids = data.map(s => s.id);
+        const { data: ucData } = await supabase
+          .from('use_cases')
+          .select('session_id')
+          .in('session_id', ids);
+        if (ucData) {
+          const counts = {};
+          ucData.forEach(uc => {
+            counts[uc.session_id] = (counts[uc.session_id] || 0) + 1;
+          });
+          setSessionCounts(counts);
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching sessions:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [user.email]);
+
+  const fetchSessionData = useCallback(async () => {
+    if (!currentSession) return;
+    setLoading(true);
+    try {
+      const [useCasesRes, stepsRes] = await Promise.all([
+        supabase
+          .from('use_cases')
+          .select('*')
+          .eq('session_id', currentSession.id)
+          .order('created_at', { ascending: true }),
+        supabase
+          .from('agreed_next_steps')
+          .select('*')
+          .eq('session_id', currentSession.id)
+          .order('created_at', { ascending: true })
+      ]);
+
+      if (useCasesRes.error) throw useCasesRes.error;
+      if (stepsRes.error) throw stepsRes.error;
+
+      setUseCases(useCasesRes.data || []);
+      setAgreedSteps(stepsRes.data || []);
+      setCallNotes(currentSession.call_notes || '');
+    } catch (err) {
+      console.error('Error fetching session data:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [currentSession]);
+
+  const autoSave = useCallback((table, id, fields) => {
+    const key = table + '-' + id;
+    clearTimeout(saveTimeout.current[key]);
+    saveTimeout.current[key] = setTimeout(async () => {
+      try {
+        await supabase.from(table).update(fields).eq('id', id);
+      } catch (err) {
+        console.error('Auto-save error:', err);
+      }
+    }, 500);
+  }, []);
+
+  const handleCreateSession = useCallback(async () => {
+    if (!newSessionForm.client_name.trim() || !newSessionForm.session_goal.trim()) return;
+    try {
+      const { data, error } = await supabase
+        .from('use_case_sessions')
+        .insert([{
+          created_by: user.email,
+          client_name: newSessionForm.client_name,
+          session_goal: newSessionForm.session_goal,
+          status: 'active',
+          call_notes: ''
+        }])
+        .select();
+
+      if (error) throw error;
+      if (data && data[0]) {
+        setCurrentSession(data[0]);
+        setNewSessionForm({ client_name: '', session_goal: '' });
+        setShowNewSessionForm(false);
+        setTab('builder');
+        setSubTab('usecases');
+      }
+    } catch (err) {
+      console.error('Error creating session:', err);
+    }
+  }, [newSessionForm, user.email]);
+
+  const handleSelectSession = useCallback((session) => {
+    setCurrentSession(session);
+    setTab('builder');
+    setSubTab('usecases');
+  }, []);
+
+  const handleAddUseCase = useCallback(async () => {
+    if (!currentSession) return;
+    try {
+      const { data, error } = await supabase
+        .from('use_cases')
+        .insert([{
+          session_id: currentSession.id,
+          title: '',
+          notes: '',
+          area: '',
+          impact: 0,
+          feasibility: 0,
+          starred: false
+        }])
+        .select();
+
+      if (error) throw error;
+      if (data) {
+        setUseCases(prev => [...prev, ...data]);
+      }
+    } catch (err) {
+      console.error('Error adding use case:', err);
+    }
+  }, [currentSession]);
+
+  const handleUpdateUseCase = useCallback((id, fields) => {
+    setUseCases(prev => prev.map(uc => uc.id === id ? { ...uc, ...fields } : uc));
+    autoSave('use_cases', id, fields);
+  }, [autoSave]);
+
+  const handleDeleteUseCase = useCallback(async (id) => {
+    try {
+      const { error } = await supabase.from('use_cases').delete().eq('id', id);
+      if (error) throw error;
+      setUseCases(prev => prev.filter(uc => uc.id !== id));
+    } catch (err) {
+      console.error('Error deleting use case:', err);
+    }
+  }, []);
+
+  const handleCallNotesChange = useCallback((notes) => {
+    setCallNotes(notes);
+    if (currentSession) {
+      autoSave('use_case_sessions', currentSession.id, { call_notes: notes });
+    }
+  }, [currentSession, autoSave]);
+
+  const handleAddStep = useCallback(async () => {
+    if (!currentSession) return;
+    try {
+      const { data, error } = await supabase
+        .from('agreed_next_steps')
+        .insert([{
+          session_id: currentSession.id,
+          action: '',
+          owner: '',
+          due_date: ''
+        }])
+        .select();
+
+      if (error) throw error;
+      if (data) {
+        setAgreedSteps(prev => [...prev, ...data]);
+      }
+    } catch (err) {
+      console.error('Error adding step:', err);
+    }
+  }, [currentSession]);
+
+  const handleUpdateStep = useCallback((id, fields) => {
+    setAgreedSteps(prev => prev.map(step => step.id === id ? { ...step, ...fields } : step));
+    autoSave('agreed_next_steps', id, fields);
+  }, [autoSave]);
+
+  const handleDeleteStep = useCallback(async (id) => {
+    try {
+      const { error } = await supabase.from('agreed_next_steps').delete().eq('id', id);
+      if (error) throw error;
+      setAgreedSteps(prev => prev.filter(step => step.id !== id));
+    } catch (err) {
+      console.error('Error deleting step:', err);
+    }
+  }, []);
+
+  const topScoredUseCases = useMemo(() => {
+    return useCases
+      .filter(uc => uc.impact > 0 || uc.feasibility > 0)
+      .map(uc => ({ ...uc, totalScore: (uc.impact || 0) + (uc.feasibility || 0) }))
+      .sort((a, b) => {
+        if (b.totalScore !== a.totalScore) return b.totalScore - a.totalScore;
+        return (b.starred ? 1 : 0) - (a.starred ? 1 : 0);
+      })
+      .slice(0, 10);
+  }, [useCases]);
+
+  const shortlistedUseCases = useMemo(() => {
+    return useCases
+      .filter(uc => uc.starred)
+      .map(uc => ({ ...uc, totalScore: (uc.impact || 0) + (uc.feasibility || 0) }))
+      .sort((a, b) => b.totalScore - a.totalScore);
+  }, [useCases]);
+
+  const getScoreLabel = (value) => {
+    if (value <= 0) return 'None';
+    if (value === 1) return 'Low';
+    if (value === 2) return 'Med';
+    if (value === 3) return 'High';
+    return '';
+  };
+
+  if (tab === 'sessions') {
+    return (
+      <div className="ucb-container">
+        <div className="ucb-header">
+          <a className="ucb-back-link" onClick={onBack}>{'<-'} Back</a>
+          <div className="ucb-header-title">Use Case Builder</div>
+        </div>
+        <div className="ucb-content">
+          <div className="ucb-session-list">
+            <div className="ucb-session-header">
+              <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 600 }}>Sessions</h2>
+              <button className="ucb-new-session-btn" onClick={() => setShowNewSessionForm(!showNewSessionForm)}>
+                {showNewSessionForm ? 'Cancel' : '+ New Session'}
+              </button>
+            </div>
+
+            {showNewSessionForm && (
+              <div className="ucb-session-form">
+                <div className="ucb-form-row">
+                  <div className="ucb-form-group">
+                    <label>Client Name</label>
+                    <input type="text" placeholder="Enter client name" value={newSessionForm.client_name}
+                      onChange={(e) => setNewSessionForm({ ...newSessionForm, client_name: e.target.value })} />
+                  </div>
+                </div>
+                <div className="ucb-form-group">
+                  <label>Session Goal</label>
+                  <textarea placeholder="What do you want to understand or accomplish in this session?" rows={3}
+                    value={newSessionForm.session_goal}
+                    onChange={(e) => setNewSessionForm({ ...newSessionForm, session_goal: e.target.value })} />
+                </div>
+                <div className="ucb-form-buttons">
+                  <button className="ucb-btn-secondary" onClick={() => setShowNewSessionForm(false)}>Cancel</button>
+                  <button className="ucb-btn-primary" onClick={handleCreateSession}>Create Session</button>
+                </div>
+              </div>
+            )}
+
+            {sessions.length === 0 ? (
+              <div className="ucb-empty-state" style={{ padding: '3rem 0' }}>
+                No sessions yet. Create one to get started.
+              </div>
+            ) : (
+              <table className="ucb-sessions-table">
+                <thead>
+                  <tr>
+                    <th>Client</th>
+                    <th>Session Goal</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Use Cases</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sessions.map(session => (
+                    <tr key={session.id} onClick={() => handleSelectSession(session)}>
+                      <td>{session.client_name}</td>
+                      <td style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {session.session_goal}
+                      </td>
+                      <td>{new Date(session.created_at).toLocaleDateString()}</td>
+                      <td><span className={'ucb-status-badge ' + session.status}>{session.status}</span></td>
+                      <td>{sessionCounts[session.id] || 0}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (tab === 'builder' && currentSession) {
+    return (
+      <div className="ucb-container">
+        <div className="ucb-header">
+          <a className="ucb-back-link" onClick={() => { setTab('sessions'); setCurrentSession(null); }}>{'<-'} Back</a>
+          <div className="ucb-header-title">{currentSession.client_name}</div>
+          <div className="ucb-tabs">
+            <button className={'ucb-tab-btn ' + (subTab === 'usecases' ? 'active' : '')} onClick={() => setSubTab('usecases')}>Use Cases</button>
+            <button className={'ucb-tab-btn ' + (subTab === 'context' ? 'active' : '')} onClick={() => setSubTab('context')}>Context</button>
+            <button className={'ucb-tab-btn ' + (subTab === 'shortlist' ? 'active' : '')} onClick={() => setSubTab('shortlist')}>Shortlist</button>
+          </div>
+        </div>
+
+        <div className="ucb-content">
+          {subTab === 'usecases' && (
+            <div className="ucb-builder">
+              <div className="ucb-builder-content">
+                <div className="ucb-usecases-main">
+                  <button className="ucb-add-usecase-btn" onClick={handleAddUseCase}>+ Add Use Case</button>
+
+                  {useCases.map((uc) => (
+                    <div key={uc.id} className={'ucb-usecase-card ' + (uc.starred ? 'starred' : '')}>
+                      <div className="ucb-usecase-header">
+                        <input type="text" className="ucb-usecase-title-input" placeholder="Use case title..."
+                          value={uc.title || ''} onChange={(e) => handleUpdateUseCase(uc.id, { title: e.target.value })} />
+                        <div className="ucb-usecase-actions">
+                          <button className={'ucb-star-btn ' + (uc.starred ? 'active' : '')}
+                            onClick={() => handleUpdateUseCase(uc.id, { starred: !uc.starred })}
+                            title={uc.starred ? 'Remove from shortlist' : 'Add to shortlist'}>
+                            {uc.starred ? '\u2605' : '\u2606'}
+                          </button>
+                          <button className="ucb-delete-btn" onClick={() => handleDeleteUseCase(uc.id)} title="Delete use case">
+                            {'\u00D7'}
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="ucb-usecase-field">
+                        <label className="ucb-field-label">Notes</label>
+                        <textarea className="ucb-usecase-notes" placeholder="Notes..." rows={2}
+                          value={uc.notes || ''} onChange={(e) => handleUpdateUseCase(uc.id, { notes: e.target.value })} />
+                      </div>
+
+                      <div className="ucb-usecase-row">
+                        <div className="ucb-usecase-field">
+                          <label className="ucb-field-label">Area</label>
+                          <input type="text" className="ucb-usecase-area" placeholder="e.g. Finance"
+                            value={uc.area || ''} onChange={(e) => handleUpdateUseCase(uc.id, { area: e.target.value })} />
+                        </div>
+                        <div className="ucb-usecase-field" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                          <label className="ucb-field-label">Impact</label>
+                          <div className="ucb-score-buttons">
+                            {[1, 2, 3].map(score => (
+                              <button key={'impact-' + score}
+                                className={'ucb-score-btn s' + score + (uc.impact === score ? ' active' : '')}
+                                onClick={() => handleUpdateUseCase(uc.id, { impact: uc.impact === score ? 0 : score })}>
+                                {score}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="ucb-usecase-field">
+                        <label className="ucb-field-label">Feasibility</label>
+                        <div className="ucb-score-buttons">
+                          {[1, 2, 3].map(score => (
+                            <button key={'feas-' + score}
+                              className={'ucb-score-btn s' + score + (uc.feasibility === score ? ' active' : '')}
+                              onClick={() => handleUpdateUseCase(uc.id, { feasibility: uc.feasibility === score ? 0 : score })}>
+                              {score}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Agreed Next Steps â session-level, below all use-case cards */}
+                  <div className="ucb-agreed-steps">
+                    <div className="ucb-agreed-steps-title">Agreed Next Steps</div>
+                    {agreedSteps.map(step => (
+                      <div key={step.id} className="ucb-step-row">
+                        <input type="text" className="ucb-step-input" placeholder="Action"
+                          value={step.action || ''} onChange={(e) => handleUpdateStep(step.id, { action: e.target.value })} />
+                        <input type="text" className="ucb-step-input" placeholder="Owner"
+                          value={step.owner || ''} onChange={(e) => handleUpdateStep(step.id, { owner: e.target.value })} />
+                        <input type="text" className="ucb-step-input" placeholder="Due date"
+                          value={step.due_date || ''} onChange={(e) => handleUpdateStep(step.id, { due_date: e.target.value })} />
+                        <button className="ucb-step-delete-btn" onClick={() => handleDeleteStep(step.id)}>{'\u00D7'}</button>
+                      </div>
+                    ))}
+                    <button className="ucb-add-step-btn" onClick={handleAddStep}>+ Add step</button>
+                  </div>
+                </div>
+
+                <div className="ucb-sidebar">
+                  <div className="ucb-sidebar-section">
+                    <div className="ucb-section-title">Top Scored</div>
+                    {topScoredUseCases.length === 0 ? (
+                      <div className="ucb-empty-state">No scored use cases yet</div>
+                    ) : (
+                      topScoredUseCases.map(uc => (
+                        <div key={uc.id} className="ucb-scored-item">
+                          <div className="ucb-scored-title">{uc.title || 'Untitled'}</div>
+                          <div className="ucb-score-badge">{uc.totalScore}/6</div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+
+                  <div className="ucb-sidebar-section">
+                    <div className="ucb-section-title">Call Notes</div>
+                    <textarea className="ucb-call-notes" placeholder="Key takeaways, observations, and next steps..."
+                      value={callNotes} onChange={(e) => handleCallNotesChange(e.target.value)} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {subTab === 'context' && (
+            <div className="ucb-builder-content">
+              <div className="ucb-context-left">
+                <div className="ucb-context-section">
+                  <div className="ucb-context-title">Session Goal</div>
+                  <div className="ucb-session-goal">{currentSession.session_goal || 'Not set'}</div>
+                </div>
+                <div className="ucb-context-section">
+                  <div className="ucb-context-title">Prompts</div>
+                  <div className="ucb-empty-state">Not configured</div>
+                </div>
+              </div>
+              <div className="ucb-context-left">
+                <div className="ucb-context-section">
+                  <div className="ucb-context-title">Strengths</div>
+                  <div className="ucb-empty-state">Not configured</div>
+                </div>
+                <div className="ucb-context-section">
+                  <div className="ucb-context-title">Listen-for Signals</div>
+                  <div className="ucb-empty-state">Not configured</div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {subTab === 'shortlist' && (
+            <div className="ucb-builder-content single-column">
+              {shortlistedUseCases.length === 0 ? (
+                <div className="ucb-no-shortlist">
+                  <div className="ucb-no-shortlist-emoji">{'\u2B50'}</div>
+                  <p>No use cases shortlisted yet.</p>
+                  <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+                    Star use cases on the Use Cases tab to see them here.
+                  </p>
+                </div>
+              ) : (
+                shortlistedUseCases.map((uc, idx) => (
+                  <div key={uc.id} className="ucb-shortlist-card">
+                    <div className="ucb-shortlist-rank">{idx + 1}</div>
+                    <div style={{ flex: 1 }}>
+                      <div className="ucb-shortlist-title">{uc.title || 'Untitled'}</div>
+                      <div className="ucb-shortlist-meta">
+                        {uc.area && <span className="ucb-tag">{uc.area}</span>}
+                      </div>
+                      {uc.notes && <div className="ucb-shortlist-notes">{uc.notes}</div>}
+                      <div className="ucb-shortlist-labels">
+                        <span className="ucb-label-badge">Impact: {getScoreLabel(uc.impact)}</span>
+                        <span className="ucb-label-badge">Feasibility: {getScoreLabel(uc.feasibility)}</span>
+                      </div>
+                    </div>
+                    <div className="ucb-shortlist-score">{uc.totalScore}</div>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+}
+
+
+
 function ClosingZone({ deals, teamMembers, user, onDealClick }) {
   // Detect board mode from URL: #closing?board=1 or ?board=1 in query
   const isBoardMode = React.useMemo(() => {
@@ -3270,6 +4514,7 @@ function App() {
               {canAccessScreen('admin') && <button className={`view-btn ${page==='admin'?'active':''}`} onClick={()=>setPage('admin')} style={page==='admin'?{background:'var(--accent)',color:'white'}:{}}>Admin</button>}
               <button className={`view-btn ${page==='initiatives'?'active':''}`} onClick={()=>setPage('initiatives')} style={page==='initiatives'?{background:'var(--accent)',color:'white'}:{}}>Initiatives</button>
               <button className={`view-btn ${page==='clients'?'active':''}`} onClick={()=>{setPage('clients');setSelectedClient(null);}} style={page==='clients'?{background:'var(--accent)',color:'white'}:{}}>Clients</button>
+              {user?.email === 'bolaji@conquer.ai' && <button className={`view-btn ${page==='usecases'?'active':''}`} onClick={()=>setPage('usecases')} style={page==='usecases'?{background:'var(--accent)',color:'white'}:{}}>Use Cases</button>}
             </div>
             <button className="refresh-btn" onClick={load}>↻ Refresh</button>
             <span className="timestamp">{ts.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span>
@@ -3327,6 +4572,7 @@ function App() {
               {canAccessScreen('admin') && <button className={`view-btn ${page==='admin'?'active':''}`} onClick={()=>setPage('admin')} style={page==='admin'?{background:'var(--accent)',color:'white'}:{}}>Admin</button>}
               <button className={`view-btn ${page==='initiatives'?'active':''}`} onClick={()=>setPage('initiatives')} style={page==='initiatives'?{background:'var(--accent)',color:'white'}:{}}>Initiatives</button>
               <button className={`view-btn ${page==='clients'?'active':''}`} onClick={()=>{setPage('clients');setSelectedClient(null);}} style={page==='clients'?{background:'var(--accent)',color:'white'}:{}}>Clients</button>
+              {user?.email === 'bolaji@conquer.ai' && <button className={`view-btn ${page==='usecases'?'active':''}`} onClick={()=>setPage('usecases')} style={page==='usecases'?{background:'var(--accent)',color:'white'}:{}}>Use Cases</button>}
             </div>
             <button className="refresh-btn" onClick={load}>↻ Refresh</button>
             <span className="timestamp">{ts.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span>
@@ -3360,6 +4606,7 @@ function App() {
               {canAccessScreen('admin') && <button className={`view-btn ${page==='admin'?'active':''}`} onClick={()=>setPage('admin')} style={page==='admin'?{background:'var(--accent)',color:'white'}:{}}>Admin</button>}
               <button className={`view-btn ${page==='initiatives'?'active':''}`} onClick={()=>setPage('initiatives')} style={page==='initiatives'?{background:'var(--accent)',color:'white'}:{}}>Initiatives</button>
               <button className={`view-btn ${page==='clients'?'active':''}`} onClick={()=>{setPage('clients');setSelectedClient(null);}} style={page==='clients'?{background:'var(--accent)',color:'white'}:{}}>Clients</button>
+              {user?.email === 'bolaji@conquer.ai' && <button className={`view-btn ${page==='usecases'?'active':''}`} onClick={()=>setPage('usecases')} style={page==='usecases'?{background:'var(--accent)',color:'white'}:{}}>Use Cases</button>}
             </div>
             <button className="refresh-btn" onClick={load}>↻ Refresh</button>
             <span className="timestamp">{ts.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span>
@@ -3404,6 +4651,7 @@ function App() {
             {canAccessScreen('admin') && <button className={`view-btn ${page==='admin'?'active':''}`} onClick={()=>setPage('admin')} style={page==='admin'?{background:'var(--accent)',color:'white'}:{}}>Admin</button>}
               <button className={`view-btn ${page==='initiatives'?'active':''}`} onClick={()=>setPage('initiatives')} style={page==='initiatives'?{background:'var(--accent)',color:'white'}:{}}>Initiatives</button>
               <button className={`view-btn ${page==='clients'?'active':''}`} onClick={()=>{setPage('clients');setSelectedClient(null);}} style={page==='clients'?{background:'var(--accent)',color:'white'}:{}}>Clients</button>
+              {user?.email === 'bolaji@conquer.ai' && <button className={`view-btn ${page==='usecases'?'active':''}`} onClick={()=>setPage('usecases')} style={page==='usecases'?{background:'var(--accent)',color:'white'}:{}}>Use Cases</button>}
           </div>
           <button className="refresh-btn" onClick={load}>↻ Refresh</button>
           <span className="timestamp">{ts.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span>
@@ -3494,6 +4742,7 @@ function App() {
 
 
       {page === 'closing' && <ClosingZone deals={deals} teamMembers={team} user={user} onDealClick={(id) => {setSelId(id); setPage('account');}} />}
+            {page === 'usecases' && <UseCaseBuilder user={user} onBack={() => setPage('board')} />}
 
       {toast && <div className="toast">{toast}</div>}
     </div>
