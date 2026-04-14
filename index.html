@@ -1643,6 +1643,200 @@
   background: var(--text-muted);
 }
 
+/* ====== Stage Gate Checklist ====== */
+.gate-checklist {
+  margin-top: 1.5rem;
+}
+.gate-checklist-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+.gate-checklist-title {
+  font-family: 'Geist Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+.gate-checklist-progress {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-family: 'Geist Mono', monospace;
+}
+.gate-checklist-progress-bar {
+  width: 80px;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.gate-checklist-progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+.gate-checklist-progress-fill.complete {
+  background: var(--stage-signed);
+}
+.gate-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.gate-tab {
+  padding: 0.5rem 1rem;
+  font-size: 0.78rem;
+  font-family: 'Geist Mono', monospace;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+.gate-tab:hover {
+  color: var(--text-secondary);
+}
+.gate-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+.gate-tab.all-done {
+  color: var(--stage-signed);
+}
+.gate-tab .gate-tab-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+.gate-tab .gate-tab-dot.done {
+  background: var(--stage-signed);
+}
+.gate-tab .gate-tab-dot.partial {
+  background: var(--orange);
+}
+.gate-tab .gate-tab-dot.empty {
+  background: var(--border);
+}
+.gate-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.gate-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
+}
+.gate-section-label {
+  font-family: 'Geist Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.gate-section-count {
+  font-family: 'Geist Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+.gate-check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: background 0.15s;
+}
+.gate-check-item:last-child {
+  border-bottom: none;
+}
+.gate-check-item:hover {
+  background: var(--bg-card-hover);
+}
+.gate-check-box {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: 1.5px solid var(--border);
+  background: var(--bg);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  margin-top: 1px;
+}
+.gate-check-box:hover {
+  border-color: var(--accent);
+}
+.gate-check-box.checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.gate-check-box.checked svg {
+  opacity: 1;
+}
+.gate-check-box svg {
+  width: 11px;
+  height: 11px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.gate-check-label {
+  font-size: 0.85rem;
+  color: var(--text);
+  line-height: 1.4;
+  flex: 1;
+}
+.gate-check-item.completed .gate-check-label {
+  color: var(--text-muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--border);
+}
+.gate-check-meta {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  font-family: 'Geist Mono', monospace;
+  margin-top: 2px;
+}
+.gate-overall-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  background: var(--bg-elevated);
+  border-radius: var(--radius);
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  font-family: 'Geist Mono', monospace;
+}
+.gate-overall-status.ready {
+  border: 1px solid var(--stage-signed);
+  color: var(--stage-signed);
+}
+.gate-overall-status.blocked {
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
 </style>
 </head>
 <body>
@@ -1677,6 +1871,92 @@ const STAGE_BENCHMARKS = {
   procurement: 21,
   contract_signed: 0,
 };
+
+// Stage Gate Definitions
+const GATE_DEFINITIONS = {
+  gate_1: {
+    label: 'Gate 1: Intro \u2192 Discovery',
+    fromStage: 'intro',
+    toStage: 'discovery',
+    inputs: [
+      { key: 'company_name', label: 'Company name recorded' },
+      { key: 'intro_transcript', label: 'Intro call transcript uploaded' },
+      { key: 'contacts_with_roles', label: 'Contact list with roles documented' },
+      { key: 'conquer_attendees', label: 'Conquer attendees identified' },
+      { key: 'introducer_partner', label: 'Introducer / partner recorded' },
+    ],
+    outputs: [
+      { key: 'discovery_scheduled', label: 'Discovery session scheduled' },
+      { key: 'use_cases_identified', label: 'Use cases identified (or flagged as none yet)' },
+      { key: 'related_examples', label: 'Related use cases / examples prepared' },
+      { key: 'ucb_session_complete', label: 'Use Case Session completed (function, triggers, actors, systems, decisions, volumes)' },
+      { key: 'process_clarity', label: 'Process clarity established' },
+    ],
+  },
+  gate_2: {
+    label: 'Gate 2: Discovery \u2192 POC',
+    fromStage: 'discovery',
+    toStage: 'poc',
+    inputs: [
+      { key: 'nda_signed', label: 'NDA signed' },
+    ],
+    outputs: [
+      { key: 'poc_spec', label: 'POC spec written' },
+      { key: 'poc_built', label: 'POC built and link created' },
+      { key: 'demo_scheduled', label: 'Demo session scheduled' },
+    ],
+  },
+  gate_3: {
+    label: 'Gate 3: POC \u2192 Proposal',
+    fromStage: 'poc',
+    toStage: 'proposal',
+    inputs: [],
+    outputs: [
+      { key: 'tech_arch_approved', label: 'Technical architecture reviewed and approved' },
+      { key: 'resourcing_plan', label: 'Resourcing plan completed' },
+      { key: 'pricing_finalised', label: 'Pricing finalised' },
+      { key: 'proposal_review_scheduled', label: 'Proposal review session scheduled' },
+    ],
+  },
+  gate_4: {
+    label: 'Gate 4: Proposal \u2192 Decision Phase',
+    fromStage: 'proposal',
+    toStage: 'decision_phase',
+    inputs: [],
+    outputs: [
+      { key: 'proposal_delivered', label: 'Proposal delivered and reviewed with client' },
+      { key: 'security_compliance_review', label: 'Security / compliance review completed' },
+      { key: 'tech_arch_aligned', label: 'Technical architecture aligned to client environment' },
+      { key: 'stakeholder_mapping', label: 'All decision-makers identified and engaged' },
+      { key: 'references_provided', label: 'Client references provided' },
+      { key: 'contract_sow_drafted', label: 'Contract / SOW drafted and sent' },
+      { key: 'commercial_terms_agreed', label: 'Commercial terms agreed' },
+      { key: 'support_model_clarified', label: 'Ongoing support model clarified' },
+    ],
+  },
+  gate_5: {
+    label: 'Gate 5: Decision Phase \u2192 Signed',
+    fromStage: 'decision_phase',
+    toStage: 'contract_signed',
+    inputs: [],
+    outputs: [
+      { key: 'contract_redlines', label: 'Contract redlines agreed' },
+      { key: 'legal_review', label: 'Legal review completed (both sides)' },
+      { key: 'contract_signed', label: 'Contract signed' },
+    ],
+  },
+};
+
+function getGateForStage(stageKey) {
+  return Object.entries(GATE_DEFINITIONS).find(([_, g]) => g.fromStage === stageKey);
+}
+function getGatesUpToStage(stageKey) {
+  const stageIdx = STAGES.findIndex(s => s.key === stageKey);
+  return Object.entries(GATE_DEFINITIONS).filter(([_, g]) => {
+    const fromIdx = STAGES.findIndex(s => s.key === g.fromStage);
+    return fromIdx <= stageIdx;
+  });
+}
 
 const WEIGHT_MAP = {
   intro: 0.05,
@@ -2216,6 +2496,8 @@ function AccountView({ dealId, deals, teamMembers, onBack, canEdit, user, onStar
   const [showCopied, setShowCopied] = useState(false);
   const [activities, setActivities] = useState([]);
   const [linkedInitiatives, setLinkedInitiatives] = useState([]);
+  const [gateChecks, setGateChecks] = useState({});
+  const [activeGateTab, setActiveGateTab] = useState(null);
 
   useEffect(() => { if (deal) setForm(deal); }, [deal]);
   // Clear local overrides once parent prop catches up (Supabase realtime or refetch)
@@ -2234,6 +2516,53 @@ function AccountView({ dealId, deals, teamMembers, onBack, canEdit, user, onStar
     };
     fetchData();
   }, [deal?.id]);
+
+  // Fetch gate checks for this deal
+  useEffect(() => {
+    if (!deal) return;
+    (async () => {
+      const { data } = await supabase.from('deal_gate_checks').select('*').eq('deal_id', deal.id);
+      if (data) {
+        const map = {};
+        data.forEach(row => { map[row.gate_key + '::' + row.check_key] = row; });
+        setGateChecks(map);
+      }
+    })();
+  }, [deal?.id]);
+
+  // Set default active gate tab to current stage exit gate
+  useEffect(() => {
+    if (!deal || activeGateTab) return;
+    const currentGate = getGateForStage(deal.stage);
+    if (currentGate) setActiveGateTab(currentGate[0]);
+    else setActiveGateTab('gate_5');
+  }, [deal?.stage]);
+
+  const toggleGateCheck = async (gateKey, checkKey) => {
+    if (!canEdit || !deal) return;
+    const compositeKey = gateKey + '::' + checkKey;
+    const existing = gateChecks[compositeKey];
+    const newCompleted = existing ? !existing.completed : true;
+    const now = new Date().toISOString();
+    setGateChecks(prev => ({
+      ...prev,
+      [compositeKey]: {
+        ...existing,
+        deal_id: deal.id, gate_key: gateKey, check_key: checkKey,
+        completed: newCompleted,
+        completed_at: newCompleted ? now : null,
+        completed_by: newCompleted ? (user?.email || null) : null,
+      }
+    }));
+    const { error } = await supabase.from('deal_gate_checks').upsert({
+      deal_id: deal.id, gate_key: gateKey, check_key: checkKey,
+      completed: newCompleted,
+      completed_at: newCompleted ? now : null,
+      completed_by: newCompleted ? (user?.email || null) : null,
+      updated_at: now,
+    }, { onConflict: 'deal_id,gate_key,check_key' });
+    if (error) console.error('Gate check save error:', error);
+  };
 
   if (!deal) return <div className="loading-screen"><div className="loading-spinner"></div></div>;
 
@@ -2397,6 +2726,116 @@ function AccountView({ dealId, deals, teamMembers, onBack, canEdit, user, onStar
           </div>
         </div>
       )}
+
+      {/* STAGE GATE CHECKLIST */}
+      {(() => {
+        const gates = getGatesUpToStage(deal.stage);
+        if (!gates || gates.length === 0) return null;
+        const currentGateEntry = getGateForStage(deal.stage);
+        const currentGateKey = currentGateEntry ? currentGateEntry[0] : null;
+        const selectedGate = activeGateTab && GATE_DEFINITIONS[activeGateTab] ? activeGateTab : (gates.length > 0 ? gates[gates.length - 1][0] : null);
+        if (!selectedGate) return null;
+        const gateDef = GATE_DEFINITIONS[selectedGate];
+        const allChecks = [...gateDef.inputs, ...gateDef.outputs];
+        const completedCount = allChecks.filter(c => gateChecks[selectedGate + '::' + c.key]?.completed).length;
+        const totalCount = allChecks.length;
+        const pct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+        const allGateChecks = gates.flatMap(([gk, gd]) => [...gd.inputs, ...gd.outputs].map(c => ({ gateKey: gk, ...c })));
+        const allCompleted = allGateChecks.filter(c => gateChecks[c.gateKey + '::' + c.key]?.completed).length;
+        const allTotal = allGateChecks.length;
+        const overallPct = allTotal > 0 ? Math.round((allCompleted / allTotal) * 100) : 0;
+        return (
+          <div className="gate-checklist">
+            <div className="gate-checklist-header">
+              <span className="gate-checklist-title">Stage Gates</span>
+              <div className="gate-checklist-progress">
+                <div className="gate-checklist-progress-bar">
+                  <div className={"gate-checklist-progress-fill" + (overallPct === 100 ? ' complete' : '')} style={{width: overallPct + '%'}}></div>
+                </div>
+                <span>{allCompleted}/{allTotal}</span>
+              </div>
+            </div>
+            <div className="gate-tabs">
+              {gates.map(([gk, gd]) => {
+                const gChecks = [...gd.inputs, ...gd.outputs];
+                const gDone = gChecks.filter(c => gateChecks[gk + '::' + c.key]?.completed).length;
+                const gTotal = gChecks.length;
+                const dotClass = gDone === gTotal ? 'done' : gDone > 0 ? 'partial' : 'empty';
+                const isCurrent = gk === currentGateKey;
+                return (
+                  <button key={gk} className={'gate-tab' + (selectedGate === gk ? ' active' : '') + (gDone === gTotal ? ' all-done' : '')} onClick={() => setActiveGateTab(gk)}>
+                    {gd.fromStage === 'intro' ? 'G1' : gd.fromStage === 'discovery' ? 'G2' : gd.fromStage === 'poc' ? 'G3' : gd.fromStage === 'proposal' ? 'G4' : 'G5'}
+                    {isCurrent && ' \u25C0'}
+                    <span className={'gate-tab-dot ' + dotClass}></span>
+                  </button>
+                );
+              })}
+            </div>
+            <div className="gate-section">
+              <div className="gate-section-header">
+                <span className="gate-section-label">{gateDef.label}</span>
+                <span className="gate-section-count">{completedCount}/{totalCount} complete</span>
+              </div>
+              {gateDef.inputs.length > 0 && (
+                <>
+                  <div style={{padding:'0.4rem 1rem 0.2rem',fontSize:'0.7rem',fontFamily:'"Geist Mono", monospace',color:'var(--text-dim)',textTransform:'uppercase',letterSpacing:'0.05em',background:'var(--bg-elevated)',borderBottom:'1px solid var(--border)'}}>Inputs</div>
+                  {gateDef.inputs.map(check => {
+                    const rec = gateChecks[selectedGate + '::' + check.key];
+                    const isChecked = rec?.completed;
+                    return (
+                      <div key={check.key} className={'gate-check-item' + (isChecked ? ' completed' : '')}>
+                        <div className={'gate-check-box' + (isChecked ? ' checked' : '')} onClick={() => toggleGateCheck(selectedGate, check.key)}>
+                          <svg viewBox="0 0 12 12" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 6l3 3 5-5"/></svg>
+                        </div>
+                        <div>
+                          <div className="gate-check-label">{check.label}</div>
+                          {isChecked && rec?.completed_by && (
+                            <div className="gate-check-meta">{rec.completed_by.split('@')[0]} + ' \u00B7 ' + new Date(rec.completed_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </>
+              )}
+              {gateDef.outputs.length > 0 && (
+                <>
+                  <div style={{padding:'0.4rem 1rem 0.2rem',fontSize:'0.7rem',fontFamily:'"Geist Mono", monospace',color:'var(--text-dim)',textTransform:'uppercase',letterSpacing:'0.05em',background:'var(--bg-elevated)',borderBottom:'1px solid var(--border)'}}>Outputs</div>
+                  {gateDef.outputs.map(check => {
+                    const rec = gateChecks[selectedGate + '::' + check.key];
+                    const isChecked = rec?.completed;
+                    return (
+                      <div key={check.key} className={'gate-check-item' + (isChecked ? ' completed' : '')}>
+                        <div className={'gate-check-box' + (isChecked ? ' checked' : '')} onClick={() => toggleGateCheck(selectedGate, check.key)}>
+                          <svg viewBox="0 0 12 12" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 6l3 3 5-5"/></svg>
+                        </div>
+                        <div>
+                          <div className="gate-check-label">{check.label}</div>
+                          {isChecked && rec?.completed_by && (
+                            <div className="gate-check-meta">{rec.completed_by.split('@')[0]} + ' \u00B7 ' + new Date(rec.completed_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </>
+              )}
+            </div>
+            {completedCount === totalCount && totalCount > 0 && (
+              <div className="gate-overall-status ready">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                Gate complete \u2014 ready to advance to {GATE_DEFINITIONS[selectedGate]?.toStage ? STAGE_MAP[GATE_DEFINITIONS[selectedGate].toStage]?.label : 'next stage'}
+              </div>
+            )}
+            {(completedCount < totalCount) && selectedGate === currentGateKey && (
+              <div className="gate-overall-status blocked">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                {totalCount - completedCount} item{totalCount - completedCount !== 1 ? 's' : ''} remaining before advancing
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {/* ENGAGEMENT OVERVIEW */}
       {(() => {
