@@ -2790,7 +2790,7 @@ function AccountView({ dealId, deals, teamMembers, onBack, canEdit, user, onStar
                         <div>
                           <div className="gate-check-label">{check.label}</div>
                           {isChecked && rec?.completed_by && (
-                            <div className="gate-check-meta">{rec.completed_by.split('@')[0]} + ' \u00B7 ' + new Date(rec.completed_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div>
+                            <div className="gate-check-meta">{rec.completed_by.split('@')[0]} · {new Date(rec.completed_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div>
                           )}
                         </div>
                       </div>
@@ -2812,7 +2812,7 @@ function AccountView({ dealId, deals, teamMembers, onBack, canEdit, user, onStar
                         <div>
                           <div className="gate-check-label">{check.label}</div>
                           {isChecked && rec?.completed_by && (
-                            <div className="gate-check-meta">{rec.completed_by.split('@')[0]} + ' \u00B7 ' + new Date(rec.completed_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div>
+                            <div className="gate-check-meta">{rec.completed_by.split('@')[0]} · {new Date(rec.completed_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div>
                           )}
                         </div>
                       </div>
